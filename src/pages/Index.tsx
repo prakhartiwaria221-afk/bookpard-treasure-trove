@@ -132,8 +132,8 @@ const Index = () => {
             <div>
               <h3 className="font-bold text-foreground mb-4">Contact Us</h3>
               <p className="text-muted-foreground text-sm">
-                Email: support@bookpard.com<br />
-                Phone: +91 1234567890
+                Email: prakhartiwaria221@gmail.com<br />
+                Phone: +919111415672
               </p>
             </div>
           </div>
