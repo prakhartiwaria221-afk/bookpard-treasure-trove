@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Search, Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import logo from "@/assets/logo.png";
 
 interface NavbarProps {
@@ -13,10 +16,44 @@ interface NavbarProps {
 export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     onSearchChange(value);
+  };
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error signing out",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "You've been successfully signed out.",
+      });
+      navigate("/");
+    }
   };
 
   return (
@@ -54,17 +91,37 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             />
           </div>
 
-          {/* Cart */}
-          <Link to="/cart">
-            <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
-              <ShoppingCart className="h-5 w-5 text-primary" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  {cartItemCount}
-                </span>
-              )}
-            </Button>
-          </Link>
+          {/* Cart & Auth */}
+          <div className="flex items-center gap-2">
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
+                <ShoppingCart className="h-5 w-5 text-primary" />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {cartItemCount}
+                  </span>
+                )}
+              </Button>
+            </Link>
+
+            {user ? (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSignOut}
+                className="hover:bg-destructive/10"
+                title="Sign Out"
+              >
+                <LogOut className="h-5 w-5 text-destructive" />
+              </Button>
+            ) : (
+              <Link to="/auth">
+                <Button variant="ghost" size="icon" className="hover:bg-primary/10" title="Sign In">
+                  <User className="h-5 w-5 text-primary" />
+                </Button>
+              </Link>
+            )}
+          </div>
 
           {/* Mobile Menu Button */}
           <Button
