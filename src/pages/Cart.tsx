@@ -2,19 +2,19 @@ import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, totalPrice, totalItems, clearCart } = useCart();
+  const navigate = useNavigate();
 
   const handleCheckout = () => {
     if (cart.length === 0) {
       toast.error("Your cart is empty!");
       return;
     }
-    toast.success("Proceeding to payment...");
-    // In a real app, this would navigate to payment page
+    navigate("/checkout");
   };
 
   if (cart.length === 0) {
