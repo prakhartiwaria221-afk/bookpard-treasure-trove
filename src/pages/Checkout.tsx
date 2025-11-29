@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Checkout() {
   const { cart, totalPrice, totalItems, clearCart } = useCart();
@@ -36,7 +37,7 @@ export default function Checkout() {
     return null;
   }
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     // Validate based on payment method
     if (paymentMethod === "upi" && !upiId) {
       toast.error("Please enter your UPI ID");
@@ -52,6 +53,27 @@ export default function Checkout() {
 
     if (paymentMethod === "cod" && (!deliveryAddress || !phoneNumber)) {
       toast.error("Please fill delivery address and phone number");
+      return;
+    }
+
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Save order to database
+    const { error } = await supabase.from("orders").insert([{
+      user_id: user?.id || null,
+      items: cart as any,
+      total_price: totalPrice,
+      payment_method: paymentMethod,
+      delivery_address: paymentMethod === "cod" ? deliveryAddress : null,
+      contact_phone: paymentMethod === "cod" ? phoneNumber : null,
+      contact_email: user?.email || null,
+      status: "pending",
+    }]);
+
+    if (error) {
+      console.error("Error saving order:", error);
+      toast.error("Failed to process order. Please try again.");
       return;
     }
 

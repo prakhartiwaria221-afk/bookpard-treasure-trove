@@ -77,6 +77,11 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             <Link to="/sell" className="text-foreground hover:text-primary transition-colors font-medium">
               Sell Books
             </Link>
+            {user && (
+              <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
+                Admin
+              </Link>
+            )}
           </div>
 
           {/* Search Bar */}
@@ -172,6 +177,15 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             >
               Sell Books
             </Link>
+            {user && (
+              <Link
+                to="/admin"
+                className="block text-foreground hover:text-primary transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin
+              </Link>
+            )}
           </div>
         )}
       </div>
