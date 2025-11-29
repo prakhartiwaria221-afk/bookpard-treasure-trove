@@ -56,6 +56,45 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          delivery_address: string | null
+          id: string
+          items: Json
+          payment_method: string
+          status: string
+          total_price: number
+          user_id: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          delivery_address?: string | null
+          id?: string
+          items: Json
+          payment_method: string
+          status?: string
+          total_price: number
+          user_id?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          delivery_address?: string | null
+          id?: string
+          items?: Json
+          payment_method?: string
+          status?: string
+          total_price?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_listings: {
         Row: {
           author: string
