@@ -62,7 +62,11 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img src={logo} alt="BookPard Logo" className="h-14 w-auto" />
+            <img 
+              src={logo} 
+              alt="BookPard Logo" 
+              className="h-10 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-300" 
+            />
           </Link>
 
           {/* Desktop Navigation */}
