@@ -67,6 +67,7 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               alt="BookPard Logo" 
               className="h-10 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-300" 
             />
+            <span className="text-2xl md:text-3xl font-bold text-primary">BookPard</span>
           </Link>
 
           {/* Desktop Navigation */}
