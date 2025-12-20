@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { CategoryFilter } from "@/components/CategoryFilter";
@@ -8,6 +8,7 @@ import { useCart } from "@/hooks/useCart";
 import { booksData } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -15,9 +16,47 @@ const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Books");
   const [sortBy, setSortBy] = useState<SortOption>("price-low");
   const [filterCondition, setFilterCondition] = useState<FilterCondition>("all");
+  const [userListings, setUserListings] = useState<Book[]>([]);
+
+  // Fetch user listings from database
+  useEffect(() => {
+    const fetchUserListings = async () => {
+      const { data, error } = await supabase
+        .from("user_listings_public")
+        .select("*")
+        .eq("status", "active");
+
+      if (error) {
+        console.error("Error fetching user listings:", error);
+        return;
+      }
+
+      if (data) {
+        const mappedListings: Book[] = data.map((listing) => ({
+          id: listing.id || "",
+          title: listing.title || "",
+          author: listing.author || "",
+          category: listing.category || "",
+          price: listing.price || 0,
+          oldPrice: listing.price || 0,
+          image: listing.image_url || "/placeholder.svg",
+          condition: (listing.condition === "new" ? "new" : "old") as "new" | "old",
+          description: listing.description || "",
+        }));
+        setUserListings(mappedListings);
+      }
+    };
+
+    fetchUserListings();
+  }, []);
+
+  // Combine static books with user listings
+  const allBooks = useMemo(() => {
+    return [...booksData, ...userListings];
+  }, [userListings]);
 
   const filteredAndSortedBooks = useMemo(() => {
-    let filtered = [...booksData];
+    let filtered = [...allBooks];
 
     // Search filter
     if (searchQuery) {
@@ -59,7 +98,7 @@ const Index = () => {
     });
 
     return filtered;
-  }, [searchQuery, selectedCategory, sortBy, filterCondition]);
+  }, [searchQuery, selectedCategory, sortBy, filterCondition, allBooks]);
 
   const handleAddToCart = (book: Book) => {
     addToCart(book);
