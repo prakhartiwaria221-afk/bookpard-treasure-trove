@@ -112,14 +112,7 @@ export default function SellBooks() {
         }
       }
 
-      // Map condition to database format
-      const conditionMap: Record<string, string> = {
-        'excellent': 'new',
-        'good': 'old',
-        'average': 'old'
-      };
-
-      // Insert listing into database
+      // Insert listing into database - condition must be 'excellent', 'good', or 'average'
       const { error } = await supabase
         .from('user_listings')
         .insert({
@@ -127,7 +120,7 @@ export default function SellBooks() {
           title: formData.title,
           author: formData.author,
           category: formData.category,
-          condition: conditionMap[formData.condition] || 'old',
+          condition: formData.condition, // Use exact value from form: excellent, good, or average
           price: parseInt(formData.price),
           description: formData.description || null,
           contact_email: formData.contactEmail,

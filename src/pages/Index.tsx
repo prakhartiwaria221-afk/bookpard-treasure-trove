@@ -40,7 +40,8 @@ const Index = () => {
           price: listing.price || 0,
           oldPrice: listing.price || 0,
           image: listing.image_url || "/placeholder.svg",
-          condition: (listing.condition === "new" ? "new" : "old") as "new" | "old",
+          // Map database condition (excellent/good/average) to Book type (new/old)
+          condition: (listing.condition === "excellent" ? "new" : "old") as "new" | "old",
           description: listing.description || "",
         }));
         setUserListings(mappedListings);
