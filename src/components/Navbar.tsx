@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User, Settings } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -82,14 +90,9 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               Sell Books
             </Link>
             {user && (
-              <>
-                <Link to="/settings" className="text-foreground hover:text-primary transition-colors font-medium">
-                  Settings
-                </Link>
-                <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
-                  Admin
-                </Link>
-              </>
+              <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
+                Admin
+              </Link>
             )}
           </div>
 
@@ -119,15 +122,47 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             </Link>
 
             {user ? (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                className="hover:bg-destructive/10"
-                title="Sign Out"
-              >
-                <LogOut className="h-5 w-5 text-destructive" />
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-1 hover:bg-primary/10 px-2">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="h-4 w-4 text-primary" />
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-card border-border z-50">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">My Account</p>
+                      <p className="text-xs leading-none text-muted-foreground truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to="/settings" className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to="/orders" className="flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={handleSignOut} 
+                    className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link to="/auth">
                 <Button variant="ghost" size="icon" className="hover:bg-primary/10" title="Sign In">
@@ -194,6 +229,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Settings
+                </Link>
+                <Link
+                  to="/orders"
+                  className="block text-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  My Orders
                 </Link>
                 <Link
                   to="/admin"
