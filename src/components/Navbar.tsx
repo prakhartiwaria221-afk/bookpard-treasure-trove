@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,9 +82,14 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               Sell Books
             </Link>
             {user && (
-              <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
-                Admin
-              </Link>
+              <>
+                <Link to="/settings" className="text-foreground hover:text-primary transition-colors font-medium">
+                  Settings
+                </Link>
+                <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
+                  Admin
+                </Link>
+              </>
             )}
           </div>
 
@@ -182,13 +187,22 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               Sell Books
             </Link>
             {user && (
-              <Link
-                to="/admin"
-                className="block text-foreground hover:text-primary transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Admin
-              </Link>
+              <>
+                <Link
+                  to="/settings"
+                  className="block text-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Settings
+                </Link>
+                <Link
+                  to="/admin"
+                  className="block text-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Admin
+                </Link>
+              </>
             )}
           </div>
         )}
