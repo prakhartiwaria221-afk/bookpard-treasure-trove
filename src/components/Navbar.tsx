@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAdmin } from "@/hooks/useAdmin";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import logo from "@/assets/logo.png";
 
@@ -25,6 +26,7 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -148,6 +150,14 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                       My Orders
                     </Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link to="/manage-books" className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4" />
+                        Manage Books
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     onClick={handleSignOut} 
@@ -232,6 +242,15 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                 >
                   My Orders
                 </Link>
+                {isAdmin && (
+                  <Link
+                    to="/manage-books"
+                    className="block text-foreground hover:text-primary transition-colors font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Manage Books
+                  </Link>
+                )}
               </>
             )}
           </div>
