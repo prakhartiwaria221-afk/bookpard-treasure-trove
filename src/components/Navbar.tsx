@@ -83,17 +83,12 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
               Home
             </Link>
-            <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
+            <a href="/#books-section" className="text-foreground hover:text-primary transition-colors font-medium">
               Books
-            </Link>
+            </a>
             <Link to="/sell" className="text-foreground hover:text-primary transition-colors font-medium">
               Sell Books
             </Link>
-            {user && (
-              <Link to="/admin" className="text-foreground hover:text-primary transition-colors font-medium">
-                Admin
-              </Link>
-            )}
           </div>
 
           {/* Search Bar */}
@@ -207,13 +202,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             >
               Home
             </Link>
-            <Link
-              to="/"
+            <a
+              href="/#books-section"
               className="block text-foreground hover:text-primary transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Books
-            </Link>
+            </a>
             <Link
               to="/sell"
               className="block text-foreground hover:text-primary transition-colors font-medium"
@@ -236,13 +231,6 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   My Orders
-                </Link>
-                <Link
-                  to="/admin"
-                  className="block text-foreground hover:text-primary transition-colors font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Admin
                 </Link>
               </>
             )}
