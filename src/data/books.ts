@@ -1,6 +1,6 @@
 import { Book } from "@/types/book";
 
-import harryPotterImg from "@/assets/books/harry-potter.jpg";
+import harryPotterImg from "@/assets/books/harry-potter-stone.png";
 import harryPotterChamberImg from "@/assets/books/harry-potter.png";
 import toyStoryImg from "@/assets/books/toy-story.jpg";
 import carsImg from "@/assets/books/cars.jpg";
