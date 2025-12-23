@@ -1,6 +1,7 @@
 import { Book } from "@/types/book";
 
 import harryPotterImg from "@/assets/books/harry-potter.jpg";
+import harryPotterChamberImg from "@/assets/books/harry-potter.png";
 import toyStoryImg from "@/assets/books/toy-story.jpg";
 import carsImg from "@/assets/books/cars.jpg";
 import mysteryImg from "@/assets/books/mystery.jpg";
@@ -105,7 +106,7 @@ export const booksData: Book[] = [
     category: "Kids",
     price: 299,
     oldPrice: 599,
-    image: harryPotterImg,
+    image: harryPotterChamberImg,
     condition: "old",
     description: "Used book in excellent condition.",
   },
