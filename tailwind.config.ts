@@ -47,14 +47,19 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        coral: {
-          DEFAULT: "hsl(var(--coral))",
-          light: "hsl(var(--coral-light))",
-          dark: "hsl(var(--coral-dark))",
+        // Christmas colors
+        christmas: {
+          red: "hsl(var(--christmas-red))",
+          "red-light": "hsl(var(--christmas-red-light))",
+          "red-dark": "hsl(var(--christmas-red-dark))",
+          green: "hsl(var(--christmas-green))",
+          "green-light": "hsl(var(--christmas-green-light))",
+          "green-dark": "hsl(var(--christmas-green-dark))",
+          gold: "hsl(var(--christmas-gold))",
+          "gold-light": "hsl(var(--christmas-gold-light))",
         },
-        peach: "hsl(var(--peach))",
-        amber: "hsl(var(--amber))",
-        cream: "hsl(var(--cream))",
+        snow: "hsl(var(--snow))",
+        frost: "hsl(var(--frost))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -78,10 +83,20 @@ export default {
             height: "0",
           },
         },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(-10px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-in": {
+          from: { opacity: "0", transform: "translateX(-10px)" },
+          to: { opacity: "1", transform: "translateX(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
       },
     },
   },

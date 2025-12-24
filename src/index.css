@@ -4,92 +4,128 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
+Christmas Theme with Dark Mode Support
 */
 
 @layer base {
   :root {
-    /* Warm peachy-coral palette for BookPard */
-    --background: 25 100% 98%;
-    --foreground: 20 30% 25%;
+    /* Christmas Light Theme - Warm red & green with snowy accents */
+    --background: 0 0% 98%;
+    --foreground: 150 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 20 30% 25%;
+    --card-foreground: 150 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 20 30% 25%;
+    --popover-foreground: 150 30% 15%;
 
-    /* Warm coral primary */
-    --primary: 20 75% 65%;
+    /* Christmas Red Primary */
+    --primary: 0 72% 51%;
     --primary-foreground: 0 0% 100%;
     
-    /* Golden amber secondary */
-    --secondary: 40 85% 70%;
-    --secondary-foreground: 20 30% 25%;
+    /* Christmas Green Secondary */
+    --secondary: 145 63% 32%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Soft peachy muted */
-    --muted: 25 50% 95%;
-    --muted-foreground: 20 20% 50%;
+    /* Soft snowy muted */
+    --muted: 210 20% 95%;
+    --muted-foreground: 150 20% 40%;
 
-    /* Warm accent */
-    --accent: 35 80% 75%;
-    --accent-foreground: 20 30% 25%;
+    /* Gold accent */
+    --accent: 45 93% 47%;
+    --accent-foreground: 0 0% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 25 40% 90%;
-    --input: 25 40% 92%;
-    --ring: 20 75% 65%;
+    --border: 150 20% 88%;
+    --input: 150 20% 92%;
+    --ring: 0 72% 51%;
 
     --radius: 1rem;
 
-    /* Custom brand colors */
-    --coral: 20 75% 65%;
-    --coral-light: 20 80% 80%;
-    --coral-dark: 20 70% 50%;
-    --peach: 30 90% 85%;
-    --amber: 40 85% 70%;
-    --cream: 35 60% 95%;
+    /* Custom Christmas colors */
+    --christmas-red: 0 72% 51%;
+    --christmas-red-light: 0 80% 65%;
+    --christmas-red-dark: 0 70% 40%;
+    --christmas-green: 145 63% 32%;
+    --christmas-green-light: 145 55% 45%;
+    --christmas-green-dark: 145 70% 22%;
+    --christmas-gold: 45 93% 47%;
+    --christmas-gold-light: 45 95% 60%;
+    --snow: 210 40% 98%;
+    --frost: 200 30% 94%;
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(25 100% 98%) 0%, hsl(25 80% 92%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(25 50% 98%));
-    --gradient-primary: linear-gradient(135deg, hsl(20 75% 65%), hsl(25 80% 70%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(150 20% 95%) 50%, hsl(0 72% 97%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(150 15% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(0 72% 51%), hsl(0 80% 60%));
+    --gradient-christmas: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(145 63% 32%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(20 75% 65% / 0.15);
-    --shadow-hover: 0 8px 30px -4px hsl(20 75% 65% / 0.25);
-    --shadow-card: 0 2px 15px -3px hsl(20 30% 25% / 0.08);
+    --shadow-soft: 0 4px 20px -2px hsl(0 72% 51% / 0.12);
+    --shadow-hover: 0 8px 30px -4px hsl(0 72% 51% / 0.2);
+    --shadow-card: 0 2px 15px -3px hsl(150 30% 25% / 0.08);
+    --shadow-glow: 0 0 20px hsl(0 72% 51% / 0.3);
   }
 
   .dark {
-    --background: 20 30% 10%;
-    --foreground: 25 50% 95%;
+    /* Christmas Dark Theme - Rich deep tones with festive highlights */
+    --background: 150 25% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 20 25% 15%;
-    --card-foreground: 25 50% 95%;
+    --card: 150 20% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 20 25% 15%;
-    --popover-foreground: 25 50% 95%;
+    --popover: 150 20% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 20 75% 60%;
+    /* Bright Christmas Red */
+    --primary: 0 75% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 70% 50%;
+    /* Vibrant Christmas Green */
+    --secondary: 145 55% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 20 25% 20%;
-    --muted-foreground: 25 30% 65%;
+    /* Dark forest muted */
+    --muted: 150 20% 18%;
+    --muted-foreground: 150 15% 60%;
 
-    --accent: 35 70% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Warm Gold accent */
+    --accent: 45 90% 55%;
+    --accent-foreground: 0 0% 10%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 20 25% 25%;
-    --input: 20 25% 25%;
-    --ring: 20 75% 60%;
+    --border: 150 20% 20%;
+    --input: 150 20% 18%;
+    --ring: 0 75% 55%;
+
+    /* Dark mode Christmas colors */
+    --christmas-red: 0 75% 55%;
+    --christmas-red-light: 0 80% 65%;
+    --christmas-red-dark: 0 70% 45%;
+    --christmas-green: 145 55% 45%;
+    --christmas-green-light: 145 50% 55%;
+    --christmas-green-dark: 150 60% 30%;
+    --christmas-gold: 45 90% 55%;
+    --christmas-gold-light: 45 95% 65%;
+    --snow: 150 20% 85%;
+    --frost: 200 20% 75%;
+    
+    /* Dark Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(150 25% 8%) 0%, hsl(150 20% 12%) 50%, hsl(0 30% 12%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(150 20% 14%), hsl(150 20% 10%));
+    --gradient-primary: linear-gradient(135deg, hsl(0 75% 55%), hsl(0 80% 60%));
+    --gradient-christmas: linear-gradient(135deg, hsl(0 75% 55%) 0%, hsl(145 55% 45%) 100%);
+    
+    /* Dark Shadows */
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.4);
+    --shadow-hover: 0 8px 30px -4px hsl(0 75% 55% / 0.25);
+    --shadow-card: 0 2px 15px -3px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 30px hsl(0 75% 55% / 0.4);
   }
 }
 
@@ -99,6 +135,46 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
   }
+}
+
+/* Snowflake animation for Christmas theme */
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(100px) rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-snowfall {
+  animation: snowfall linear infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Christmas decorative elements */
+.christmas-glow {
+  box-shadow: 0 0 20px hsl(var(--christmas-red) / 0.3), 
+              0 0 40px hsl(var(--christmas-gold) / 0.2);
+}
+
+.dark .christmas-glow {
+  box-shadow: 0 0 30px hsl(var(--christmas-red) / 0.4), 
+              0 0 60px hsl(var(--christmas-gold) / 0.3);
 }
