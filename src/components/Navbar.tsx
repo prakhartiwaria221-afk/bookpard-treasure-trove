@@ -14,6 +14,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import logo from "@/assets/logo.png";
 
@@ -105,8 +106,10 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             />
           </div>
 
-          {/* Cart & Auth */}
-          <div className="flex items-center gap-2">
+          {/* Theme Toggle, Cart & Auth */}
+          <div className="flex items-center gap-1 md:gap-2">
+            <ThemeToggle />
+            
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative hover:bg-primary/10">
                 <ShoppingCart className="h-5 w-5 text-primary" />
