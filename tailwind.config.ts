@@ -1,5 +1,7 @@
 import type { Config } from "tailwindcss";
 
+// Christmas color utilities for direct use
+
 export default {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
@@ -91,12 +93,28 @@ export default {
           from: { opacity: "0", transform: "translateX(-10px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
+        snowfall: {
+          "0%": {
+            transform: "translateY(-10vh) translateX(0) rotate(0deg)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "translateY(100vh) translateX(50px) rotate(360deg)",
+            opacity: "0.3",
+          },
+        },
+        twinkle: {
+          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
+        snowfall: "snowfall linear infinite",
+        twinkle: "twinkle 2s ease-in-out infinite",
       },
     },
   },
