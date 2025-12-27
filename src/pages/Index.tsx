@@ -138,7 +138,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-24 md:pt-28">
       <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
       <Hero />
       
