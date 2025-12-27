@@ -2,6 +2,9 @@ import { Book } from "@/types/book";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart, Gift, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/hooks/useCart";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface BookCardProps {
   book: Book;
@@ -26,8 +29,16 @@ const getCategoryDecoration = (category: string) => {
 };
 
 export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const discount = Math.round(((book.oldPrice - book.price) / book.oldPrice) * 100);
   const categoryDecor = getCategoryDecoration(book.category);
+
+  const handleBuyNow = () => {
+    addToCart(book);
+    toast.success(`${book.title} added to cart!`);
+    navigate("/checkout");
+  };
 
   return (
     <div className="group relative bg-card rounded-2xl overflow-hidden shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-hover)] transition-all duration-300 hover:-translate-y-1 border border-border/50">
@@ -112,6 +123,7 @@ export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
           </Button>
           <Button
             variant="outline"
+            onClick={handleBuyNow}
             className="border-christmas-green text-christmas-green hover:bg-christmas-green hover:text-white transition-all hover:scale-105"
           >
             Buy Now
