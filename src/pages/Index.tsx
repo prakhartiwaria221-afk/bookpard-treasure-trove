@@ -50,13 +50,11 @@ const Index = () => {
     fetchAdminBooks();
   }, []);
 
-  // Fetch user listings from database
+  // Fetch user listings from database using secure function
   useEffect(() => {
     const fetchUserListings = async () => {
       const { data, error } = await supabase
-        .from("user_listings_public")
-        .select("*")
-        .eq("status", "active");
+        .rpc("get_active_user_listings");
 
       if (error) {
         console.error("Error fetching user listings:", error);

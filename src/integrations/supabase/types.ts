@@ -210,6 +210,22 @@ export type Database = {
       }
     }
     Functions: {
+      get_active_user_listings: {
+        Args: never
+        Returns: {
+          author: string
+          category: string
+          condition: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          price: number
+          status: string
+          title: string
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
