@@ -74,7 +74,7 @@ export const Hero = () => {
                 <Snowflake className="h-5 w-5 text-christmas-green" />
                 <p className="text-sm text-muted-foreground">Holiday Special</p>
               </div>
-              <p className="text-2xl font-bold text-primary">Up to 50% Off</p>
+              <p className="text-2xl font-bold text-primary">20% Off</p>
             </div>
           </div>
         </div>
