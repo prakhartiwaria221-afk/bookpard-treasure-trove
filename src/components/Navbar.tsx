@@ -15,6 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ChristmasLights } from "@/components/ChristmasLights";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useTheme } from "@/hooks/useTheme";
 import logoDark from "@/assets/logo-dark.jpg";
@@ -71,7 +72,9 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border shadow-[var(--shadow-soft)]">
+    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border shadow-[var(--shadow-soft)] relative">
+      {/* Christmas Lights */}
+      <ChristmasLights />
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}

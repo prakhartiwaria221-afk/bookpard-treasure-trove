@@ -201,3 +201,19 @@ Christmas Theme with Dark Mode Support
 .animate-festive-glow {
   animation: festive-glow 3s ease-in-out infinite;
 }
+
+/* Twinkling Christmas lights */
+@keyframes twinkle-light {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.animate-twinkle-light {
+  animation: twinkle-light 1.5s ease-in-out infinite;
+}
