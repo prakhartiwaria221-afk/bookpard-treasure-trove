@@ -178,3 +178,26 @@ Christmas Theme with Dark Mode Support
   box-shadow: 0 0 30px hsl(var(--christmas-red) / 0.4), 
               0 0 60px hsl(var(--christmas-gold) / 0.3);
 }
+
+/* Festive logo glow animation */
+@keyframes festive-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px hsl(var(--christmas-red) / 0.6),
+                0 0 20px hsl(var(--christmas-red) / 0.4),
+                0 0 30px hsl(var(--christmas-gold) / 0.3);
+  }
+  33% {
+    box-shadow: 0 0 10px hsl(var(--christmas-green) / 0.6),
+                0 0 20px hsl(var(--christmas-green) / 0.4),
+                0 0 30px hsl(var(--christmas-gold) / 0.3);
+  }
+  66% {
+    box-shadow: 0 0 10px hsl(var(--christmas-gold) / 0.6),
+                0 0 20px hsl(var(--christmas-gold) / 0.4),
+                0 0 30px hsl(var(--christmas-red) / 0.3);
+  }
+}
+
+.animate-festive-glow {
+  animation: festive-glow 3s ease-in-out infinite;
+}
