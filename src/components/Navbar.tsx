@@ -30,10 +30,21 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { isAdmin } = useAdmin();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     // Check current session
@@ -72,7 +83,11 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur-sm border-b border-border shadow-[var(--shadow-soft)] relative">
+    <nav className={`sticky top-0 z-50 border-b border-border relative transition-all duration-300 ${
+      isScrolled 
+        ? "bg-card/70 backdrop-blur-md shadow-lg" 
+        : "bg-card/95 backdrop-blur-sm shadow-[var(--shadow-soft)]"
+    }`}>
       {/* Christmas Lights */}
       <ChristmasLights />
       <div className="container mx-auto px-4 py-4">
