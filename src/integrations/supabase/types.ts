@@ -166,22 +166,7 @@ export type Database = {
       }
     }
     Views: {
-      user_listings_public: {
-        Row: {
-          author: string | null
-          category: string | null
-          condition: string | null
-          created_at: string | null
-          description: string | null
-          id: string | null
-          image_url: string | null
-          price: number | null
-          status: string | null
-          title: string | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       get_active_user_listings: {
