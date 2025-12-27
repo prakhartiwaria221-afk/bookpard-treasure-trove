@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, BookPlus, Package } from "lucide-react";
+import { Trash2, BookPlus, Package, Pencil } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -17,6 +17,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Book = {
   id: string;
@@ -44,6 +62,18 @@ export default function ManageBooks() {
   const [oldPrice, setOldPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
+
+  // Edit modal states
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editAuthor, setEditAuthor] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editCondition, setEditCondition] = useState("new");
+  const [editPrice, setEditPrice] = useState("");
+  const [editOldPrice, setEditOldPrice] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
+  const [editDescription, setEditDescription] = useState("");
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -114,6 +144,48 @@ export default function ManageBooks() {
       console.error(error);
     } else {
       toast.success("Book deleted successfully!");
+      fetchBooks();
+    }
+  };
+
+  const openEditDialog = (book: Book) => {
+    setEditingBook(book);
+    setEditTitle(book.title);
+    setEditAuthor(book.author);
+    setEditCategory(book.category);
+    setEditCondition(book.condition);
+    setEditPrice(book.price.toString());
+    setEditOldPrice(book.old_price.toString());
+    setEditImageUrl(book.image_url);
+    setEditDescription(book.description || "");
+    setEditDialogOpen(true);
+  };
+
+  const handleEditBook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBook) return;
+
+    const { error } = await supabase
+      .from("books")
+      .update({
+        title: editTitle,
+        author: editAuthor,
+        category: editCategory,
+        condition: editCondition,
+        price: parseInt(editPrice),
+        old_price: parseInt(editOldPrice),
+        image_url: editImageUrl,
+        description: editDescription || null,
+      })
+      .eq("id", editingBook.id);
+
+    if (error) {
+      toast.error("Failed to update book");
+      console.error(error);
+    } else {
+      toast.success("Book updated successfully!");
+      setEditDialogOpen(false);
+      setEditingBook(null);
       fetchBooks();
     }
   };
@@ -289,6 +361,9 @@ export default function ManageBooks() {
                             src={book.image_url}
                             alt={book.title}
                             className="w-16 h-20 object-cover rounded"
+                            onError={(e) => {
+                              e.currentTarget.src = "/placeholder.svg";
+                            }}
                           />
                           <div className="flex-1">
                             <h3 className="font-bold text-foreground">{book.title}</h3>
@@ -303,14 +378,44 @@ export default function ManageBooks() {
                               <span className="text-sm font-bold text-primary">₹{book.price}</span>
                             </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleDeleteBook(book.id)}
-                            className="text-destructive hover:bg-destructive/10"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => openEditDialog(book)}
+                              className="text-primary hover:bg-primary/10"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="text-destructive hover:bg-destructive/10"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteBook(book.id)}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </div>
                       ))
                     )}
@@ -321,6 +426,125 @@ export default function ManageBooks() {
           </Tabs>
         </div>
       </main>
+
+      {/* Edit Book Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Book</DialogTitle>
+            <DialogDescription>
+              Update the book details below
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditBook} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editTitle">Book Title *</Label>
+                <Input
+                  id="editTitle"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editAuthor">Author *</Label>
+                <Input
+                  id="editAuthor"
+                  value={editAuthor}
+                  onChange={(e) => setEditAuthor(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editCategory">Category *</Label>
+                <Input
+                  id="editCategory"
+                  value={editCategory}
+                  onChange={(e) => setEditCategory(e.target.value)}
+                  placeholder="e.g., Fiction, Mystery, Romance"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editCondition">Condition *</Label>
+                <Select value={editCondition} onValueChange={setEditCondition}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="old">Old</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editPrice">Price (₹) *</Label>
+                <Input
+                  id="editPrice"
+                  type="number"
+                  value={editPrice}
+                  onChange={(e) => setEditPrice(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editOldPrice">Original Price (₹) *</Label>
+                <Input
+                  id="editOldPrice"
+                  type="number"
+                  value={editOldPrice}
+                  onChange={(e) => setEditOldPrice(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="editImageUrl">Image URL *</Label>
+              <Input
+                id="editImageUrl"
+                type="url"
+                value={editImageUrl}
+                onChange={(e) => setEditImageUrl(e.target.value)}
+                placeholder="https://example.com/book-cover.jpg"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="editDescription">Description</Label>
+              <Input
+                id="editDescription"
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                placeholder="Optional book description"
+              />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-primary to-coral-dark hover:opacity-90"
+              >
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
