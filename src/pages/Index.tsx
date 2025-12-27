@@ -142,7 +142,7 @@ const Index = () => {
       <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
       <Hero />
       
-      <main className="container mx-auto px-4 py-12" id="books-section">
+      <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
         {/* Filters */}
         <div className="space-y-6 mb-8 animate-fade-in">
           <CategoryFilter
