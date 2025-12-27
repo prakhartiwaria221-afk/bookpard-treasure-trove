@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, BookPlus, Package, Pencil, Upload, Image } from "lucide-react";
+import { Trash2, BookPlus, Package, Pencil, Upload, Image, BookOpen, Eye } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -284,7 +284,7 @@ export default function ManageBooks() {
           </h1>
 
           <Tabs defaultValue="add-books" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="add-books" className="flex items-center gap-2">
                 <BookPlus className="h-4 w-4" />
                 Add Books
@@ -292,6 +292,10 @@ export default function ManageBooks() {
               <TabsTrigger value="inventory" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Inventory
+              </TabsTrigger>
+              <TabsTrigger value="book-details" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Book Details
               </TabsTrigger>
             </TabsList>
 
@@ -531,6 +535,124 @@ export default function ManageBooks() {
                       ))
                     )}
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Book Details Tab */}
+            <TabsContent value="book-details">
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Book Details</CardTitle>
+                  <CardDescription>
+                    View complete details and pricing of all {books.length} books on your website
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {books.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      No books available. Add your first book!
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {books.map((book) => (
+                        <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                          <div className="relative">
+                            <img
+                              src={book.image_url}
+                              alt={book.title}
+                              className="w-full h-48 object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = "/placeholder.svg";
+                              }}
+                            />
+                            <div className="absolute top-2 right-2 flex gap-1">
+                              <span className="text-xs px-2 py-1 rounded-full bg-background/90 text-foreground font-medium">
+                                {book.condition === "new" ? "New" : "Used"}
+                              </span>
+                            </div>
+                          </div>
+                          <CardContent className="p-4 space-y-3">
+                            <div>
+                              <h3 className="font-bold text-foreground text-lg line-clamp-1">{book.title}</h3>
+                              <p className="text-sm text-muted-foreground">by {book.author}</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                {book.category}
+                              </span>
+                            </div>
+
+                            <div className="border-t border-border pt-3">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-xs text-muted-foreground">Selling Price</p>
+                                  <p className="text-xl font-bold text-primary">₹{book.price}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-xs text-muted-foreground">Original Price</p>
+                                  <p className="text-lg text-muted-foreground line-through">₹{book.old_price}</p>
+                                </div>
+                              </div>
+                              {book.old_price > book.price && (
+                                <p className="text-xs text-green-600 mt-1">
+                                  {Math.round(((book.old_price - book.price) / book.old_price) * 100)}% off
+                                </p>
+                              )}
+                            </div>
+
+                            {book.description && (
+                              <div className="border-t border-border pt-3">
+                                <p className="text-xs text-muted-foreground mb-1">Description</p>
+                                <p className="text-sm text-foreground line-clamp-2">{book.description}</p>
+                              </div>
+                            )}
+
+                            <div className="flex gap-2 pt-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => openEditDialog(book)}
+                                className="flex-1"
+                              >
+                                <Pencil className="h-3 w-3 mr-1" />
+                                Edit
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteBook(book.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
