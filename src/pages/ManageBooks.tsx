@@ -48,10 +48,25 @@ type Book = {
   description: string | null;
 };
 
+type AllBook = {
+  id: string;
+  title: string;
+  author: string;
+  category: string;
+  condition: string;
+  price: number;
+  old_price: number | null;
+  image_url: string;
+  description: string | null;
+  source: 'admin' | 'user';
+  created_at: string | null;
+};
+
 export default function ManageBooks() {
   const { isAdmin, loading } = useAdmin();
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
+  const [allBooks, setAllBooks] = useState<AllBook[]>([]);
 
   // Form states for adding books
   const [title, setTitle] = useState("");
@@ -90,7 +105,36 @@ export default function ManageBooks() {
   useEffect(() => {
     if (isAdmin) {
       fetchBooks();
+      fetchAllBooks();
     }
+  }, [isAdmin]);
+
+  // Real-time subscription for all books
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const booksChannel = supabase
+      .channel('all-books-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'books' },
+        () => {
+          fetchBooks();
+          fetchAllBooks();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'user_listings' },
+        () => {
+          fetchAllBooks();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(booksChannel);
+    };
   }, [isAdmin]);
 
   const fetchBooks = async () => {
@@ -105,6 +149,68 @@ export default function ManageBooks() {
     } else {
       setBooks(data || []);
     }
+  };
+
+  const fetchAllBooks = async () => {
+    // Fetch admin books
+    const { data: adminBooks, error: adminError } = await supabase
+      .from("books")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (adminError) {
+      console.error("Failed to fetch admin books:", adminError);
+    }
+
+    // Fetch user listings (active ones)
+    const { data: userBooks, error: userError } = await supabase
+      .from("user_listings")
+      .select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false });
+
+    if (userError) {
+      console.error("Failed to fetch user listings:", userError);
+    }
+
+    // Combine both sources
+    const combined: AllBook[] = [
+      ...(adminBooks || []).map((book) => ({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        category: book.category,
+        condition: book.condition,
+        price: book.price,
+        old_price: book.old_price,
+        image_url: book.image_url,
+        description: book.description,
+        source: 'admin' as const,
+        created_at: book.created_at,
+      })),
+      ...(userBooks || []).map((book) => ({
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        category: book.category,
+        condition: book.condition,
+        price: book.price,
+        old_price: null,
+        image_url: book.image_url || '/placeholder.svg',
+        description: book.description,
+        source: 'user' as const,
+        created_at: book.created_at,
+      })),
+    ];
+
+    // Sort by created_at
+    combined.sort((a, b) => {
+      const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return dateB - dateA;
+    });
+
+    setAllBooks(combined);
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -543,20 +649,23 @@ export default function ManageBooks() {
             <TabsContent value="book-details">
               <Card>
                 <CardHeader>
-                  <CardTitle>All Book Details</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Eye className="h-5 w-5" />
+                    All Book Details
+                  </CardTitle>
                   <CardDescription>
-                    View complete details and pricing of all {books.length} books on your website
+                    View complete details and pricing of all {allBooks.length} books on your website (updates in real-time)
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {books.length === 0 ? (
+                  {allBooks.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">
                       No books available. Add your first book!
                     </p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {books.map((book) => (
-                        <Card key={book.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                      {allBooks.map((book) => (
+                        <Card key={`${book.source}-${book.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
                           <div className="relative">
                             <img
                               src={book.image_url}
@@ -566,6 +675,15 @@ export default function ManageBooks() {
                                 e.currentTarget.src = "/placeholder.svg";
                               }}
                             />
+                            <div className="absolute top-2 left-2">
+                              <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                                book.source === 'admin' 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'bg-secondary text-secondary-foreground'
+                              }`}>
+                                {book.source === 'admin' ? 'Admin' : 'User Listing'}
+                              </span>
+                            </div>
                             <div className="absolute top-2 right-2 flex gap-1">
                               <span className="text-xs px-2 py-1 rounded-full bg-background/90 text-foreground font-medium">
                                 {book.condition === "new" ? "New" : "Used"}
@@ -590,12 +708,14 @@ export default function ManageBooks() {
                                   <p className="text-xs text-muted-foreground">Selling Price</p>
                                   <p className="text-xl font-bold text-primary">₹{book.price}</p>
                                 </div>
-                                <div className="text-right">
-                                  <p className="text-xs text-muted-foreground">Original Price</p>
-                                  <p className="text-lg text-muted-foreground line-through">₹{book.old_price}</p>
-                                </div>
+                                {book.old_price && (
+                                  <div className="text-right">
+                                    <p className="text-xs text-muted-foreground">Original Price</p>
+                                    <p className="text-lg text-muted-foreground line-through">₹{book.old_price}</p>
+                                  </div>
+                                )}
                               </div>
-                              {book.old_price > book.price && (
+                              {book.old_price && book.old_price > book.price && (
                                 <p className="text-xs text-green-600 mt-1">
                                   {Math.round(((book.old_price - book.price) / book.old_price) * 100)}% off
                                 </p>
@@ -609,45 +729,50 @@ export default function ManageBooks() {
                               </div>
                             )}
 
-                            <div className="flex gap-2 pt-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => openEditDialog(book)}
-                                className="flex-1"
-                              >
-                                <Pencil className="h-3 w-3 mr-1" />
-                                Edit
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-destructive hover:bg-destructive/10"
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Book</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete "{book.title}"? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteBook(book.id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            {book.source === 'admin' && (
+                              <div className="flex gap-2 pt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    const adminBook = books.find(b => b.id === book.id);
+                                    if (adminBook) openEditDialog(adminBook);
+                                  }}
+                                  className="flex-1"
+                                >
+                                  <Pencil className="h-3 w-3 mr-1" />
+                                  Edit
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-destructive hover:bg-destructive/10"
                                     >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDeleteBook(book.id)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            )}
                           </CardContent>
                         </Card>
                       ))}
