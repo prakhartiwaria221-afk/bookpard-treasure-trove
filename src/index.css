@@ -134,6 +134,10 @@ Christmas Theme with Dark Mode Support
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground transition-colors duration-300;
   }
