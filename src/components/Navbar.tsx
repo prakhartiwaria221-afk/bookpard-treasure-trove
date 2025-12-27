@@ -16,7 +16,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import logo from "@/assets/logo.png";
+import { useTheme } from "@/hooks/useTheme";
+import logoDark from "@/assets/logo-dark.jpg";
+import logoLight from "@/assets/logo-light.jpg";
 
 interface NavbarProps {
   cartItemCount: number;
@@ -28,6 +30,7 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const { isAdmin } = useAdmin();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -72,13 +75,15 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img 
-              src={logo} 
-              alt="BookPard Logo" 
-              className="h-10 md:h-14 w-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] hover:drop-shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-300" 
-            />
-            <span className="text-2xl md:text-3xl font-bold text-primary">BookPard</span>
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <div className="h-12 w-12 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-primary/30 shadow-lg hover:border-primary/50 transition-all duration-300">
+              <img 
+                src={theme === 'dark' ? logoDark : logoLight} 
+                alt="BookPard Logo" 
+                className="h-full w-full object-cover" 
+              />
+            </div>
+            <span className="text-xl md:text-2xl font-bold text-primary hidden sm:block">BookPard</span>
           </Link>
 
           {/* Desktop Navigation */}
