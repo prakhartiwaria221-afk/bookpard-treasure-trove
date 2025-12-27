@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Navbar } from "@/components/Navbar";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, BookPlus, Package, Pencil, Upload, Image, BookOpen, Eye, Search, X } from "lucide-react";
+import { Trash2, BookPlus, Package, Pencil, Upload, Image, BookOpen, Eye, Search, X, ArrowLeft } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -424,13 +424,21 @@ export default function ManageBooks() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar cartItemCount={0} onSearchChange={() => {}} />
-
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl font-bold text-foreground mb-8 animate-fade-in">
-            Manage Books
-          </h1>
+          <div className="flex items-center gap-4 mb-8">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/")}
+              className="hover:bg-primary/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-4xl font-bold text-foreground animate-fade-in">
+              Manage Books
+            </h1>
+          </div>
 
           <Tabs defaultValue="add-books" className="space-y-6">
             <TabsList className="grid w-full grid-cols-3">
