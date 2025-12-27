@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, BookPlus, Package, Pencil } from "lucide-react";
+import { Trash2, BookPlus, Package, Pencil, Upload, Image } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -62,6 +62,9 @@ export default function ManageBooks() {
   const [oldPrice, setOldPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Edit modal states
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -74,7 +77,9 @@ export default function ManageBooks() {
   const [editOldPrice, setEditOldPrice] = useState("");
   const [editImageUrl, setEditImageUrl] = useState("");
   const [editDescription, setEditDescription] = useState("");
-
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [editUploading, setEditUploading] = useState(false);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (!loading && !isAdmin) {
       toast.error("Access denied. Admin privileges required.");
@@ -102,37 +107,84 @@ export default function ManageBooks() {
     }
   };
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `books/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('book-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      toast.error('Failed to upload image');
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from('book-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   const handleAddBook = async (e: React.FormEvent) => {
     e.preventDefault();
+    setUploading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    const { error } = await supabase.from("books").insert({
-      title,
-      author,
-      category,
-      condition,
-      price: parseInt(price),
-      old_price: parseInt(oldPrice),
-      image_url: imageUrl,
-      description: description || null,
-      created_by: user?.id || null,
-    });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      let finalImageUrl = imageUrl;
+      
+      // Upload image if file is selected
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile);
+        if (!uploadedUrl) {
+          setUploading(false);
+          return;
+        }
+        finalImageUrl = uploadedUrl;
+      }
 
-    if (error) {
-      toast.error("Failed to add book");
-      console.error(error);
-    } else {
-      toast.success("Book added successfully!");
-      setTitle("");
-      setAuthor("");
-      setCategory("");
-      setCondition("new");
-      setPrice("");
-      setOldPrice("");
-      setImageUrl("");
-      setDescription("");
-      fetchBooks();
+      if (!finalImageUrl) {
+        toast.error("Please provide an image URL or upload an image");
+        setUploading(false);
+        return;
+      }
+      
+      const { error } = await supabase.from("books").insert({
+        title,
+        author,
+        category,
+        condition,
+        price: parseInt(price),
+        old_price: parseInt(oldPrice),
+        image_url: finalImageUrl,
+        description: description || null,
+        created_by: user?.id || null,
+      });
+
+      if (error) {
+        toast.error("Failed to add book");
+        console.error(error);
+      } else {
+        toast.success("Book added successfully!");
+        setTitle("");
+        setAuthor("");
+        setCategory("");
+        setCondition("new");
+        setPrice("");
+        setOldPrice("");
+        setImageUrl("");
+        setDescription("");
+        setImageFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        fetchBooks();
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -164,29 +216,48 @@ export default function ManageBooks() {
   const handleEditBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingBook) return;
+    setEditUploading(true);
 
-    const { error } = await supabase
-      .from("books")
-      .update({
-        title: editTitle,
-        author: editAuthor,
-        category: editCategory,
-        condition: editCondition,
-        price: parseInt(editPrice),
-        old_price: parseInt(editOldPrice),
-        image_url: editImageUrl,
-        description: editDescription || null,
-      })
-      .eq("id", editingBook.id);
+    try {
+      let finalImageUrl = editImageUrl;
+      
+      // Upload new image if file is selected
+      if (editImageFile) {
+        const uploadedUrl = await uploadImage(editImageFile);
+        if (!uploadedUrl) {
+          setEditUploading(false);
+          return;
+        }
+        finalImageUrl = uploadedUrl;
+      }
 
-    if (error) {
-      toast.error("Failed to update book");
-      console.error(error);
-    } else {
-      toast.success("Book updated successfully!");
-      setEditDialogOpen(false);
-      setEditingBook(null);
-      fetchBooks();
+      const { error } = await supabase
+        .from("books")
+        .update({
+          title: editTitle,
+          author: editAuthor,
+          category: editCategory,
+          condition: editCondition,
+          price: parseInt(editPrice),
+          old_price: parseInt(editOldPrice),
+          image_url: finalImageUrl,
+          description: editDescription || null,
+        })
+        .eq("id", editingBook.id);
+
+      if (error) {
+        toast.error("Failed to update book");
+        console.error(error);
+      } else {
+        toast.success("Book updated successfully!");
+        setEditDialogOpen(false);
+        setEditingBook(null);
+        setEditImageFile(null);
+        if (editFileInputRef.current) editFileInputRef.current.value = "";
+        fetchBooks();
+      }
+    } finally {
+      setEditUploading(false);
     }
   };
 
@@ -303,16 +374,55 @@ export default function ManageBooks() {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="imageUrl">Image URL *</Label>
-                      <Input
-                        id="imageUrl"
-                        type="url"
-                        value={imageUrl}
-                        onChange={(e) => setImageUrl(e.target.value)}
-                        placeholder="https://example.com/book-cover.jpg"
-                        required
-                      />
+                    <div className="space-y-4">
+                      <Label>Book Image *</Label>
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2"
+                          >
+                            <Upload className="h-4 w-4" />
+                            Upload Image
+                          </Button>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setImageFile(file);
+                                setImageUrl("");
+                              }
+                            }}
+                            className="hidden"
+                          />
+                          {imageFile && (
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Image className="h-4 w-4" />
+                              {imageFile.name}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">or</span>
+                        </div>
+                        <Input
+                          id="imageUrl"
+                          type="url"
+                          value={imageUrl}
+                          onChange={(e) => {
+                            setImageUrl(e.target.value);
+                            setImageFile(null);
+                            if (fileInputRef.current) fileInputRef.current.value = "";
+                          }}
+                          placeholder="Enter image URL"
+                          disabled={!!imageFile}
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">
@@ -327,9 +437,10 @@ export default function ManageBooks() {
 
                     <Button
                       type="submit"
+                      disabled={uploading}
                       className="w-full bg-gradient-to-r from-primary to-coral-dark hover:opacity-90"
                     >
-                      Add Book to Inventory
+                      {uploading ? "Adding..." : "Add Book to Inventory"}
                     </Button>
                   </form>
                 </CardContent>
@@ -505,16 +616,67 @@ export default function ManageBooks() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="editImageUrl">Image URL *</Label>
-              <Input
-                id="editImageUrl"
-                type="url"
-                value={editImageUrl}
-                onChange={(e) => setEditImageUrl(e.target.value)}
-                placeholder="https://example.com/book-cover.jpg"
-                required
-              />
+            <div className="space-y-4">
+              <Label>Book Image</Label>
+              {editImageUrl && !editImageFile && (
+                <div className="mb-2">
+                  <img 
+                    src={editImageUrl} 
+                    alt="Current cover" 
+                    className="w-20 h-24 object-cover rounded border"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg";
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Current image</p>
+                </div>
+              )}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => editFileInputRef.current?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Upload New Image
+                  </Button>
+                  <input
+                    ref={editFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setEditImageFile(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  {editImageFile && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Image className="h-4 w-4" />
+                      {editImageFile.name}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">or update URL</span>
+                </div>
+                <Input
+                  id="editImageUrl"
+                  type="url"
+                  value={editImageUrl}
+                  onChange={(e) => {
+                    setEditImageUrl(e.target.value);
+                    setEditImageFile(null);
+                    if (editFileInputRef.current) editFileInputRef.current.value = "";
+                  }}
+                  placeholder="Enter image URL"
+                  disabled={!!editImageFile}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -537,9 +699,10 @@ export default function ManageBooks() {
               </Button>
               <Button
                 type="submit"
+                disabled={editUploading}
                 className="bg-gradient-to-r from-primary to-coral-dark hover:opacity-90"
               >
-                Save Changes
+                {editUploading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
