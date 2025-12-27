@@ -18,8 +18,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChristmasLights } from "@/components/ChristmasLights";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useTheme } from "@/hooks/useTheme";
-import logoDark from "@/assets/logo-dark.jpg";
-import logoLight from "@/assets/logo-light.jpg";
+import logoDarkMode from "@/assets/logo-dark-mode.jpg";
+import logoLightMode from "@/assets/logo-light-mode.jpg";
 
 interface NavbarProps {
   cartItemCount: number;
@@ -111,12 +111,12 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
             <div className="relative h-12 w-12 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-christmas-gold/50 animate-festive-glow hover:scale-105 transition-transform duration-300">
               <img 
-                src={logoDark} 
+                src={logoDarkMode} 
                 alt="BookPard Logo" 
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
               />
               <img 
-                src={logoLight} 
+                src={logoLightMode} 
                 alt="BookPard Logo" 
                 className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
               />
