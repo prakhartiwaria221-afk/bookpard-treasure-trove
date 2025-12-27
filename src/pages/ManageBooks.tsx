@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, BookPlus, Package, Pencil, Upload, Image, BookOpen, Eye } from "lucide-react";
+import { Trash2, BookPlus, Package, Pencil, Upload, Image, BookOpen, Eye, Search, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -95,6 +95,49 @@ export default function ManageBooks() {
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [editUploading, setEditUploading] = useState(false);
   const editFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Search and filter states for Book Details tab
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [filterCondition, setFilterCondition] = useState("all");
+  const [filterSource, setFilterSource] = useState("all");
+
+  // Get unique categories from allBooks
+  const categories = useMemo(() => {
+    const cats = [...new Set(allBooks.map(book => book.category))];
+    return cats.sort();
+  }, [allBooks]);
+
+  // Filtered books based on search and filters
+  const filteredBooks = useMemo(() => {
+    return allBooks.filter(book => {
+      // Search filter
+      const matchesSearch = searchQuery === "" || 
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Category filter
+      const matchesCategory = filterCategory === "all" || book.category === filterCategory;
+      
+      // Condition filter
+      const matchesCondition = filterCondition === "all" || book.condition === filterCondition;
+      
+      // Source filter
+      const matchesSource = filterSource === "all" || book.source === filterSource;
+      
+      return matchesSearch && matchesCategory && matchesCondition && matchesSource;
+    });
+  }, [allBooks, searchQuery, filterCategory, filterCondition, filterSource]);
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setFilterCategory("all");
+    setFilterCondition("all");
+    setFilterSource("all");
+  };
+
+  const hasActiveFilters = searchQuery !== "" || filterCategory !== "all" || filterCondition !== "all" || filterSource !== "all";
+
   useEffect(() => {
     if (!loading && !isAdmin) {
       toast.error("Access denied. Admin privileges required.");
@@ -657,14 +700,89 @@ export default function ManageBooks() {
                     View complete details and pricing of all {allBooks.length} books on your website (updates in real-time)
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-6">
+                  {/* Search and Filter Controls */}
+                  <div className="space-y-4">
+                    {/* Search Bar */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search by title or author..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-10 pr-10"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery("")}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Filters */}
+                    <div className="flex flex-wrap gap-3">
+                      <Select value={filterCategory} onValueChange={setFilterCategory}>
+                        <SelectTrigger className="w-[160px]">
+                          <SelectValue placeholder="Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Categories</SelectItem>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      <Select value={filterCondition} onValueChange={setFilterCondition}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="Condition" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Conditions</SelectItem>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="old">Used</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      <Select value={filterSource} onValueChange={setFilterSource}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue placeholder="Source" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Sources</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="user">User Listing</SelectItem>
+                        </SelectContent>
+                      </Select>
+
+                      {hasActiveFilters && (
+                        <Button variant="ghost" size="sm" onClick={clearFilters} className="h-10">
+                          <X className="h-4 w-4 mr-1" />
+                          Clear Filters
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Results count */}
+                    <p className="text-sm text-muted-foreground">
+                      Showing {filteredBooks.length} of {allBooks.length} books
+                    </p>
+                  </div>
+
                   {allBooks.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">
                       No books available. Add your first book!
                     </p>
+                  ) : filteredBooks.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">
+                      No books match your search criteria. Try adjusting your filters.
+                    </p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {allBooks.map((book) => (
+                      {filteredBooks.map((book) => (
                         <Card key={`${book.source}-${book.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
                           <div className="relative">
                             <img
