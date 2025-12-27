@@ -76,14 +76,19 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <div className="h-12 w-12 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-primary/30 shadow-lg hover:border-primary/50 transition-all duration-300">
+            <div className="relative h-12 w-12 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-primary/30 shadow-lg hover:border-primary/50 transition-all duration-300">
               <img 
-                src={theme === 'dark' ? logoDark : logoLight} 
+                src={logoDark} 
                 alt="BookPard Logo" 
-                className="h-full w-full object-cover" 
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`}
+              />
+              <img 
+                src={logoLight} 
+                alt="BookPard Logo" 
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-in-out ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`}
               />
             </div>
-            <span className="text-xl md:text-2xl font-bold text-primary hidden sm:block">BookPard</span>
+            <span className="text-xl md:text-2xl font-bold text-primary hidden sm:block transition-colors duration-300">BookPard</span>
           </Link>
 
           {/* Desktop Navigation */}
