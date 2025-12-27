@@ -180,32 +180,6 @@ export type Database = {
           title: string | null
           user_id: string | null
         }
-        Insert: {
-          author?: string | null
-          category?: string | null
-          condition?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          image_url?: string | null
-          price?: number | null
-          status?: string | null
-          title?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          author?: string | null
-          category?: string | null
-          condition?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          image_url?: string | null
-          price?: number | null
-          status?: string | null
-          title?: string | null
-          user_id?: string | null
-        }
         Relationships: []
       }
     }
