@@ -31,20 +31,33 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { isAdmin } = useAdmin();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Handle scroll effect
+  // Handle scroll effect - hide on scroll down, show on scroll up
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      
+      setIsScrolled(currentScrollY > 20);
+      
+      // Hide navbar when scrolling down, show when scrolling up
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
+      
+      setLastScrollY(currentScrollY);
     };
     
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   useEffect(() => {
     // Check current session
@@ -83,7 +96,9 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 border-b border-border relative transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-border transition-all duration-300 ${
+      isHidden ? "-translate-y-full" : "translate-y-0"
+    } ${
       isScrolled 
         ? "bg-card/70 backdrop-blur-md shadow-lg" 
         : "bg-card/95 backdrop-blur-sm shadow-[var(--shadow-soft)]"
