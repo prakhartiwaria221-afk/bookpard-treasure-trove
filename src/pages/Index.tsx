@@ -17,6 +17,38 @@ const Index = () => {
   const [sortBy, setSortBy] = useState<SortOption>("price-low");
   const [filterCondition, setFilterCondition] = useState<FilterCondition>("all");
   const [userListings, setUserListings] = useState<Book[]>([]);
+  const [adminBooks, setAdminBooks] = useState<Book[]>([]);
+
+  // Fetch admin books from database
+  useEffect(() => {
+    const fetchAdminBooks = async () => {
+      const { data, error } = await supabase
+        .from("books")
+        .select("*");
+
+      if (error) {
+        console.error("Error fetching books:", error);
+        return;
+      }
+
+      if (data) {
+        const mappedBooks: Book[] = data.map((book) => ({
+          id: book.id,
+          title: book.title,
+          author: book.author,
+          category: book.category,
+          price: book.price,
+          oldPrice: book.old_price,
+          image: book.image_url,
+          condition: (book.condition === "new" ? "new" : "old") as "new" | "old",
+          description: book.description || "",
+        }));
+        setAdminBooks(mappedBooks);
+      }
+    };
+
+    fetchAdminBooks();
+  }, []);
 
   // Fetch user listings from database
   useEffect(() => {
@@ -40,7 +72,6 @@ const Index = () => {
           price: listing.price || 0,
           oldPrice: listing.price || 0,
           image: listing.image_url || "/placeholder.svg",
-          // Map database condition (excellent/good/average) to Book type (new/old)
           condition: (listing.condition === "excellent" ? "new" : "old") as "new" | "old",
           description: listing.description || "",
         }));
@@ -51,10 +82,10 @@ const Index = () => {
     fetchUserListings();
   }, []);
 
-  // Combine static books with user listings
+  // Combine static books with admin books and user listings
   const allBooks = useMemo(() => {
-    return [...booksData, ...userListings];
-  }, [userListings]);
+    return [...booksData, ...adminBooks, ...userListings];
+  }, [adminBooks, userListings]);
 
   const filteredAndSortedBooks = useMemo(() => {
     let filtered = [...allBooks];
