@@ -17,7 +17,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ChristmasLights } from "@/components/ChristmasLights";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/contexts/ThemeContext";
 import logoDarkMode from "@/assets/logo-dark-mode.jpg";
 import logoLightMode from "@/assets/logo-light-mode.jpg";
 
