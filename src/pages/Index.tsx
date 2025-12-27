@@ -104,7 +104,10 @@ const Index = () => {
       } else if (selectedCategory === "Old Books") {
         filtered = filtered.filter((book) => book.condition === "old");
       } else {
-        filtered = filtered.filter((book) => book.category === selectedCategory);
+        // Case-insensitive category matching
+        filtered = filtered.filter(
+          (book) => book.category.toLowerCase() === selectedCategory.toLowerCase()
+        );
       }
     }
 
