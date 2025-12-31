@@ -4,6 +4,7 @@ import { Hero } from "@/components/Hero";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { FilterControls } from "@/components/FilterControls";
 import { BookCard } from "@/components/BookCard";
+import { BookSection } from "@/components/BookSection";
 import { useCart } from "@/hooks/useCart";
 import { booksData } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
@@ -135,6 +136,48 @@ const Index = () => {
     return filtered;
   }, [searchQuery, selectedCategory, sortBy, filterCondition, allBooks]);
 
+  // Categorized book sections
+  const bookSections = useMemo(() => {
+    // Popular Series - Books that are part of a series (Harry Potter, etc.)
+    const popularSeries = allBooks.filter(
+      (book) =>
+        book.title.toLowerCase().includes("harry potter") ||
+        book.title.toLowerCase().includes("toy story") ||
+        book.title.toLowerCase().includes("cars")
+    );
+
+    // Bestsellers - Books with highest discount (oldPrice - price)
+    const bestsellers = [...allBooks]
+      .filter((book) => book.oldPrice && book.oldPrice > book.price)
+      .sort((a, b) => (b.oldPrice! - b.price) - (a.oldPrice! - a.price))
+      .slice(0, 8);
+
+    // Best Authors - Premium authors
+    const bestAuthors = allBooks.filter(
+      (book) =>
+        book.author.toLowerCase().includes("j.k. rowling") ||
+        book.author.toLowerCase().includes("agatha christie") ||
+        book.author.toLowerCase().includes("stephen king") ||
+        book.author.toLowerCase().includes("margaret atwood")
+    );
+
+    // Top Selling - Sort by lowest price (most affordable = likely top selling)
+    const topSelling = [...allBooks]
+      .sort((a, b) => a.price - b.price)
+      .slice(0, 8);
+
+    // New Arrivals - Admin books and user listings (database entries are new)
+    const newArrivals = [...adminBooks, ...userListings].slice(0, 8);
+
+    return {
+      popularSeries,
+      bestsellers,
+      bestAuthors,
+      topSelling,
+      newArrivals,
+    };
+  }, [allBooks, adminBooks, userListings]);
+
   const handleAddToCart = (book: Book) => {
     addToCart(book);
     triggerFireworks("low");
@@ -163,26 +206,82 @@ const Index = () => {
           />
         </div>
 
-        {/* Books Grid */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-foreground">
-            {selectedCategory === "All Books" ? "All Books" : selectedCategory}
-            <span className="text-muted-foreground font-normal ml-2">
-              ({filteredAndSortedBooks.length} books)
-            </span>
-          </h2>
-        </div>
+        {/* Show sections only when viewing All Books */}
+        {selectedCategory === "All Books" && !searchQuery && (
+          <div className="animate-fade-in space-y-4">
+            {/* New Arrivals Section */}
+            {bookSections.newArrivals.length > 0 && (
+              <BookSection
+                title="✨ New Arrivals"
+                books={bookSections.newArrivals}
+                onAddToCart={handleAddToCart}
+                icon="clock"
+                variant="new"
+              />
+            )}
 
-        {filteredAndSortedBooks.length === 0 ? (
-          <div className="text-center py-16 animate-fade-in">
-            <p className="text-xl text-muted-foreground">No books found matching your criteria.</p>
+            {/* Popular Series */}
+            <BookSection
+              title="🎬 Popular Series"
+              books={bookSections.popularSeries}
+              onAddToCart={handleAddToCart}
+              icon="sparkles"
+              variant="featured"
+            />
+
+            {/* Bestsellers */}
+            <BookSection
+              title="🏆 Bestsellers"
+              books={bookSections.bestsellers}
+              onAddToCart={handleAddToCart}
+              icon="trophy"
+              variant="default"
+            />
+
+            {/* Best Authors */}
+            <BookSection
+              title="⭐ Best Authors"
+              books={bookSections.bestAuthors}
+              onAddToCart={handleAddToCart}
+              icon="star"
+              variant="featured"
+            />
+
+            {/* Top Selling */}
+            <BookSection
+              title="📈 Top Selling"
+              books={bookSections.topSelling}
+              onAddToCart={handleAddToCart}
+              icon="trending"
+              variant="default"
+            />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-            {filteredAndSortedBooks.map((book) => (
-              <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
-            ))}
-          </div>
+        )}
+
+        {/* Filtered Books Grid - Show when category is selected or searching */}
+        {(selectedCategory !== "All Books" || searchQuery) && (
+          <>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-foreground">
+                {selectedCategory === "All Books" ? "Search Results" : selectedCategory}
+                <span className="text-muted-foreground font-normal ml-2">
+                  ({filteredAndSortedBooks.length} books)
+                </span>
+              </h2>
+            </div>
+
+            {filteredAndSortedBooks.length === 0 ? (
+              <div className="text-center py-16 animate-fade-in">
+                <p className="text-xl text-muted-foreground">No books found matching your criteria.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+                {filteredAndSortedBooks.map((book) => (
+                  <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </main>
 
