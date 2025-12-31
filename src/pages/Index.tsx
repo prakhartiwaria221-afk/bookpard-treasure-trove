@@ -9,9 +9,11 @@ import { booksData } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useFireworks } from "@/contexts/FireworksContext";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
+  const { triggerFireworks } = useFireworks();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Books");
   const [sortBy, setSortBy] = useState<SortOption>("price-low");
@@ -135,6 +137,7 @@ const Index = () => {
 
   const handleAddToCart = (book: Book) => {
     addToCart(book);
+    triggerFireworks("low");
     toast.success(`${book.title} added to cart!`, {
       description: "Check your cart to proceed to checkout.",
     });

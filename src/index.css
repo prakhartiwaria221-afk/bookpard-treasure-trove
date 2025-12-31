@@ -254,3 +254,22 @@ New Year Celebration Theme with Dark Mode Support
 .animate-twinkle-star {
   animation: twinkle-star 2s ease-in-out infinite;
 }
+
+/* Firework particle animation */
+@keyframes firework-particle {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+      calc(var(--velocity-x) * 80px),
+      calc(var(--velocity-y) * 80px + 50px)
+    ) scale(0);
+    opacity: 0;
+  }
+}
+
+.animate-firework-particle {
+  animation: firework-particle 1.5s ease-out forwards;
+}

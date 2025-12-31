@@ -16,10 +16,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useFireworks } from "@/contexts/FireworksContext";
 
 export default function Checkout() {
   const { cart, totalPrice, totalItems, clearCart } = useCart();
   const navigate = useNavigate();
+  const { triggerFireworks } = useFireworks();
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [showSuccess, setShowSuccess] = useState(false);
   
@@ -76,6 +78,9 @@ export default function Checkout() {
       toast.error("Failed to process order. Please try again.");
       return;
     }
+
+    // Trigger celebration fireworks!
+    triggerFireworks("high");
 
     // Show success dialog
     setShowSuccess(true);
