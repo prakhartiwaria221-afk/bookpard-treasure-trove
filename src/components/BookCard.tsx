@@ -1,6 +1,6 @@
 import { Book } from "@/types/book";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart, PartyPopper, Sparkles } from "lucide-react";
+import { ShoppingCart, PartyPopper, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -78,10 +78,6 @@ export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
           )}
         </div>
 
-        {/* Wishlist Button */}
-        <button className="absolute top-3 right-3 bg-card/90 backdrop-blur-sm p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-newyear-midnight hover:text-white hover:scale-110 shadow-lg">
-          <Heart className="h-4 w-4" />
-        </button>
 
         {/* Bottom decorative ribbon */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-newyear-midnight via-newyear-gold to-confetti-purple" />
