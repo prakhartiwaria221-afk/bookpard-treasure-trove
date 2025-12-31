@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Christmas color utilities for direct use
+// New Year celebration color utilities for direct use
 
 export default {
   darkMode: ["class"],
@@ -49,19 +49,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Christmas colors
-        christmas: {
-          red: "hsl(var(--christmas-red))",
-          "red-light": "hsl(var(--christmas-red-light))",
-          "red-dark": "hsl(var(--christmas-red-dark))",
-          green: "hsl(var(--christmas-green))",
-          "green-light": "hsl(var(--christmas-green-light))",
-          "green-dark": "hsl(var(--christmas-green-dark))",
-          gold: "hsl(var(--christmas-gold))",
-          "gold-light": "hsl(var(--christmas-gold-light))",
+        // New Year celebration colors
+        newyear: {
+          midnight: "hsl(var(--newyear-midnight))",
+          "midnight-light": "hsl(var(--newyear-midnight-light))",
+          "midnight-dark": "hsl(var(--newyear-midnight-dark))",
+          gold: "hsl(var(--newyear-gold))",
+          "gold-light": "hsl(var(--newyear-gold-light))",
+          "gold-dark": "hsl(var(--newyear-gold-dark))",
+          silver: "hsl(var(--newyear-silver))",
+          "silver-light": "hsl(var(--newyear-silver-light))",
+          champagne: "hsl(var(--newyear-champagne))",
         },
-        snow: "hsl(var(--snow))",
-        frost: "hsl(var(--frost))",
+        sparkle: "hsl(var(--sparkle))",
+        confetti: {
+          pink: "hsl(var(--confetti-pink))",
+          purple: "hsl(var(--confetti-purple))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -93,19 +97,24 @@ export default {
           from: { opacity: "0", transform: "translateX(-10px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
-        snowfall: {
+        confetti: {
           "0%": {
             transform: "translateY(-10vh) translateX(0) rotate(0deg)",
             opacity: "1",
           },
           "100%": {
-            transform: "translateY(100vh) translateX(50px) rotate(360deg)",
+            transform: "translateY(100vh) translateX(50px) rotate(720deg)",
             opacity: "0.3",
           },
         },
-        twinkle: {
-          "0%, 100%": { opacity: "0.4", transform: "scale(1)" },
-          "50%": { opacity: "1", transform: "scale(1.1)" },
+        sparkle: {
+          "0%, 100%": { opacity: "0.4", transform: "scale(0.8)" },
+          "50%": { opacity: "1", transform: "scale(1.2)" },
+        },
+        firework: {
+          "0%": { transform: "scale(0)", opacity: "1" },
+          "50%": { transform: "scale(1.5)", opacity: "0.8" },
+          "100%": { transform: "scale(2)", opacity: "0" },
         },
       },
       animation: {
@@ -113,8 +122,9 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
-        snowfall: "snowfall linear infinite",
-        twinkle: "twinkle 2s ease-in-out infinite",
+        confetti: "confetti linear infinite",
+        sparkle: "sparkle 1.5s ease-in-out infinite",
+        firework: "firework 2s ease-out infinite",
       },
     },
   },

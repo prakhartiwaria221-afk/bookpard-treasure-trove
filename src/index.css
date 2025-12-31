@@ -4,128 +4,132 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
-Christmas Theme with Dark Mode Support
+New Year Celebration Theme with Dark Mode Support
 */
 
 @layer base {
   :root {
-    /* Christmas Light Theme - Warm red & green with snowy accents */
-    --background: 0 0% 98%;
-    --foreground: 150 30% 15%;
+    /* New Year Light Theme - Elegant gold & midnight blue with champagne accents */
+    --background: 220 20% 98%;
+    --foreground: 220 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 150 30% 15%;
+    --card-foreground: 220 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 150 30% 15%;
+    --popover-foreground: 220 30% 15%;
 
-    /* Christmas Red Primary */
-    --primary: 0 72% 51%;
+    /* Midnight Blue Primary */
+    --primary: 230 60% 45%;
     --primary-foreground: 0 0% 100%;
     
-    /* Christmas Green Secondary */
-    --secondary: 145 63% 32%;
-    --secondary-foreground: 0 0% 100%;
+    /* Champagne Gold Secondary */
+    --secondary: 45 70% 55%;
+    --secondary-foreground: 220 30% 15%;
 
-    /* Soft snowy muted */
-    --muted: 210 20% 95%;
-    --muted-foreground: 150 20% 40%;
+    /* Soft silver muted */
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Gold accent */
-    --accent: 45 93% 47%;
-    --accent-foreground: 0 0% 10%;
+    /* Sparkle Gold accent */
+    --accent: 45 85% 50%;
+    --accent-foreground: 220 30% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 20% 88%;
-    --input: 150 20% 92%;
-    --ring: 0 72% 51%;
+    --border: 220 15% 88%;
+    --input: 220 15% 92%;
+    --ring: 230 60% 45%;
 
     --radius: 1rem;
 
-    /* Custom Christmas colors */
-    --christmas-red: 0 72% 51%;
-    --christmas-red-light: 0 80% 65%;
-    --christmas-red-dark: 0 70% 40%;
-    --christmas-green: 145 63% 32%;
-    --christmas-green-light: 145 55% 45%;
-    --christmas-green-dark: 145 70% 22%;
-    --christmas-gold: 45 93% 47%;
-    --christmas-gold-light: 45 95% 60%;
-    --snow: 210 40% 98%;
-    --frost: 200 30% 94%;
+    /* Custom New Year colors */
+    --newyear-midnight: 230 60% 45%;
+    --newyear-midnight-light: 230 55% 55%;
+    --newyear-midnight-dark: 230 65% 30%;
+    --newyear-gold: 45 85% 50%;
+    --newyear-gold-light: 45 90% 65%;
+    --newyear-gold-dark: 40 80% 40%;
+    --newyear-silver: 220 10% 75%;
+    --newyear-silver-light: 220 10% 88%;
+    --newyear-champagne: 35 60% 75%;
+    --sparkle: 45 100% 70%;
+    --confetti-pink: 340 75% 65%;
+    --confetti-purple: 280 65% 60%;
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(150 20% 95%) 50%, hsl(0 72% 97%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(150 15% 98%));
-    --gradient-primary: linear-gradient(135deg, hsl(0 72% 51%), hsl(0 80% 60%));
-    --gradient-christmas: linear-gradient(135deg, hsl(0 72% 51%) 0%, hsl(145 63% 32%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 20% 98%) 0%, hsl(230 30% 95%) 50%, hsl(45 40% 96%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(230 15% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(230 60% 45%), hsl(230 55% 55%));
+    --gradient-celebration: linear-gradient(135deg, hsl(230 60% 45%) 0%, hsl(45 85% 50%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(0 72% 51% / 0.12);
-    --shadow-hover: 0 8px 30px -4px hsl(0 72% 51% / 0.2);
-    --shadow-card: 0 2px 15px -3px hsl(150 30% 25% / 0.08);
-    --shadow-glow: 0 0 20px hsl(0 72% 51% / 0.3);
+    --shadow-soft: 0 4px 20px -2px hsl(230 60% 45% / 0.12);
+    --shadow-hover: 0 8px 30px -4px hsl(45 85% 50% / 0.25);
+    --shadow-card: 0 2px 15px -3px hsl(220 30% 25% / 0.08);
+    --shadow-glow: 0 0 20px hsl(45 85% 50% / 0.4);
   }
 
   .dark {
-    /* Christmas Dark Theme - Rich deep tones with festive highlights */
-    --background: 150 25% 8%;
-    --foreground: 0 0% 95%;
+    /* New Year Dark Theme - Deep midnight with luxurious gold highlights */
+    --background: 230 35% 8%;
+    --foreground: 45 20% 95%;
 
-    --card: 150 20% 12%;
-    --card-foreground: 0 0% 95%;
+    --card: 230 30% 12%;
+    --card-foreground: 45 20% 95%;
 
-    --popover: 150 20% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 230 30% 12%;
+    --popover-foreground: 45 20% 95%;
 
-    /* Bright Christmas Red */
-    --primary: 0 75% 55%;
+    /* Bright Midnight Blue */
+    --primary: 230 65% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Vibrant Christmas Green */
-    --secondary: 145 55% 45%;
-    --secondary-foreground: 0 0% 100%;
+    /* Rich Gold */
+    --secondary: 45 80% 55%;
+    --secondary-foreground: 230 35% 10%;
 
-    /* Dark forest muted */
-    --muted: 150 20% 18%;
-    --muted-foreground: 150 15% 60%;
+    /* Dark elegant muted */
+    --muted: 230 25% 18%;
+    --muted-foreground: 220 15% 65%;
 
     /* Warm Gold accent */
     --accent: 45 90% 55%;
-    --accent-foreground: 0 0% 10%;
+    --accent-foreground: 230 35% 10%;
 
     --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 20% 20%;
-    --input: 150 20% 18%;
-    --ring: 0 75% 55%;
+    --border: 230 25% 22%;
+    --input: 230 25% 18%;
+    --ring: 45 80% 55%;
 
-    /* Dark mode Christmas colors */
-    --christmas-red: 0 75% 55%;
-    --christmas-red-light: 0 80% 65%;
-    --christmas-red-dark: 0 70% 45%;
-    --christmas-green: 145 55% 45%;
-    --christmas-green-light: 145 50% 55%;
-    --christmas-green-dark: 150 60% 30%;
-    --christmas-gold: 45 90% 55%;
-    --christmas-gold-light: 45 95% 65%;
-    --snow: 150 20% 85%;
-    --frost: 200 20% 75%;
+    /* Dark mode New Year colors */
+    --newyear-midnight: 230 65% 55%;
+    --newyear-midnight-light: 230 60% 65%;
+    --newyear-midnight-dark: 230 70% 40%;
+    --newyear-gold: 45 90% 55%;
+    --newyear-gold-light: 45 95% 68%;
+    --newyear-gold-dark: 40 85% 45%;
+    --newyear-silver: 220 15% 65%;
+    --newyear-silver-light: 220 10% 78%;
+    --newyear-champagne: 35 55% 65%;
+    --sparkle: 45 100% 75%;
+    --confetti-pink: 340 80% 70%;
+    --confetti-purple: 280 70% 65%;
     
     /* Dark Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(150 25% 8%) 0%, hsl(150 20% 12%) 50%, hsl(0 30% 12%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(150 20% 14%), hsl(150 20% 10%));
-    --gradient-primary: linear-gradient(135deg, hsl(0 75% 55%), hsl(0 80% 60%));
-    --gradient-christmas: linear-gradient(135deg, hsl(0 75% 55%) 0%, hsl(145 55% 45%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(230 35% 8%) 0%, hsl(230 30% 12%) 50%, hsl(45 30% 10%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(230 30% 14%), hsl(230 30% 10%));
+    --gradient-primary: linear-gradient(135deg, hsl(230 65% 55%), hsl(230 60% 65%));
+    --gradient-celebration: linear-gradient(135deg, hsl(230 65% 55%) 0%, hsl(45 90% 55%) 100%);
     
     /* Dark Shadows */
     --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.4);
-    --shadow-hover: 0 8px 30px -4px hsl(0 75% 55% / 0.25);
+    --shadow-hover: 0 8px 30px -4px hsl(45 90% 55% / 0.3);
     --shadow-card: 0 2px 15px -3px hsl(0 0% 0% / 0.3);
-    --shadow-glow: 0 0 30px hsl(0 75% 55% / 0.4);
+    --shadow-glow: 0 0 30px hsl(45 90% 55% / 0.5);
   }
 }
 
@@ -143,81 +147,110 @@ Christmas Theme with Dark Mode Support
   }
 }
 
-/* Snowflake animation for Christmas theme */
-@keyframes snowfall {
+/* Confetti animation for New Year theme */
+@keyframes confetti-fall {
   0% {
     transform: translateY(-10vh) translateX(0) rotate(0deg);
     opacity: 1;
   }
   100% {
-    transform: translateY(100vh) translateX(100px) rotate(360deg);
+    transform: translateY(100vh) translateX(50px) rotate(720deg);
     opacity: 0.3;
   }
 }
 
-@keyframes twinkle {
+@keyframes sparkle {
   0%, 100% {
     opacity: 0.3;
+    transform: scale(0.8);
   }
   50% {
     opacity: 1;
+    transform: scale(1.2);
   }
 }
 
-.animate-snowfall {
-  animation: snowfall linear infinite;
+@keyframes firework-burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
-.animate-twinkle {
-  animation: twinkle 2s ease-in-out infinite;
+.animate-confetti {
+  animation: confetti-fall linear infinite;
 }
 
-/* Christmas decorative elements */
-.christmas-glow {
-  box-shadow: 0 0 20px hsl(var(--christmas-red) / 0.3), 
-              0 0 40px hsl(var(--christmas-gold) / 0.2);
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
 }
 
-.dark .christmas-glow {
-  box-shadow: 0 0 30px hsl(var(--christmas-red) / 0.4), 
-              0 0 60px hsl(var(--christmas-gold) / 0.3);
+.animate-firework {
+  animation: firework-burst 2s ease-out infinite;
+}
+
+/* New Year decorative elements */
+.celebration-glow {
+  box-shadow: 0 0 20px hsl(var(--newyear-gold) / 0.4), 
+              0 0 40px hsl(var(--newyear-midnight) / 0.2);
+}
+
+.dark .celebration-glow {
+  box-shadow: 0 0 30px hsl(var(--newyear-gold) / 0.5), 
+              0 0 60px hsl(var(--newyear-midnight) / 0.3);
 }
 
 /* Festive logo glow animation */
-@keyframes festive-glow {
+@keyframes celebration-glow {
   0%, 100% {
-    box-shadow: 0 0 10px hsl(var(--christmas-red) / 0.6),
-                0 0 20px hsl(var(--christmas-red) / 0.4),
-                0 0 30px hsl(var(--christmas-gold) / 0.3);
+    box-shadow: 0 0 10px hsl(var(--newyear-gold) / 0.6),
+                0 0 20px hsl(var(--newyear-gold) / 0.4),
+                0 0 30px hsl(var(--newyear-midnight) / 0.3);
   }
   33% {
-    box-shadow: 0 0 10px hsl(var(--christmas-green) / 0.6),
-                0 0 20px hsl(var(--christmas-green) / 0.4),
-                0 0 30px hsl(var(--christmas-gold) / 0.3);
+    box-shadow: 0 0 10px hsl(var(--newyear-midnight) / 0.6),
+                0 0 20px hsl(var(--newyear-midnight) / 0.4),
+                0 0 30px hsl(var(--sparkle) / 0.3);
   }
   66% {
-    box-shadow: 0 0 10px hsl(var(--christmas-gold) / 0.6),
-                0 0 20px hsl(var(--christmas-gold) / 0.4),
-                0 0 30px hsl(var(--christmas-red) / 0.3);
+    box-shadow: 0 0 10px hsl(var(--sparkle) / 0.7),
+                0 0 20px hsl(var(--newyear-gold) / 0.5),
+                0 0 30px hsl(var(--confetti-purple) / 0.3);
   }
 }
 
-.animate-festive-glow {
-  animation: festive-glow 3s ease-in-out infinite;
+.animate-celebration-glow {
+  animation: celebration-glow 3s ease-in-out infinite;
 }
 
-/* Twinkling Christmas lights */
-@keyframes twinkle-light {
+/* Twinkling stars for New Year */
+@keyframes twinkle-star {
   0%, 100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    opacity: 0.5;
+    transform: scale(0.9) rotate(45deg);
   }
   50% {
-    opacity: 0.4;
-    transform: scale(0.85);
+    opacity: 0.3;
+    transform: scale(0.8) rotate(90deg);
+  }
+  75% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(135deg);
   }
 }
 
-.animate-twinkle-light {
-  animation: twinkle-light 1.5s ease-in-out infinite;
+.animate-twinkle-star {
+  animation: twinkle-star 2s ease-in-out infinite;
 }
