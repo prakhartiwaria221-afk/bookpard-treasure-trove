@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { ChristmasLights } from "@/components/ChristmasLights";
+import { CelebrationLights } from "@/components/CelebrationLights";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useTheme } from "@/contexts/ThemeContext";
 import logoDarkMode from "@/assets/logo-dark-mode.jpg";
@@ -103,13 +103,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
         ? "bg-card/70 backdrop-blur-md shadow-lg" 
         : "bg-card/95 backdrop-blur-sm shadow-[var(--shadow-soft)]"
     }`}>
-      {/* Christmas Lights */}
-      <ChristmasLights />
+      {/* Celebration Lights */}
+      <CelebrationLights />
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <div className="relative h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-christmas-gold/60 shadow-lg shadow-christmas-gold/30 hover:shadow-xl hover:shadow-christmas-gold/40 hover:scale-105 transition-all duration-300">
+            <div className="relative h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-newyear-gold/60 shadow-lg shadow-newyear-gold/30 hover:shadow-xl hover:shadow-newyear-gold/40 hover:scale-105 transition-all duration-300">
               <img 
                 src={logoDarkMode} 
                 alt="BookPard Logo" 

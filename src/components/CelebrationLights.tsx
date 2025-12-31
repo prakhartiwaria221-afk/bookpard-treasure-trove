@@ -1,13 +1,14 @@
 import { useMemo } from "react";
 
 const LIGHT_COLORS = [
-  "hsl(var(--christmas-red))",
-  "hsl(var(--christmas-green))",
-  "hsl(var(--christmas-gold))",
-  "hsl(var(--snow))",
+  "hsl(var(--newyear-gold))",
+  "hsl(var(--newyear-midnight))",
+  "hsl(var(--confetti-pink))",
+  "hsl(var(--sparkle))",
+  "hsl(var(--confetti-purple))",
 ];
 
-export const ChristmasLights = () => {
+export const CelebrationLights = () => {
   const lights = useMemo(() => {
     return Array.from({ length: 20 }, (_, i) => ({
       id: i,
@@ -25,7 +26,7 @@ export const ChristmasLights = () => {
             <div className="w-px h-1 bg-foreground/20" />
             {/* Light bulb */}
             <div
-              className="w-2 h-2.5 rounded-full animate-twinkle-light"
+              className="w-2 h-2.5 rounded-full animate-twinkle-star"
               style={{
                 backgroundColor: light.color,
                 boxShadow: `0 0 6px 2px ${light.color}, 0 0 10px 4px ${light.color}40`,
