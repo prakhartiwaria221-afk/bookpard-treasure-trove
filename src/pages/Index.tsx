@@ -5,12 +5,15 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { FilterControls } from "@/components/FilterControls";
 import { BookCard } from "@/components/BookCard";
 import { BookSection } from "@/components/BookSection";
+import { NewYearBanner } from "@/components/NewYearBanner";
+import { ConfettiEffect } from "@/components/ConfettiEffect";
 import { useCart } from "@/hooks/useCart";
 import { booksData } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
+import { Sparkles, PartyPopper, Heart, Star } from "lucide-react";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -21,6 +24,13 @@ const Index = () => {
   const [filterCondition, setFilterCondition] = useState<FilterCondition>("all");
   const [userListings, setUserListings] = useState<Book[]>([]);
   const [adminBooks, setAdminBooks] = useState<Book[]>([]);
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  // Auto-hide confetti after 10 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowConfetti(false), 10000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch admin books from database
   useEffect(() => {
@@ -206,161 +216,215 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-24 md:pt-28">
-      <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
-      <Hero />
+    <div className="min-h-screen bg-background">
+      {/* Confetti Effect */}
+      {showConfetti && <ConfettiEffect />}
       
-      <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
-        {/* Filters */}
-        <div className="space-y-6 mb-8 animate-fade-in">
-          <CategoryFilter
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-          />
-          <FilterControls
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            filterCondition={filterCondition}
-            onConditionChange={setFilterCondition}
-          />
-        </div>
-
-        {/* Category Title */}
-        {!searchQuery && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-foreground">
-              {selectedCategory}
-              <span className="text-muted-foreground font-normal ml-2">
-                ({filteredAndSortedBooks.length} books)
-              </span>
-            </h2>
-          </div>
-        )}
-
-        {/* Search Results - only show grid */}
-        {searchQuery && (
-          <>
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-foreground">
-                Search Results
-                <span className="text-muted-foreground font-normal ml-2">
-                  ({filteredAndSortedBooks.length} books)
-                </span>
-              </h2>
+      {/* New Year Banner - Fixed at very top */}
+      <div className="fixed top-0 left-0 right-0 z-[60]">
+        <NewYearBanner />
+      </div>
+      
+      {/* Main content with adjusted padding */}
+      <div className="pt-10">
+        <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
+        
+        <div className="pt-20 md:pt-24">
+          <Hero />
+          
+          <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
+            {/* New Year Section Header */}
+            <div className="text-center mb-12 animate-fade-in">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <PartyPopper className="h-8 w-8 text-newyear-gold animate-bounce-slow" />
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-festive-gradient">
+                  New Year 2026 Book Collection
+                </h2>
+                <Sparkles className="h-8 w-8 text-confetti-pink animate-sparkle" />
+              </div>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Start the new year with amazing reads! Explore our curated collection of books at special celebration prices.
+              </p>
             </div>
-            {filteredAndSortedBooks.length === 0 ? (
+
+            {/* Filters */}
+            <div className="space-y-6 mb-8 animate-fade-in">
+              <CategoryFilter
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+              />
+              <FilterControls
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                filterCondition={filterCondition}
+                onConditionChange={setFilterCondition}
+              />
+            </div>
+
+            {/* Category Title */}
+            {!searchQuery && (
+              <div className="mb-6 flex items-center gap-3">
+                <Star className="h-6 w-6 text-newyear-gold fill-newyear-gold/30" />
+                <h2 className="text-2xl font-playfair font-bold text-foreground">
+                  {selectedCategory}
+                  <span className="text-muted-foreground font-inter font-normal text-base ml-2">
+                    ({filteredAndSortedBooks.length} books)
+                  </span>
+                </h2>
+              </div>
+            )}
+
+            {/* Search Results - only show grid */}
+            {searchQuery && (
+              <>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-playfair font-bold text-foreground">
+                    Search Results
+                    <span className="text-muted-foreground font-inter font-normal text-base ml-2">
+                      ({filteredAndSortedBooks.length} books)
+                    </span>
+                  </h2>
+                </div>
+                {filteredAndSortedBooks.length === 0 ? (
+                  <div className="text-center py-16 animate-fade-in">
+                    <p className="text-xl text-muted-foreground">No books found matching your criteria.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+                    {filteredAndSortedBooks.map((book) => (
+                      <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Show organized sections for all categories (not during search) */}
+            {!searchQuery && filteredAndSortedBooks.length > 0 && (
+              <div className="animate-fade-in space-y-4">
+                {/* New Arrivals Section */}
+                {bookSections.newArrivals.length > 0 && (
+                  <BookSection
+                    title="✨ New Arrivals"
+                    books={bookSections.newArrivals}
+                    onAddToCart={handleAddToCart}
+                    icon="clock"
+                    variant="new"
+                  />
+                )}
+
+                {/* Popular Series */}
+                {bookSections.popularSeries.length > 0 && (
+                  <BookSection
+                    title="🎬 Popular Series"
+                    books={bookSections.popularSeries}
+                    onAddToCart={handleAddToCart}
+                    icon="sparkles"
+                    variant="featured"
+                  />
+                )}
+
+                {/* Bestsellers */}
+                {bookSections.bestsellers.length > 0 && (
+                  <BookSection
+                    title="🏆 Bestsellers"
+                    books={bookSections.bestsellers}
+                    onAddToCart={handleAddToCart}
+                    icon="trophy"
+                    variant="default"
+                  />
+                )}
+
+                {/* Best Authors */}
+                {bookSections.bestAuthors.length > 0 && (
+                  <BookSection
+                    title="⭐ Best Authors"
+                    books={bookSections.bestAuthors}
+                    onAddToCart={handleAddToCart}
+                    icon="star"
+                    variant="featured"
+                  />
+                )}
+
+                {/* Top Selling */}
+                {bookSections.topSelling.length > 0 && (
+                  <BookSection
+                    title="📈 Top Selling"
+                    books={bookSections.topSelling}
+                    onAddToCart={handleAddToCart}
+                    icon="trending"
+                    variant="default"
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!searchQuery && filteredAndSortedBooks.length === 0 && (
               <div className="text-center py-16 animate-fade-in">
-                <p className="text-xl text-muted-foreground">No books found matching your criteria.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
-                {filteredAndSortedBooks.map((book) => (
-                  <BookCard key={book.id} book={book} onAddToCart={handleAddToCart} />
-                ))}
+                <p className="text-xl text-muted-foreground">No books found in this category.</p>
               </div>
             )}
-          </>
-        )}
+          </main>
 
-        {/* Show organized sections for all categories (not during search) */}
-        {!searchQuery && filteredAndSortedBooks.length > 0 && (
-          <div className="animate-fade-in space-y-4">
-            {/* New Arrivals Section */}
-            {bookSections.newArrivals.length > 0 && (
-              <BookSection
-                title="✨ New Arrivals"
-                books={bookSections.newArrivals}
-                onAddToCart={handleAddToCart}
-                icon="clock"
-                variant="new"
-              />
-            )}
-
-            {/* Popular Series */}
-            {bookSections.popularSeries.length > 0 && (
-              <BookSection
-                title="🎬 Popular Series"
-                books={bookSections.popularSeries}
-                onAddToCart={handleAddToCart}
-                icon="sparkles"
-                variant="featured"
-              />
-            )}
-
-            {/* Bestsellers */}
-            {bookSections.bestsellers.length > 0 && (
-              <BookSection
-                title="🏆 Bestsellers"
-                books={bookSections.bestsellers}
-                onAddToCart={handleAddToCart}
-                icon="trophy"
-                variant="default"
-              />
-            )}
-
-            {/* Best Authors */}
-            {bookSections.bestAuthors.length > 0 && (
-              <BookSection
-                title="⭐ Best Authors"
-                books={bookSections.bestAuthors}
-                onAddToCart={handleAddToCart}
-                icon="star"
-                variant="featured"
-              />
-            )}
-
-            {/* Top Selling */}
-            {bookSections.topSelling.length > 0 && (
-              <BookSection
-                title="📈 Top Selling"
-                books={bookSections.topSelling}
-                onAddToCart={handleAddToCart}
-                icon="trending"
-                variant="default"
-              />
-            )}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {!searchQuery && filteredAndSortedBooks.length === 0 && (
-          <div className="text-center py-16 animate-fade-in">
-            <p className="text-xl text-muted-foreground">No books found in this category.</p>
-          </div>
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-card border-t border-border mt-16">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="font-bold text-foreground mb-4">About BookPard</h3>
-              <p className="text-muted-foreground text-sm">
-                Your trusted marketplace for buying and selling books. Affordable prices for all age groups.
-              </p>
+          {/* Footer - New Year Themed */}
+          <footer className="relative bg-gradient-to-b from-card to-newyear-midnight-dark/10 dark:to-newyear-midnight-dark/30 border-t border-newyear-gold/20 mt-16 overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute inset-0 pointer-events-none">
+              <Star className="absolute top-8 left-[10%] h-4 w-4 text-newyear-gold/20 fill-newyear-gold/10 animate-twinkle-star" />
+              <Star className="absolute top-12 right-[15%] h-3 w-3 text-newyear-gold/25 fill-newyear-gold/15 animate-twinkle-star" style={{ animationDelay: "0.5s" }} />
+              <Sparkles className="absolute bottom-20 left-[20%] h-4 w-4 text-newyear-gold/15 animate-sparkle" style={{ animationDelay: "1s" }} />
             </div>
-            <div>
-              <h3 className="font-bold text-foreground mb-4">Quick Links</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
-                <li><a href="/" className="hover:text-primary transition-colors">Books</a></li>
-                <li><a href="/sell" className="hover:text-primary transition-colors">Sell Books</a></li>
-              </ul>
+            
+            <div className="container mx-auto px-4 py-12 relative z-10">
+              <div className="grid md:grid-cols-3 gap-8">
+                <div>
+                  <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-newyear-gold" />
+                    About BookPard
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Your trusted marketplace for buying and selling books. Celebrate New Year 2026 with amazing deals on books for all ages!
+                  </p>
+                </div>
+                <div>
+                  <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
+                    <Star className="h-4 w-4 text-newyear-gold fill-newyear-gold/50" />
+                    Quick Links
+                  </h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li><a href="/" className="hover:text-newyear-gold transition-colors">Home</a></li>
+                    <li><a href="/#books-section" className="hover:text-newyear-gold transition-colors">Books</a></li>
+                    <li><a href="/sell" className="hover:text-newyear-gold transition-colors">Sell Books</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-confetti-pink" />
+                    Contact Us
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Email: prakhartiwaria221@gmail.com<br />
+                    Phone: +919111415672
+                  </p>
+                </div>
+              </div>
+              
+              {/* New Year Footer Message */}
+              <div className="mt-8 pt-8 border-t border-newyear-gold/20 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <PartyPopper className="h-4 w-4 text-newyear-gold" />
+                  <span className="font-dancing text-lg text-newyear-gold">Happy New Year 2026!</span>
+                  <PartyPopper className="h-4 w-4 text-newyear-gold scale-x-[-1]" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  © 2026 BookPard. All rights reserved. Made with <Heart className="inline h-3 w-3 text-confetti-pink fill-confetti-pink" /> for book lovers.
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-foreground mb-4">Contact Us</h3>
-              <p className="text-muted-foreground text-sm">
-                Email: prakhartiwaria221@gmail.com<br />
-                Phone: +919111415672
-              </p>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            © 2025 BookPard. All rights reserved.
-          </div>
+          </footer>
         </div>
-      </footer>
+      </div>
     </div>
   );
 };
