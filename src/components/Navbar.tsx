@@ -96,13 +96,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-border transition-all duration-300 ${
+    <nav className={`fixed left-0 right-0 z-50 border-b border-newyear-gold/20 transition-all duration-300 ${
       isHidden ? "-translate-y-full" : "translate-y-0"
     } ${
       isScrolled 
-        ? "bg-card/70 backdrop-blur-md shadow-lg" 
+        ? "bg-card/80 backdrop-blur-lg shadow-lg shadow-newyear-gold/5" 
         : "bg-card/95 backdrop-blur-sm shadow-[var(--shadow-soft)]"
-    }`}>
+    }`} style={{ top: '40px' }}>
       {/* Celebration Lights */}
       <CelebrationLights />
       <div className="container mx-auto px-4 py-4">

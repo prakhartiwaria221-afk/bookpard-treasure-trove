@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// New Year celebration color utilities for direct use
+// New Year 2026 celebration color utilities for direct use
 
 export default {
   darkMode: ["class"],
@@ -15,6 +15,11 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        'playfair': ['Playfair Display', 'serif'],
+        'dancing': ['Dancing Script', 'cursive'],
+        'inter': ['Inter', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -49,7 +54,7 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // New Year celebration colors
+        // New Year 2026 celebration colors
         newyear: {
           midnight: "hsl(var(--newyear-midnight))",
           "midnight-light": "hsl(var(--newyear-midnight-light))",
@@ -65,6 +70,9 @@ export default {
         confetti: {
           pink: "hsl(var(--confetti-pink))",
           purple: "hsl(var(--confetti-purple))",
+          green: "hsl(var(--confetti-green))",
+          blue: "hsl(var(--confetti-blue))",
+          red: "hsl(var(--confetti-red))",
         },
       },
       borderRadius: {
@@ -74,20 +82,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "fade-in": {
           from: { opacity: "0", transform: "translateY(-10px)" },
@@ -98,14 +98,8 @@ export default {
           to: { opacity: "1", transform: "translateX(0)" },
         },
         confetti: {
-          "0%": {
-            transform: "translateY(-10vh) translateX(0) rotate(0deg)",
-            opacity: "1",
-          },
-          "100%": {
-            transform: "translateY(100vh) translateX(50px) rotate(720deg)",
-            opacity: "0.3",
-          },
+          "0%": { transform: "translateY(-10vh) translateX(0) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateY(100vh) translateX(50px) rotate(720deg)", opacity: "0.3" },
         },
         sparkle: {
           "0%, 100%": { opacity: "0.4", transform: "scale(0.8)" },
@@ -116,6 +110,30 @@ export default {
           "50%": { transform: "scale(1.5)", opacity: "0.8" },
           "100%": { transform: "scale(2)", opacity: "0" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px hsl(45 85% 50% / 0.6)" },
+          "50%": { boxShadow: "0 0 40px hsl(45 85% 50% / 0.9), 0 0 60px hsl(45 85% 50% / 0.5)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "bounce-slow": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+        "rotate-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "text-shimmer": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -125,6 +143,12 @@ export default {
         confetti: "confetti linear infinite",
         sparkle: "sparkle 1.5s ease-in-out infinite",
         firework: "firework 2s ease-out infinite",
+        shimmer: "shimmer 2s linear infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
+        "bounce-slow": "bounce-slow 2s ease-in-out infinite",
+        "rotate-slow": "rotate-slow 20s linear infinite",
+        "text-shimmer": "text-shimmer 3s linear infinite",
       },
     },
   },
