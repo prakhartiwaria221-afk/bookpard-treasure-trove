@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -197,12 +197,20 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link to="/manage-books" className="flex items-center gap-2">
-                        <BookOpen className="h-4 w-4" />
-                        Manage Books
-                      </Link>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link to="/admin" className="flex items-center gap-2">
+                          <LayoutDashboard className="h-4 w-4" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link to="/manage-books" className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4" />
+                          Manage Books
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
@@ -289,13 +297,22 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                   My Orders
                 </Link>
                 {isAdmin && (
-                  <Link
-                    to="/manage-books"
-                    className="block text-foreground hover:text-primary transition-colors font-medium"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Manage Books
-                  </Link>
+                  <>
+                    <Link
+                      to="/admin"
+                      className="block text-foreground hover:text-primary transition-colors font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Admin Dashboard
+                    </Link>
+                    <Link
+                      to="/manage-books"
+                      className="block text-foreground hover:text-primary transition-colors font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Manage Books
+                    </Link>
+                  </>
                 )}
               </>
             )}
