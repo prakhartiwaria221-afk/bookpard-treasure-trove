@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAdmin } from "@/hooks/useAdmin";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Trash2, Edit, Package, ShoppingCart, BookPlus, ArrowLeft } from "lucide-react";
+import { Trash2, Package, ShoppingCart, BookPlus, ArrowLeft, Users, IndianRupee, TrendingUp, UserPlus, UserMinus, Loader2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,14 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 type Book = {
   id: string;
@@ -50,12 +42,22 @@ type Order = {
   created_at: string;
 };
 
+type AdminUser = {
+  user_id: string;
+  email: string;
+  role: string;
+  created_at: string;
+};
+
 export default function AdminDashboard() {
   const { isAdmin, loading } = useAdmin();
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [addingAdmin, setAddingAdmin] = useState(false);
+  const [removingAdminId, setRemovingAdminId] = useState<string | null>(null);
 
   // Form states for adding books
   const [title, setTitle] = useState("");
@@ -66,6 +68,12 @@ export default function AdminDashboard() {
   const [oldPrice, setOldPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [description, setDescription] = useState("");
+
+  // Analytics
+  const totalBooks = books.length;
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((sum, order) => sum + order.total_price, 0);
+  const pendingOrders = orders.filter(o => o.status === "pending").length;
 
   useEffect(() => {
     if (!loading && !isAdmin) {
@@ -78,6 +86,7 @@ export default function AdminDashboard() {
     if (isAdmin) {
       fetchBooks();
       fetchOrders();
+      fetchAdminUsers();
     }
   }, [isAdmin]);
 
@@ -105,12 +114,91 @@ export default function AdminDashboard() {
       toast.error("Failed to fetch orders");
       console.error(error);
     } else {
-      // Cast items from Json to array
       const ordersWithItems = (data || []).map(order => ({
         ...order,
         items: Array.isArray(order.items) ? order.items : []
       }));
       setOrders(ordersWithItems);
+    }
+  };
+
+  const fetchAdminUsers = async () => {
+    const { data, error } = await supabase.rpc("get_admin_users");
+
+    if (error) {
+      console.error("Failed to fetch admin users:", error);
+    } else {
+      setAdminUsers(data || []);
+    }
+  };
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminEmail.trim()) return;
+
+    setAddingAdmin(true);
+    try {
+      // Get user_id by email
+      const { data: userId, error: lookupError } = await supabase.rpc("get_user_id_by_email", {
+        _email: newAdminEmail.trim()
+      });
+
+      if (lookupError || !userId) {
+        toast.error("User not found. Make sure the email is registered.");
+        setAddingAdmin(false);
+        return;
+      }
+
+      // Check if already admin
+      const existingAdmin = adminUsers.find(a => a.user_id === userId);
+      if (existingAdmin) {
+        toast.error("This user is already an admin.");
+        setAddingAdmin(false);
+        return;
+      }
+
+      // Add admin role
+      const { error: insertError } = await supabase
+        .from("user_roles")
+        .insert({ user_id: userId, role: "admin" });
+
+      if (insertError) {
+        toast.error("Failed to add admin role");
+        console.error(insertError);
+      } else {
+        toast.success("Admin added successfully!");
+        setNewAdminEmail("");
+        fetchAdminUsers();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+    } finally {
+      setAddingAdmin(false);
+    }
+  };
+
+  const handleRemoveAdmin = async (userId: string) => {
+    setRemovingAdminId(userId);
+    try {
+      const { error } = await supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId)
+        .eq("role", "admin");
+
+      if (error) {
+        toast.error("Failed to remove admin role");
+        console.error(error);
+      } else {
+        toast.success("Admin role removed!");
+        fetchAdminUsers();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+    } finally {
+      setRemovingAdminId(null);
     }
   };
 
@@ -205,21 +293,84 @@ export default function AdminDashboard() {
       </div>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-8">
+          
+          {/* Analytics Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Books</p>
+                    <p className="text-3xl font-bold text-foreground">{totalBooks}</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Package className="h-6 w-6 text-primary" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Orders</p>
+                    <p className="text-3xl font-bold text-foreground">{totalOrders}</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <ShoppingCart className="h-6 w-6 text-blue-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Revenue</p>
+                    <p className="text-3xl font-bold text-foreground">₹{totalRevenue.toLocaleString()}</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <IndianRupee className="h-6 w-6 text-green-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-orange-500/20">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pending Orders</p>
+                    <p className="text-3xl font-bold text-foreground">{pendingOrders}</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-orange-500/20 flex items-center justify-center">
+                    <TrendingUp className="h-6 w-6 text-orange-500" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           <Tabs defaultValue="add-books" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="add-books" className="flex items-center gap-2">
                 <BookPlus className="h-4 w-4" />
-                Add Books
+                <span className="hidden sm:inline">Add Books</span>
               </TabsTrigger>
               <TabsTrigger value="inventory" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
-                Inventory
+                <span className="hidden sm:inline">Inventory</span>
               </TabsTrigger>
               <TabsTrigger value="orders" className="flex items-center gap-2">
                 <ShoppingCart className="h-4 w-4" />
-                Orders
+                <span className="hidden sm:inline">Orders</span>
+              </TabsTrigger>
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span className="hidden sm:inline">Users</span>
               </TabsTrigger>
             </TabsList>
 
@@ -480,6 +631,87 @@ export default function AdminDashboard() {
                               ))}
                             </div>
                           </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Users Tab */}
+            <TabsContent value="users">
+              <Card>
+                <CardHeader>
+                  <CardTitle>User Management</CardTitle>
+                  <CardDescription>
+                    Manage admin users and their roles ({adminUsers.length} admins)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Add Admin Form */}
+                  <form onSubmit={handleAddAdmin} className="flex gap-3">
+                    <div className="flex-1">
+                      <Input
+                        type="email"
+                        placeholder="Enter user email to make admin..."
+                        value={newAdminEmail}
+                        onChange={(e) => setNewAdminEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" disabled={addingAdmin} className="shrink-0">
+                      {addingAdmin ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <UserPlus className="h-4 w-4 mr-2" />
+                          Add Admin
+                        </>
+                      )}
+                    </Button>
+                  </form>
+
+                  {/* Admin Users List */}
+                  <div className="space-y-3">
+                    <h3 className="font-medium text-foreground">Current Admins</h3>
+                    {adminUsers.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">
+                        No admin users found.
+                      </p>
+                    ) : (
+                      adminUsers.map((admin) => (
+                        <div
+                          key={admin.user_id}
+                          className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                              <Users className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground">{admin.email}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Admin since {new Date(admin.created_at).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRemoveAdmin(admin.user_id)}
+                            disabled={removingAdminId === admin.user_id}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            {removingAdminId === admin.user_id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <>
+                                <UserMinus className="h-4 w-4 mr-2" />
+                                Remove
+                              </>
+                            )}
+                          </Button>
                         </div>
                       ))
                     )}
