@@ -8,23 +8,23 @@ interface ConfettiPiece {
   delay: number;
   opacity: number;
   color: string;
-  shape: "circle" | "square" | "star";
+  shape: "circle" | "square" | "kite";
 }
 
 const CONFETTI_COLORS = [
-  "hsl(var(--newyear-gold))",
-  "hsl(var(--newyear-midnight))",
-  "hsl(var(--confetti-pink))",
-  "hsl(var(--confetti-purple))",
-  "hsl(var(--sparkle))",
-  "hsl(var(--newyear-silver))",
+  "hsl(var(--sankranti-saffron))",
+  "hsl(var(--sankranti-yellow))",
+  "hsl(var(--kite-red))",
+  "hsl(var(--kite-blue))",
+  "hsl(var(--kite-green))",
+  "hsl(var(--kite-purple))",
 ];
 
 export const Confetti = () => {
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
 
   useEffect(() => {
-    const shapes: Array<"circle" | "square" | "star"> = ["circle", "square", "star"];
+    const shapes: Array<"circle" | "square" | "kite"> = ["circle", "square", "kite"];
     const pieces: ConfettiPiece[] = Array.from({ length: 40 }, (_, i) => ({
       id: i,
       left: Math.random() * 100,
@@ -39,15 +39,14 @@ export const Confetti = () => {
   }, []);
 
   const renderShape = (piece: ConfettiPiece) => {
-    if (piece.shape === "star") {
+    if (piece.shape === "kite") {
       return (
         <svg
-          viewBox="0 0 24 24"
-          fill="currentColor"
+          viewBox="0 0 24 30"
           style={{ color: piece.color }}
           className="w-full h-full"
         >
-          <path d="M12 2L13.5 8.5L20 9L15 13L16.5 20L12 16L7.5 20L9 13L4 9L10.5 8.5L12 2Z" />
+          <path d="M12 0L24 12L12 30L0 12L12 0Z" fill="currentColor" />
         </svg>
       );
     }

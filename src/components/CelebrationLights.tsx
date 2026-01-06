@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 
 const LIGHT_COLORS = [
-  "hsl(var(--newyear-gold))",
-  "hsl(var(--newyear-midnight))",
-  "hsl(var(--confetti-pink))",
-  "hsl(var(--sparkle))",
-  "hsl(var(--confetti-purple))",
+  "hsl(var(--sankranti-saffron))",
+  "hsl(var(--sankranti-yellow))",
+  "hsl(var(--kite-red))",
+  "hsl(var(--sankranti-sky))",
+  "hsl(var(--kite-green))",
 ];
 
 export const CelebrationLights = () => {
