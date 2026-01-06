@@ -37,7 +37,7 @@ export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
   const handleBuyNow = () => {
     addToCart(book);
     toast.success(`${book.title} added to cart!`);
-    navigate("/cart");
+    navigate("/checkout");
   };
 
   return (
