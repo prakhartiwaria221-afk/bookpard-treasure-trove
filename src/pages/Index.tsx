@@ -5,15 +5,15 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { FilterControls } from "@/components/FilterControls";
 import { BookCard } from "@/components/BookCard";
 import { BookSection } from "@/components/BookSection";
-import { NewYearBanner } from "@/components/NewYearBanner";
-import { ConfettiEffect } from "@/components/ConfettiEffect";
+import { SankrantiBanner } from "@/components/SankrantiBanner";
+import { KiteEffect } from "@/components/KiteEffect";
 import { useCart } from "@/hooks/useCart";
 import { booksData } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
-import { Sparkles, PartyPopper, Heart, Star } from "lucide-react";
+import { Sun, Heart } from "lucide-react";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -24,11 +24,11 @@ const Index = () => {
   const [filterCondition, setFilterCondition] = useState<FilterCondition>("all");
   const [userListings, setUserListings] = useState<Book[]>([]);
   const [adminBooks, setAdminBooks] = useState<Book[]>([]);
-  const [showConfetti, setShowConfetti] = useState(true);
+  const [showKites, setShowKites] = useState(true);
 
-  // Auto-hide confetti after 10 seconds
+  // Auto-hide kites after 10 seconds
   useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 10000);
+    const timer = setTimeout(() => setShowKites(false), 10000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -217,12 +217,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Confetti Effect */}
-      {showConfetti && <ConfettiEffect />}
+      {/* Kite Effect */}
+      {showKites && <KiteEffect />}
       
-      {/* New Year Banner - Fixed at very top */}
+      {/* Sankranti Banner - Fixed at very top */}
       <div className="fixed top-0 left-0 right-0 z-[60]">
-        <NewYearBanner />
+        <SankrantiBanner />
       </div>
       
       {/* Main content with adjusted padding */}
@@ -233,17 +233,21 @@ const Index = () => {
           <Hero />
           
           <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
-            {/* New Year Section Header */}
+            {/* Sankranti Section Header */}
             <div className="text-center mb-12 animate-fade-in">
               <div className="inline-flex items-center gap-3 mb-4">
-                <PartyPopper className="h-8 w-8 text-newyear-gold animate-bounce-slow" />
+                <Sun className="h-8 w-8 text-sankranti-saffron animate-sun-pulse" />
                 <h2 className="text-3xl md:text-4xl font-playfair font-bold text-festive-gradient">
-                  New Year 2026 Book Collection
+                  Makar Sankranti 2026 Book Collection
                 </h2>
-                <Sparkles className="h-8 w-8 text-confetti-pink animate-sparkle" />
+                <div className="h-8 w-8 animate-kite-sway">
+                  <svg viewBox="0 0 24 30" className="w-full h-full" fill="hsl(var(--kite-red))">
+                    <path d="M12 0L24 12L12 30L0 12L12 0Z" />
+                  </svg>
+                </div>
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Start the new year with amazing reads! Explore our curated collection of books at special celebration prices.
+                Celebrate Sankranti with amazing reads! Explore our curated collection of books at special festive prices.
               </p>
             </div>
 
@@ -264,7 +268,7 @@ const Index = () => {
             {/* Category Title */}
             {!searchQuery && (
               <div className="mb-6 flex items-center gap-3">
-                <Star className="h-6 w-6 text-newyear-gold fill-newyear-gold/30" />
+                <Sun className="h-6 w-6 text-sankranti-saffron" />
                 <h2 className="text-2xl font-playfair font-bold text-foreground">
                   {selectedCategory}
                   <span className="text-muted-foreground font-inter font-normal text-base ml-2">
@@ -316,7 +320,7 @@ const Index = () => {
                 {/* Popular Series */}
                 {bookSections.popularSeries.length > 0 && (
                   <BookSection
-                    title="🎬 Popular Series"
+                    title="🪁 Popular Series"
                     books={bookSections.popularSeries}
                     onAddToCart={handleAddToCart}
                     icon="sparkles"
@@ -367,40 +371,48 @@ const Index = () => {
             )}
           </main>
 
-          {/* Footer - New Year Themed */}
-          <footer className="relative bg-gradient-to-b from-card to-newyear-midnight-dark/10 dark:to-newyear-midnight-dark/30 border-t border-newyear-gold/20 mt-16 overflow-hidden">
+          {/* Footer - Sankranti Themed */}
+          <footer className="relative bg-gradient-to-b from-card to-sankranti-saffron/10 dark:to-sankranti-saffron-dark/20 border-t border-sankranti-saffron/20 mt-16 overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute inset-0 pointer-events-none">
-              <Star className="absolute top-8 left-[10%] h-4 w-4 text-newyear-gold/20 fill-newyear-gold/10 animate-twinkle-star" />
-              <Star className="absolute top-12 right-[15%] h-3 w-3 text-newyear-gold/25 fill-newyear-gold/15 animate-twinkle-star" style={{ animationDelay: "0.5s" }} />
-              <Sparkles className="absolute bottom-20 left-[20%] h-4 w-4 text-newyear-gold/15 animate-sparkle" style={{ animationDelay: "1s" }} />
+              <Sun className="absolute top-8 left-[10%] h-4 w-4 text-sankranti-saffron/20 animate-sun-pulse" />
+              <Sun className="absolute top-12 right-[15%] h-3 w-3 text-sun-glow/25 animate-sun-pulse" style={{ animationDelay: "0.5s" }} />
+              <div className="absolute bottom-20 left-[20%] h-4 w-4 animate-kite-sway" style={{ animationDelay: "1s" }}>
+                <svg viewBox="0 0 16 20" className="w-full h-full opacity-15" fill="hsl(var(--kite-blue))">
+                  <path d="M8 0L16 10L8 20L0 10L8 0Z" />
+                </svg>
+              </div>
             </div>
             
             <div className="container mx-auto px-4 py-12 relative z-10">
               <div className="grid md:grid-cols-3 gap-8">
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-newyear-gold" />
+                    <Sun className="h-4 w-4 text-sankranti-saffron" />
                     About BookPard
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Your trusted marketplace for buying and selling books. Celebrate New Year 2026 with amazing deals on books for all ages!
+                    Your trusted marketplace for buying and selling books. Celebrate Makar Sankranti 2026 with amazing deals on books for all ages!
                   </p>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Star className="h-4 w-4 text-newyear-gold fill-newyear-gold/50" />
+                    <div className="h-4 w-4">
+                      <svg viewBox="0 0 16 20" className="w-full h-full" fill="hsl(var(--sankranti-saffron))">
+                        <path d="M8 0L16 10L8 20L0 10L8 0Z" />
+                      </svg>
+                    </div>
                     Quick Links
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li><a href="/" className="hover:text-newyear-gold transition-colors">Home</a></li>
-                    <li><a href="/#books-section" className="hover:text-newyear-gold transition-colors">Books</a></li>
-                    <li><a href="/sell" className="hover:text-newyear-gold transition-colors">Sell Books</a></li>
+                    <li><a href="/" className="hover:text-sankranti-saffron transition-colors">Home</a></li>
+                    <li><a href="/#books-section" className="hover:text-sankranti-saffron transition-colors">Books</a></li>
+                    <li><a href="/sell" className="hover:text-sankranti-saffron transition-colors">Sell Books</a></li>
                   </ul>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-confetti-pink" />
+                    <Heart className="h-4 w-4 text-kite-pink" />
                     Contact Us
                   </h3>
                   <p className="text-muted-foreground text-sm">
@@ -410,15 +422,19 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* New Year Footer Message */}
-              <div className="mt-8 pt-8 border-t border-newyear-gold/20 text-center">
+              {/* Sankranti Footer Message */}
+              <div className="mt-8 pt-8 border-t border-sankranti-saffron/20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <PartyPopper className="h-4 w-4 text-newyear-gold" />
-                  <span className="font-dancing text-lg text-newyear-gold">Happy New Year 2026!</span>
-                  <PartyPopper className="h-4 w-4 text-newyear-gold scale-x-[-1]" />
+                  <Sun className="h-4 w-4 text-sankranti-saffron" />
+                  <span className="font-dancing text-lg text-sankranti-saffron">Happy Makar Sankranti 2026!</span>
+                  <div className="h-4 w-4 animate-kite-sway">
+                    <svg viewBox="0 0 16 20" className="w-full h-full" fill="hsl(var(--kite-red))">
+                      <path d="M8 0L16 10L8 20L0 10L8 0Z" />
+                    </svg>
+                  </div>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  © 2026 BookPard. All rights reserved. Made with <Heart className="inline h-3 w-3 text-confetti-pink fill-confetti-pink" /> for book lovers.
+                  © 2026 BookPard. All rights reserved. Made with <Heart className="inline h-3 w-3 text-kite-pink fill-kite-pink" /> for book lovers.
                 </p>
               </div>
             </div>

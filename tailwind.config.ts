@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// New Year 2026 celebration color utilities for direct use
+// Makar Sankranti celebration color utilities for direct use
 
 export default {
   darkMode: ["class"],
@@ -54,25 +54,27 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // New Year 2026 celebration colors
-        newyear: {
-          midnight: "hsl(var(--newyear-midnight))",
-          "midnight-light": "hsl(var(--newyear-midnight-light))",
-          "midnight-dark": "hsl(var(--newyear-midnight-dark))",
-          gold: "hsl(var(--newyear-gold))",
-          "gold-light": "hsl(var(--newyear-gold-light))",
-          "gold-dark": "hsl(var(--newyear-gold-dark))",
-          silver: "hsl(var(--newyear-silver))",
-          "silver-light": "hsl(var(--newyear-silver-light))",
-          champagne: "hsl(var(--newyear-champagne))",
+        // Makar Sankranti celebration colors
+        sankranti: {
+          saffron: "hsl(var(--sankranti-saffron))",
+          "saffron-light": "hsl(var(--sankranti-saffron-light))",
+          "saffron-dark": "hsl(var(--sankranti-saffron-dark))",
+          sky: "hsl(var(--sankranti-sky))",
+          "sky-light": "hsl(var(--sankranti-sky-light))",
+          "sky-dark": "hsl(var(--sankranti-sky-dark))",
+          yellow: "hsl(var(--sankranti-yellow))",
+          "yellow-light": "hsl(var(--sankranti-yellow-light))",
+          cream: "hsl(var(--sankranti-cream))",
         },
-        sparkle: "hsl(var(--sparkle))",
-        confetti: {
-          pink: "hsl(var(--confetti-pink))",
-          purple: "hsl(var(--confetti-purple))",
-          green: "hsl(var(--confetti-green))",
-          blue: "hsl(var(--confetti-blue))",
-          red: "hsl(var(--confetti-red))",
+        sun: {
+          glow: "hsl(var(--sun-glow))",
+        },
+        kite: {
+          red: "hsl(var(--kite-red))",
+          green: "hsl(var(--kite-green))",
+          purple: "hsl(var(--kite-purple))",
+          blue: "hsl(var(--kite-blue))",
+          pink: "hsl(var(--kite-pink))",
         },
       },
       borderRadius: {
@@ -97,26 +99,33 @@ export default {
           from: { opacity: "0", transform: "translateX(-10px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
-        confetti: {
-          "0%": { transform: "translateY(-10vh) translateX(0) rotate(0deg)", opacity: "1" },
-          "100%": { transform: "translateY(100vh) translateX(50px) rotate(720deg)", opacity: "0.3" },
+        "kite-fly": {
+          "0%": { transform: "translateY(100vh) translateX(-20px) rotate(-15deg)", opacity: "0" },
+          "10%": { opacity: "1" },
+          "50%": { transform: "translateY(20vh) translateX(30px) rotate(10deg)" },
+          "100%": { transform: "translateY(-20vh) translateX(-10px) rotate(-5deg)", opacity: "0" },
+        },
+        "kite-sway": {
+          "0%, 100%": { transform: "translateX(0) rotate(0deg)" },
+          "25%": { transform: "translateX(20px) rotate(8deg)" },
+          "50%": { transform: "translateX(-15px) rotate(-5deg)" },
+          "75%": { transform: "translateX(10px) rotate(3deg)" },
+        },
+        "sun-pulse": {
+          "0%, 100%": { opacity: "0.8", transform: "scale(1)" },
+          "50%": { opacity: "1", transform: "scale(1.1)" },
         },
         sparkle: {
           "0%, 100%": { opacity: "0.4", transform: "scale(0.8)" },
           "50%": { opacity: "1", transform: "scale(1.2)" },
-        },
-        firework: {
-          "0%": { transform: "scale(0)", opacity: "1" },
-          "50%": { transform: "scale(1.5)", opacity: "0.8" },
-          "100%": { transform: "scale(2)", opacity: "0" },
         },
         shimmer: {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(45 85% 50% / 0.6)" },
-          "50%": { boxShadow: "0 0 40px hsl(45 85% 50% / 0.9), 0 0 60px hsl(45 85% 50% / 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(25 90% 50% / 0.6)" },
+          "50%": { boxShadow: "0 0 40px hsl(25 90% 50% / 0.9), 0 0 60px hsl(45 95% 50% / 0.5)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -140,9 +149,10 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
-        confetti: "confetti linear infinite",
+        "kite-fly": "kite-fly 15s ease-in-out infinite",
+        "kite-sway": "kite-sway 4s ease-in-out infinite",
+        "sun-pulse": "sun-pulse 3s ease-in-out infinite",
         sparkle: "sparkle 1.5s ease-in-out infinite",
-        firework: "firework 2s ease-out infinite",
         shimmer: "shimmer 2s linear infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         float: "float 3s ease-in-out infinite",
