@@ -108,7 +108,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <button 
+            onClick={() => {
+              navigate("/");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center gap-3 hover:opacity-90 transition-opacity"
+          >
             <div className="relative h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-newyear-gold/60 shadow-lg shadow-newyear-gold/30 hover:shadow-xl hover:shadow-newyear-gold/40 hover:scale-105 transition-all duration-300">
               <img 
                 src={logoDarkMode} 
@@ -122,7 +128,7 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               />
             </div>
             <span className="text-xl md:text-2xl font-bold text-primary hidden sm:block transition-colors duration-300">BookPard</span>
-          </Link>
+          </button>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">

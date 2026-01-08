@@ -131,6 +131,4 @@ export const categories = [
   "Romance",
   "Horror",
   "Study",
-  "New Books",
-  "Old Books",
 ];
