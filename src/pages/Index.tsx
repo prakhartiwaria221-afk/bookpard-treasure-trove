@@ -117,15 +117,23 @@ const Index = () => {
       } else if (selectedCategory === "Old Books") {
         filtered = filtered.filter((book) => book.condition === "old");
       } else if (selectedCategory === "Collection") {
-        // For Collection, include books that belong to any defined collection
+        // For Collection, include books that belong to any defined collection OR share same author
+        // First, find authors with multiple books
+        const authorCounts = allBooks.reduce((acc, book) => {
+          acc[book.author.toLowerCase()] = (acc[book.author.toLowerCase()] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        const authorsWithMultipleBooks = Object.keys(authorCounts).filter(author => authorCounts[author] > 1);
+        
         filtered = filtered.filter((book) => {
           const titleLower = book.title.toLowerCase();
           const authorLower = book.author.toLowerCase();
+          // Match by collection keywords OR by author having multiple books
           return bookCollections.some((collection) =>
             collection.keywords.some((keyword) =>
               titleLower.includes(keyword) || authorLower.includes(keyword)
             )
-          );
+          ) || authorsWithMultipleBooks.includes(authorLower);
         });
       } else {
         // Case-insensitive category matching
@@ -192,8 +200,8 @@ const Index = () => {
       return book.category.toLowerCase() === selectedCategory.toLowerCase();
     });
 
-    // Collection groups - group books by their collection
-    const collectionGroups = bookCollections.map((collection) => {
+    // Collection groups - group books by their collection AND by author
+    const predefinedCollectionGroups = bookCollections.map((collection) => {
       const booksInCollection = baseBooks.filter((book) => {
         const titleLower = book.title.toLowerCase();
         const authorLower = book.author.toLowerCase();
@@ -208,6 +216,44 @@ const Index = () => {
         books: booksInCollection,
       };
     }).filter((collection) => collection.books.length > 0);
+    
+    // Also create author-based collections for authors with multiple books
+    const authorGroups: Record<string, Book[]> = {};
+    baseBooks.forEach((book) => {
+      const authorKey = book.author.toLowerCase();
+      if (!authorGroups[authorKey]) {
+        authorGroups[authorKey] = [];
+      }
+      authorGroups[authorKey].push(book);
+    });
+    
+    // Get book IDs already in predefined collections
+    const booksInPredefinedCollections = new Set(
+      predefinedCollectionGroups.flatMap((c) => c.books.map((b) => b.id))
+    );
+    
+    // Create author collections for authors with 2+ books not already in predefined collections
+    const authorCollectionGroups = Object.entries(authorGroups)
+      .filter(([_, books]) => books.length >= 2)
+      .filter(([author]) => {
+        // Check if this author is already covered by a predefined collection
+        return !bookCollections.some((c) => 
+          c.author.toLowerCase() === author || 
+          c.keywords.some((k) => author.includes(k))
+        );
+      })
+      .map(([author, books]) => {
+        books.sort((a, b) => a.title.localeCompare(b.title));
+        return {
+          id: `author-${author.replace(/\s+/g, '-')}`,
+          name: `${books[0].author} Collection`,
+          author: books[0].author,
+          keywords: [author],
+          books,
+        };
+      });
+    
+    const collectionGroups = [...predefinedCollectionGroups, ...authorCollectionGroups];
 
     // Popular Series - Books that are part of a series (Harry Potter, etc.)
     const popularSeries = baseBooks.filter(
