@@ -194,6 +194,22 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_public_user_listings: {
+        Args: never
+        Returns: {
+          author: string
+          category: string
+          condition: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          price: number
+          status: string
+          title: string
+          user_id: string
+        }[]
+      }
       get_user_id_by_email: { Args: { _email: string }; Returns: string }
       has_role: {
         Args: {
