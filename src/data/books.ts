@@ -131,4 +131,33 @@ export const categories = [
   "Romance",
   "Horror",
   "Study",
+  "Collection",
+];
+
+// Define book collections (series/author groupings)
+export const bookCollections = [
+  {
+    id: "harry-potter",
+    name: "Harry Potter Series",
+    author: "J.K. Rowling",
+    keywords: ["harry potter"],
+  },
+  {
+    id: "disney-pixar",
+    name: "Disney Pixar Collection",
+    author: "Disney Pixar",
+    keywords: ["toy story", "cars", "disney", "pixar"],
+  },
+  {
+    id: "agatha-christie",
+    name: "Agatha Christie Mysteries",
+    author: "Agatha Christie",
+    keywords: ["agatha christie", "orient express", "poirot", "marple"],
+  },
+  {
+    id: "stephen-king",
+    name: "Stephen King Horror",
+    author: "Stephen King",
+    keywords: ["stephen king"],
+  },
 ];

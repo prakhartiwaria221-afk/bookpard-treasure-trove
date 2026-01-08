@@ -8,7 +8,7 @@ import { BookSection } from "@/components/BookSection";
 import { SankrantiBanner } from "@/components/SankrantiBanner";
 import { KiteEffect } from "@/components/KiteEffect";
 import { useCart } from "@/hooks/useCart";
-import { booksData } from "@/data/books";
+import { booksData, bookCollections } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -116,6 +116,17 @@ const Index = () => {
         filtered = filtered.filter((book) => book.condition === "new");
       } else if (selectedCategory === "Old Books") {
         filtered = filtered.filter((book) => book.condition === "old");
+      } else if (selectedCategory === "Collection") {
+        // For Collection, include books that belong to any defined collection
+        filtered = filtered.filter((book) => {
+          const titleLower = book.title.toLowerCase();
+          const authorLower = book.author.toLowerCase();
+          return bookCollections.some((collection) =>
+            collection.keywords.some((keyword) =>
+              titleLower.includes(keyword) || authorLower.includes(keyword)
+            )
+          );
+        });
       } else {
         // Case-insensitive category matching
         filtered = filtered.filter(
@@ -154,14 +165,49 @@ const Index = () => {
       if (selectedCategory === "All Books") return true;
       if (selectedCategory === "New Books") return book.condition === "new";
       if (selectedCategory === "Old Books") return book.condition === "old";
+      if (selectedCategory === "Collection") {
+        const titleLower = book.title.toLowerCase();
+        const authorLower = book.author.toLowerCase();
+        return bookCollections.some((collection) =>
+          collection.keywords.some((keyword) =>
+            titleLower.includes(keyword) || authorLower.includes(keyword)
+          )
+        );
+      }
       return book.category.toLowerCase() === selectedCategory.toLowerCase();
     });
     const baseUserListings = userListings.filter((book) => {
       if (selectedCategory === "All Books") return true;
       if (selectedCategory === "New Books") return book.condition === "new";
       if (selectedCategory === "Old Books") return book.condition === "old";
+      if (selectedCategory === "Collection") {
+        const titleLower = book.title.toLowerCase();
+        const authorLower = book.author.toLowerCase();
+        return bookCollections.some((collection) =>
+          collection.keywords.some((keyword) =>
+            titleLower.includes(keyword) || authorLower.includes(keyword)
+          )
+        );
+      }
       return book.category.toLowerCase() === selectedCategory.toLowerCase();
     });
+
+    // Collection groups - group books by their collection
+    const collectionGroups = bookCollections.map((collection) => {
+      const booksInCollection = baseBooks.filter((book) => {
+        const titleLower = book.title.toLowerCase();
+        const authorLower = book.author.toLowerCase();
+        return collection.keywords.some((keyword) =>
+          titleLower.includes(keyword) || authorLower.includes(keyword)
+        );
+      });
+      // Sort books within collection by title for proper ordering (Part 1, Part 2, etc.)
+      booksInCollection.sort((a, b) => a.title.localeCompare(b.title));
+      return {
+        ...collection,
+        books: booksInCollection,
+      };
+    }).filter((collection) => collection.books.length > 0);
 
     // Popular Series - Books that are part of a series (Harry Potter, etc.)
     const popularSeries = baseBooks.filter(
@@ -199,6 +245,7 @@ const Index = () => {
     const newArrivals = [...baseAdminBooks, ...baseUserListings].slice(0, 8);
 
     return {
+      collectionGroups,
       popularSeries,
       bestsellers,
       bestAuthors,
@@ -303,8 +350,24 @@ const Index = () => {
               </>
             )}
 
-            {/* Show organized sections for all categories (not during search) */}
-            {!searchQuery && filteredAndSortedBooks.length > 0 && (
+            {/* Show Collection Groups when Collection category is selected */}
+            {!searchQuery && selectedCategory === "Collection" && filteredAndSortedBooks.length > 0 && (
+              <div className="animate-fade-in space-y-6">
+                {bookSections.collectionGroups.map((collection) => (
+                  <BookSection
+                    key={collection.id}
+                    title={`📚 ${collection.name}`}
+                    books={collection.books}
+                    onAddToCart={handleAddToCart}
+                    icon="library"
+                    variant="featured"
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Show organized sections for all categories (not during search, not Collection) */}
+            {!searchQuery && selectedCategory !== "Collection" && filteredAndSortedBooks.length > 0 && (
               <div className="animate-fade-in space-y-4">
                 {/* New Arrivals Section */}
                 {bookSections.newArrivals.length > 0 && (
