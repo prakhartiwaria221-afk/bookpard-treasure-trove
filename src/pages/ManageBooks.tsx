@@ -280,6 +280,21 @@ export default function ManageBooks() {
 
   const handleAddBook = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate prices before submission
+    const parsedPrice = parseInt(price);
+    const parsedOldPrice = parseInt(oldPrice);
+    
+    if (isNaN(parsedPrice) || parsedPrice <= 0 || parsedPrice > 2147483647) {
+      toast.error("Price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+    
+    if (isNaN(parsedOldPrice) || parsedOldPrice <= 0 || parsedOldPrice > 2147483647) {
+      toast.error("Original price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+    
     setUploading(true);
 
     try {
@@ -308,8 +323,8 @@ export default function ManageBooks() {
         author,
         category,
         condition,
-        price: parseInt(price),
-        old_price: parseInt(oldPrice),
+        price: parsedPrice,
+        old_price: parsedOldPrice,
         image_url: finalImageUrl,
         description: description || null,
         created_by: user?.id || null,
@@ -365,6 +380,21 @@ export default function ManageBooks() {
   const handleEditBook = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingBook) return;
+    
+    // Validate prices before submission
+    const parsedEditPrice = parseInt(editPrice);
+    const parsedEditOldPrice = parseInt(editOldPrice);
+    
+    if (isNaN(parsedEditPrice) || parsedEditPrice <= 0 || parsedEditPrice > 2147483647) {
+      toast.error("Price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+    
+    if (isNaN(parsedEditOldPrice) || parsedEditOldPrice <= 0 || parsedEditOldPrice > 2147483647) {
+      toast.error("Original price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+    
     setEditUploading(true);
 
     try {
@@ -387,8 +417,8 @@ export default function ManageBooks() {
           author: editAuthor,
           category: editCategory,
           condition: editCondition,
-          price: parseInt(editPrice),
-          old_price: parseInt(editOldPrice),
+          price: parsedEditPrice,
+          old_price: parsedEditOldPrice,
           image_url: finalImageUrl,
           description: editDescription || null,
         })
