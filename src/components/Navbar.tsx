@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CelebrationLights } from "@/components/CelebrationLights";
+import { SearchSuggestions } from "@/components/SearchSuggestions";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useTheme } from "@/contexts/ThemeContext";
 import logoDarkMode from "@/assets/logo-dark-mode.jpg";
@@ -29,14 +30,32 @@ interface NavbarProps {
 export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const { isAdmin } = useAdmin();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchRef.current && !searchRef.current.contains(event.target as Node) &&
+        mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Handle scroll effect - hide on scroll down, show on scroll up
   useEffect(() => {
@@ -76,6 +95,18 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     onSearchChange(value);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleSuggestionSelect = (book: any) => {
+    if (book.title) {
+      setSearchQuery(book.title);
+      onSearchChange(book.title);
+    } else if (book.author) {
+      setSearchQuery(book.author);
+      onSearchChange(book.author);
+    }
+    setShowSuggestions(false);
   };
 
   const handleSignOut = async () => {
@@ -144,14 +175,21 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
           </div>
 
           {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-md relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div ref={searchRef} className="hidden lg:flex flex-1 max-w-md relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
             <Input
               type="text"
               placeholder="Search books..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery && setShowSuggestions(true)}
               className="pl-10 bg-muted/50 border-border focus:bg-background"
+            />
+            <SearchSuggestions
+              query={searchQuery}
+              isVisible={showSuggestions}
+              onSelect={handleSuggestionSelect}
+              onClose={() => setShowSuggestions(false)}
             />
           </div>
 
@@ -249,15 +287,22 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
         </div>
 
         {/* Mobile Search */}
-        <div className="lg:hidden mt-4">
+        <div ref={mobileSearchRef} className="lg:hidden mt-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />
             <Input
               type="text"
               placeholder="Search books..."
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery && setShowSuggestions(true)}
               className="pl-10 bg-muted/50 border-border"
+            />
+            <SearchSuggestions
+              query={searchQuery}
+              isVisible={showSuggestions}
+              onSelect={handleSuggestionSelect}
+              onClose={() => setShowSuggestions(false)}
             />
           </div>
         </div>
