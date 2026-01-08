@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Book } from "@/types/book";
 import { BookCard } from "@/components/BookCard";
-import { Sparkles, Trophy, Star, TrendingUp, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Trophy, Star, TrendingUp, Clock, ChevronDown, ChevronUp, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BookSectionProps {
   title: string;
   books: Book[];
   onAddToCart: (book: Book) => void;
-  icon?: "sparkles" | "trophy" | "star" | "trending" | "clock";
+  icon?: "sparkles" | "trophy" | "star" | "trending" | "clock" | "library";
   variant?: "default" | "featured" | "new";
 }
 
@@ -18,6 +18,7 @@ const iconMap = {
   star: Star,
   trending: TrendingUp,
   clock: Clock,
+  library: Library,
 };
 
 export const BookSection = ({
