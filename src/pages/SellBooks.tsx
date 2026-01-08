@@ -97,6 +97,13 @@ export default function SellBooks() {
       return;
     }
 
+    // Validate price
+    const parsedPrice = parseInt(formData.price);
+    if (isNaN(parsedPrice) || parsedPrice <= 0 || parsedPrice > 2147483647) {
+      toast.error("Price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -120,7 +127,7 @@ export default function SellBooks() {
           author: formData.author,
           category: formData.category,
           condition: formData.condition, // Use exact value from form: excellent, good, or average
-          price: parseInt(formData.price),
+          price: parsedPrice,
           description: formData.description || null,
           contact_email: formData.contactEmail,
           contact_phone: formData.contactPhone,
@@ -289,6 +296,9 @@ export default function SellBooks() {
               <Input
                 id="price"
                 type="number"
+                min="1"
+                max="2147483647"
+                step="1"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                 placeholder="Enter selling price"
