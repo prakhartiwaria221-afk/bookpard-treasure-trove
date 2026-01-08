@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Book } from "@/types/book";
 import { BookCard } from "@/components/BookCard";
-import { Sparkles, Trophy, Star, TrendingUp, Clock } from "lucide-react";
+import { Sparkles, Trophy, Star, TrendingUp, Clock, ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface BookSectionProps {
   title: string;
@@ -25,6 +27,7 @@ export const BookSection = ({
   icon = "sparkles",
   variant = "default",
 }: BookSectionProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const Icon = iconMap[icon];
 
   if (books.length === 0) return null;
@@ -34,6 +37,8 @@ export const BookSection = ({
     featured: "bg-gradient-to-r from-newyear-midnight/10 via-newyear-gold/10 to-newyear-midnight/10",
     new: "bg-gradient-to-r from-confetti-purple/10 via-confetti-pink/10 to-confetti-orange/10",
   };
+
+  const displayedBooks = isExpanded ? books : books.slice(0, 4);
 
   return (
     <section className={`rounded-2xl p-6 mb-8 ${variantStyles[variant]} border border-border/50 backdrop-blur-sm`}>
@@ -51,16 +56,30 @@ export const BookSection = ({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {books.slice(0, 4).map((book) => (
+        {displayedBooks.map((book) => (
           <BookCard key={book.id} book={book} onAddToCart={onAddToCart} />
         ))}
       </div>
 
       {books.length > 4 && (
         <div className="mt-4 text-center">
-          <span className="text-sm text-muted-foreground">
-            +{books.length - 4} more books in this section
-          </span>
+          <Button
+            variant="ghost"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-sm text-muted-foreground hover:text-foreground gap-2"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="h-4 w-4" />
+                Show less
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-4 w-4" />
+                +{books.length - 4} more books in this section
+              </>
+            )}
+          </Button>
         </div>
       )}
     </section>
