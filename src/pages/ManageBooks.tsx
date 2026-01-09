@@ -48,6 +48,22 @@ type Book = {
   description: string | null;
 };
 
+type UserListing = {
+  id: string;
+  user_id: string;
+  title: string;
+  author: string;
+  category: string;
+  condition: string;
+  price: number;
+  image_url: string | null;
+  description: string | null;
+  contact_email: string;
+  contact_phone: string;
+  status: string;
+  created_at: string | null;
+};
+
 type AllBook = {
   id: string;
   title: string;
@@ -66,6 +82,7 @@ export default function ManageBooks() {
   const { isAdmin, loading } = useAdmin();
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
+  const [userListings, setUserListings] = useState<UserListing[]>([]);
   const [allBooks, setAllBooks] = useState<AllBook[]>([]);
 
   // Form states for adding books
@@ -81,7 +98,7 @@ export default function ManageBooks() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Edit modal states
+  // Edit modal states for admin books
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -95,6 +112,21 @@ export default function ManageBooks() {
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
   const [editUploading, setEditUploading] = useState(false);
   const editFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Edit modal states for user listings
+  const [editUserListingDialogOpen, setEditUserListingDialogOpen] = useState(false);
+  const [editingUserListing, setEditingUserListing] = useState<UserListing | null>(null);
+  const [editUserListingTitle, setEditUserListingTitle] = useState("");
+  const [editUserListingAuthor, setEditUserListingAuthor] = useState("");
+  const [editUserListingCategory, setEditUserListingCategory] = useState("");
+  const [editUserListingCondition, setEditUserListingCondition] = useState("new");
+  const [editUserListingPrice, setEditUserListingPrice] = useState("");
+  const [editUserListingImageUrl, setEditUserListingImageUrl] = useState("");
+  const [editUserListingDescription, setEditUserListingDescription] = useState("");
+  const [editUserListingStatus, setEditUserListingStatus] = useState("active");
+  const [editUserListingImageFile, setEditUserListingImageFile] = useState<File | null>(null);
+  const [editUserListingUploading, setEditUserListingUploading] = useState(false);
+  const editUserListingFileInputRef = useRef<HTMLInputElement>(null);
 
   // Search and filter states for Book Details tab
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,6 +180,7 @@ export default function ManageBooks() {
   useEffect(() => {
     if (isAdmin) {
       fetchBooks();
+      fetchUserListings();
       fetchAllBooks();
     }
   }, [isAdmin]);
@@ -170,6 +203,7 @@ export default function ManageBooks() {
         'postgres_changes',
         { event: '*', schema: 'public', table: 'user_listings' },
         () => {
+          fetchUserListings();
           fetchAllBooks();
         }
       )
@@ -191,6 +225,20 @@ export default function ManageBooks() {
       console.error(error);
     } else {
       setBooks(data || []);
+    }
+  };
+
+  const fetchUserListings = async () => {
+    const { data, error } = await supabase
+      .from("user_listings")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      toast.error("Failed to fetch user listings");
+      console.error(error);
+    } else {
+      setUserListings(data || []);
     }
   };
 
@@ -440,6 +488,89 @@ export default function ManageBooks() {
     }
   };
 
+  // User Listing Management Functions
+  const handleDeleteUserListing = async (id: string) => {
+    const { error } = await supabase.from("user_listings").delete().eq("id", id);
+
+    if (error) {
+      toast.error("Failed to delete user listing");
+      console.error(error);
+    } else {
+      toast.success("User listing deleted successfully!");
+      fetchUserListings();
+      fetchAllBooks();
+    }
+  };
+
+  const openEditUserListingDialog = (listing: UserListing) => {
+    setEditingUserListing(listing);
+    setEditUserListingTitle(listing.title);
+    setEditUserListingAuthor(listing.author);
+    setEditUserListingCategory(listing.category);
+    setEditUserListingCondition(listing.condition);
+    setEditUserListingPrice(listing.price.toString());
+    setEditUserListingImageUrl(listing.image_url || "");
+    setEditUserListingDescription(listing.description || "");
+    setEditUserListingStatus(listing.status || "active");
+    setEditUserListingDialogOpen(true);
+  };
+
+  const handleEditUserListing = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUserListing) return;
+    
+    const parsedPrice = parseInt(editUserListingPrice);
+    
+    if (isNaN(parsedPrice) || parsedPrice <= 0 || parsedPrice > 2147483647) {
+      toast.error("Price must be a positive number between 1 and 2,147,483,647");
+      return;
+    }
+    
+    setEditUserListingUploading(true);
+
+    try {
+      let finalImageUrl = editUserListingImageUrl;
+      
+      if (editUserListingImageFile) {
+        const uploadedUrl = await uploadImage(editUserListingImageFile);
+        if (!uploadedUrl) {
+          setEditUserListingUploading(false);
+          return;
+        }
+        finalImageUrl = uploadedUrl;
+      }
+
+      const { error } = await supabase
+        .from("user_listings")
+        .update({
+          title: editUserListingTitle,
+          author: editUserListingAuthor,
+          category: editUserListingCategory,
+          condition: editUserListingCondition,
+          price: parsedPrice,
+          image_url: finalImageUrl || null,
+          description: editUserListingDescription || null,
+          status: editUserListingStatus,
+        })
+        .eq("id", editingUserListing.id);
+
+      if (error) {
+        toast.error("Failed to update user listing");
+        console.error(error);
+      } else {
+        toast.success("User listing updated successfully!");
+        setEditUserListingDialogOpen(false);
+        setEditingUserListing(null);
+        setEditUserListingImageFile(null);
+        if (editUserListingFileInputRef.current) editUserListingFileInputRef.current.value = "";
+        fetchUserListings();
+        fetchAllBooks();
+      }
+    } finally {
+      setEditUserListingUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -640,90 +771,199 @@ export default function ManageBooks() {
 
             {/* Inventory Tab */}
             <TabsContent value="inventory">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Book Inventory</CardTitle>
-                  <CardDescription>
-                    Manage all books in your inventory ({books.length} books)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {books.length === 0 ? (
-                      <p className="text-center text-muted-foreground py-8">
-                        No books in inventory. Add your first book!
-                      </p>
-                    ) : (
-                      books.map((book) => (
-                        <div
-                          key={book.id}
-                          className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          <img
-                            src={book.image_url}
-                            alt={book.title}
-                            className="w-16 h-20 object-cover rounded"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg";
-                            }}
-                          />
-                          <div className="flex-1">
-                            <h3 className="font-bold text-foreground">{book.title}</h3>
-                            <p className="text-sm text-muted-foreground">{book.author}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
-                                {book.category}
-                              </span>
-                              <span className="text-xs px-2 py-1 rounded-full bg-muted">
-                                {book.condition}
-                              </span>
-                              <span className="text-sm font-bold text-primary">₹{book.price}</span>
+              <div className="space-y-6">
+                {/* Admin Books Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Admin Books
+                    </CardTitle>
+                    <CardDescription>
+                      Books added by admin ({books.length} books)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {books.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-8">
+                          No admin books in inventory. Add your first book!
+                        </p>
+                      ) : (
+                        books.map((book) => (
+                          <div
+                            key={book.id}
+                            className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <img
+                              src={book.image_url}
+                              alt={book.title}
+                              className="w-16 h-20 object-cover rounded"
+                              onError={(e) => {
+                                e.currentTarget.src = "/placeholder.svg";
+                              }}
+                            />
+                            <div className="flex-1">
+                              <h3 className="font-bold text-foreground">{book.title}</h3>
+                              <p className="text-sm text-muted-foreground">{book.author}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary">
+                                  {book.category}
+                                </span>
+                                <span className="text-xs px-2 py-1 rounded-full bg-muted">
+                                  {book.condition}
+                                </span>
+                                <span className="text-sm font-bold text-primary">₹{book.price}</span>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => openEditDialog(book)}
+                                className="text-primary hover:bg-primary/10"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete Book</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete "{book.title}"? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteBook(book.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => openEditDialog(book)}
-                              className="text-primary hover:bg-primary/10"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  className="text-destructive hover:bg-destructive/10"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Book</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete "{book.title}"? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteBook(book.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* User Listings Section */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BookOpen className="h-5 w-5" />
+                      User Listings
+                    </CardTitle>
+                    <CardDescription>
+                      Books added by users through Sell Books ({userListings.length} listings)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {userListings.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-8">
+                          No user listings yet.
+                        </p>
+                      ) : (
+                        userListings.map((listing) => (
+                          <div
+                            key={listing.id}
+                            className="flex items-center gap-4 p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <img
+                              src={listing.image_url || "/placeholder.svg"}
+                              alt={listing.title}
+                              className="w-16 h-20 object-cover rounded"
+                              onError={(e) => {
+                                e.currentTarget.src = "/placeholder.svg";
+                              }}
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-bold text-foreground">{listing.title}</h3>
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                  listing.status === 'active' 
+                                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                                    : listing.status === 'sold'
+                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                    : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                                }`}>
+                                  {listing.status}
+                                </span>
+                              </div>
+                              <p className="text-sm text-muted-foreground">{listing.author}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
+                                  {listing.category}
+                                </span>
+                                <span className="text-xs px-2 py-1 rounded-full bg-muted">
+                                  {listing.condition}
+                                </span>
+                                <span className="text-sm font-bold text-primary">₹{listing.price}</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Contact: {listing.contact_email}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => openEditUserListingDialog(listing)}
+                                className="text-primary hover:bg-primary/10"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="text-destructive hover:bg-destructive/10"
                                   >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Delete User Listing</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Are you sure you want to delete "{listing.title}" by {listing.author}? This action cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteUserListing(listing.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Delete
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             {/* Book Details Tab */}
@@ -1106,6 +1346,180 @@ export default function ManageBooks() {
                 className="bg-gradient-to-r from-primary to-coral-dark hover:opacity-90"
               >
                 {editUploading ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit User Listing Dialog */}
+      <Dialog open={editUserListingDialogOpen} onOpenChange={setEditUserListingDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit User Listing</DialogTitle>
+            <DialogDescription>
+              Update the user listing details below
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditUserListing} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingTitle">Book Title *</Label>
+                <Input
+                  id="editUserListingTitle"
+                  value={editUserListingTitle}
+                  onChange={(e) => setEditUserListingTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingAuthor">Author *</Label>
+                <Input
+                  id="editUserListingAuthor"
+                  value={editUserListingAuthor}
+                  onChange={(e) => setEditUserListingAuthor(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingCategory">Category *</Label>
+                <Input
+                  id="editUserListingCategory"
+                  value={editUserListingCategory}
+                  onChange={(e) => setEditUserListingCategory(e.target.value)}
+                  placeholder="e.g., Fiction, Mystery, Romance"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingCondition">Condition *</Label>
+                <Select value={editUserListingCondition} onValueChange={setEditUserListingCondition}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="old">Old</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingPrice">Price (₹) *</Label>
+                <Input
+                  id="editUserListingPrice"
+                  type="number"
+                  value={editUserListingPrice}
+                  onChange={(e) => setEditUserListingPrice(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingStatus">Status *</Label>
+                <Select value={editUserListingStatus} onValueChange={setEditUserListingStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="sold">Sold</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Label>Book Image</Label>
+              {editUserListingImageUrl && !editUserListingImageFile && (
+                <div className="mb-2">
+                  <img 
+                    src={editUserListingImageUrl} 
+                    alt="Current cover" 
+                    className="w-20 h-24 object-cover rounded border"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg";
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">Current image</p>
+                </div>
+              )}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => editUserListingFileInputRef.current?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    Upload New Image
+                  </Button>
+                  <input
+                    ref={editUserListingFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setEditUserListingImageFile(file);
+                      }
+                    }}
+                    className="hidden"
+                  />
+                  {editUserListingImageFile && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Image className="h-4 w-4" />
+                      {editUserListingImageFile.name}
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">or update URL</span>
+                </div>
+                <Input
+                  id="editUserListingImageUrl"
+                  type="url"
+                  value={editUserListingImageUrl}
+                  onChange={(e) => {
+                    setEditUserListingImageUrl(e.target.value);
+                    setEditUserListingImageFile(null);
+                    if (editUserListingFileInputRef.current) editUserListingFileInputRef.current.value = "";
+                  }}
+                  placeholder="Enter image URL"
+                  disabled={!!editUserListingImageFile}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="editUserListingDescription">Description</Label>
+              <Input
+                id="editUserListingDescription"
+                value={editUserListingDescription}
+                onChange={(e) => setEditUserListingDescription(e.target.value)}
+                placeholder="Optional book description"
+              />
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditUserListingDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={editUserListingUploading}
+                className="bg-gradient-to-r from-primary to-coral-dark hover:opacity-90"
+              >
+                {editUserListingUploading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
