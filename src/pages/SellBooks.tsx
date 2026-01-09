@@ -6,13 +6,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Upload, CheckCircle, Loader2, ArrowLeft } from "lucide-react";
+import { Upload, CheckCircle, Loader2, ArrowLeft, Pencil, Trash2, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface UserListing {
+  id: string;
+  title: string;
+  author: string;
+  category: string;
+  condition: string;
+  price: number;
+  description: string | null;
+  contact_email: string;
+  contact_phone: string;
+  image_url: string | null;
+  status: string;
+  created_at: string;
+}
 
 export default function SellBooks() {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [myListings, setMyListings] = useState<UserListing[]>([]);
+  const [loadingListings, setLoadingListings] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingListing, setEditingListing] = useState<UserListing | null>(null);
+  const [editLoading, setEditLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -47,6 +69,32 @@ export default function SellBooks() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Fetch user's own listings
+  const fetchMyListings = async () => {
+    if (!user) return;
+    setLoadingListings(true);
+    try {
+      const { data, error } = await supabase
+        .from('user_listings')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMyListings(data || []);
+    } catch (error) {
+      console.error('Error fetching listings:', error);
+    } finally {
+      setLoadingListings(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchMyListings();
+    }
+  }, [user]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -77,6 +125,65 @@ export default function SellBooks() {
       .getPublicUrl(fileName);
 
     return data.publicUrl;
+  };
+
+  // Delete listing
+  const handleDeleteListing = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this listing?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('user_listings')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      toast.success('Listing deleted successfully');
+      fetchMyListings();
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete listing');
+    }
+  };
+
+  // Open edit dialog
+  const openEditDialog = (listing: UserListing) => {
+    setEditingListing(listing);
+    setEditDialogOpen(true);
+  };
+
+  // Update listing
+  const handleUpdateListing = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingListing) return;
+
+    setEditLoading(true);
+    try {
+      const { error } = await supabase
+        .from('user_listings')
+        .update({
+          title: editingListing.title,
+          author: editingListing.author,
+          category: editingListing.category,
+          condition: editingListing.condition,
+          price: editingListing.price,
+          description: editingListing.description,
+          contact_email: editingListing.contact_email,
+          contact_phone: editingListing.contact_phone,
+        })
+        .eq('id', editingListing.id);
+
+      if (error) throw error;
+      toast.success('Listing updated successfully');
+      setEditDialogOpen(false);
+      setEditingListing(null);
+      fetchMyListings();
+    } catch (error) {
+      console.error('Update error:', error);
+      toast.error('Failed to update listing');
+    } finally {
+      setEditLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,7 +225,7 @@ export default function SellBooks() {
         }
       }
 
-      // Insert listing into database - condition must be 'excellent', 'good', or 'average'
+      // Insert listing into database
       const { error } = await supabase
         .from('user_listings')
         .insert({
@@ -126,7 +233,7 @@ export default function SellBooks() {
           title: formData.title,
           author: formData.author,
           category: formData.category,
-          condition: formData.condition, // Use exact value from form: excellent, good, or average
+          condition: formData.condition,
           price: parsedPrice,
           description: formData.description || null,
           contact_email: formData.contactEmail,
@@ -147,7 +254,7 @@ export default function SellBooks() {
         icon: <CheckCircle className="h-5 w-5 text-green-500" />,
       });
 
-      // Reset form
+      // Reset form and refresh listings
       setFormData({
         title: "",
         author: "",
@@ -160,6 +267,7 @@ export default function SellBooks() {
       });
       setImage(null);
       setImagePreview("");
+      fetchMyListings();
     } catch (error) {
       console.error('Submit error:', error);
       toast.error("An error occurred. Please try again.");
@@ -186,14 +294,14 @@ export default function SellBooks() {
       </div>
       
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Give Your Books a <span className="text-primary">New Home</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              Fill out the form below to list your book and start earning!
+              List your books for sale or manage your existing listings
             </p>
           </div>
 
@@ -207,163 +315,359 @@ export default function SellBooks() {
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-card rounded-3xl p-8 shadow-[var(--shadow-card)] space-y-6">
-            {/* Book Image Upload */}
-            <div className="space-y-2">
-              <Label htmlFor="image">Book Image</Label>
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                <input
-                  type="file"
-                  id="image"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                <label htmlFor="image" className="cursor-pointer">
-                  {imagePreview ? (
-                    <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
+          {user && (
+            <Tabs defaultValue="add" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsTrigger value="add">Add New Book</TabsTrigger>
+                <TabsTrigger value="my-listings">My Listings ({myListings.length})</TabsTrigger>
+              </TabsList>
+
+              {/* Add New Book Tab */}
+              <TabsContent value="add">
+                <form onSubmit={handleSubmit} className="bg-card rounded-3xl p-8 shadow-[var(--shadow-card)] space-y-6">
+                  {/* Book Image Upload */}
+                  <div className="space-y-2">
+                    <Label htmlFor="image">Book Image</Label>
+                    <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                      <input
+                        type="file"
+                        id="image"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                      <label htmlFor="image" className="cursor-pointer">
+                        {imagePreview ? (
+                          <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
+                        ) : (
+                          <div className="space-y-2">
+                            <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
+                            <p className="text-muted-foreground">Click to upload book image</p>
+                          </div>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Book Title */}
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Book Title *</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      placeholder="Enter book title"
+                      className="bg-muted/50 border-border"
+                    />
+                  </div>
+
+                  {/* Author */}
+                  <div className="space-y-2">
+                    <Label htmlFor="author">Author Name *</Label>
+                    <Input
+                      id="author"
+                      value={formData.author}
+                      onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                      placeholder="Enter author name"
+                      className="bg-muted/50 border-border"
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category *</Label>
+                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                      <SelectTrigger className="bg-muted/50 border-border">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Kids">Kids</SelectItem>
+                        <SelectItem value="Fiction">Fiction</SelectItem>
+                        <SelectItem value="Mystery">Mystery</SelectItem>
+                        <SelectItem value="Romance">Romance</SelectItem>
+                        <SelectItem value="Horror">Horror</SelectItem>
+                        <SelectItem value="Study">Study</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Condition */}
+                  <div className="space-y-2">
+                    <Label htmlFor="condition">Book Condition *</Label>
+                    <Select value={formData.condition} onValueChange={(value) => setFormData({ ...formData, condition: value })}>
+                      <SelectTrigger className="bg-muted/50 border-border">
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="excellent">Excellent</SelectItem>
+                        <SelectItem value="good">Good</SelectItem>
+                        <SelectItem value="average">Average</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Price */}
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Selling Price (₹) *</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      min="1"
+                      max="2147483647"
+                      step="1"
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      placeholder="Enter selling price"
+                      className="bg-muted/50 border-border"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Tell us more about the book condition, edition, etc."
+                      rows={4}
+                      className="bg-muted/50 border-border resize-none"
+                    />
+                  </div>
+
+                  {/* Contact Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="contactEmail">Contact Email *</Label>
+                    <Input
+                      id="contactEmail"
+                      type="email"
+                      value={formData.contactEmail}
+                      onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+                      placeholder="Your email address"
+                      className="bg-muted/50 border-border"
+                    />
+                  </div>
+
+                  {/* Contact Phone */}
+                  <div className="space-y-2">
+                    <Label htmlFor="contactPhone">Contact Phone *</Label>
+                    <Input
+                      id="contactPhone"
+                      type="tel"
+                      value={formData.contactPhone}
+                      onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
+                      placeholder="Your phone number"
+                      className="bg-muted/50 border-border"
+                    />
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-primary to-coral-dark hover:opacity-90 shadow-[var(--shadow-hover)] transition-all"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      "Submit Listing"
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              {/* My Listings Tab */}
+              <TabsContent value="my-listings">
+                <div className="bg-card rounded-3xl p-8 shadow-[var(--shadow-card)]">
+                  {loadingListings ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : myListings.length === 0 ? (
+                    <div className="text-center py-12">
+                      <BookOpen className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                      <h3 className="text-xl font-semibold text-foreground mb-2">No listings yet</h3>
+                      <p className="text-muted-foreground">Start selling by adding your first book!</p>
+                    </div>
                   ) : (
-                    <div className="space-y-2">
-                      <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
-                      <p className="text-muted-foreground">Click to upload book image</p>
+                    <div className="space-y-4">
+                      {myListings.map((listing) => (
+                        <div 
+                          key={listing.id} 
+                          className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-border"
+                        >
+                          {listing.image_url ? (
+                            <img 
+                              src={listing.image_url} 
+                              alt={listing.title} 
+                              className="w-20 h-28 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="w-20 h-28 bg-muted rounded-lg flex items-center justify-center">
+                              <BookOpen className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-foreground truncate">{listing.title}</h4>
+                            <p className="text-sm text-muted-foreground">{listing.author}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-primary font-bold">₹{listing.price}</span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                listing.status === 'active' 
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                                  : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                              }`}>
+                                {listing.status}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              onClick={() => openEditDialog(listing)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="destructive" 
+                              size="icon"
+                              onClick={() => handleDeleteListing(listing.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
-                </label>
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+
+          {/* Show form directly if not logged in */}
+          {!user && (
+            <form onSubmit={handleSubmit} className="bg-card rounded-3xl p-8 shadow-[var(--shadow-card)] space-y-6 opacity-50 pointer-events-none">
+              {/* Simplified disabled form preview */}
+              <div className="space-y-2">
+                <Label>Book Title *</Label>
+                <Input disabled placeholder="Enter book title" className="bg-muted/50 border-border" />
               </div>
-            </div>
-
-            {/* Book Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Book Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Enter book title"
-                className="bg-muted/50 border-border"
-              />
-            </div>
-
-            {/* Author */}
-            <div className="space-y-2">
-              <Label htmlFor="author">Author Name *</Label>
-              <Input
-                id="author"
-                value={formData.author}
-                onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                placeholder="Enter author name"
-                className="bg-muted/50 border-border"
-              />
-            </div>
-
-            {/* Category */}
-            <div className="space-y-2">
-              <Label htmlFor="category">Category *</Label>
-              <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-                <SelectTrigger className="bg-muted/50 border-border">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Kids">Kids</SelectItem>
-                  <SelectItem value="Fiction">Fiction</SelectItem>
-                  <SelectItem value="Mystery">Mystery</SelectItem>
-                  <SelectItem value="Romance">Romance</SelectItem>
-                  <SelectItem value="Horror">Horror</SelectItem>
-                  <SelectItem value="Study">Study</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Condition */}
-            <div className="space-y-2">
-              <Label htmlFor="condition">Book Condition *</Label>
-              <Select value={formData.condition} onValueChange={(value) => setFormData({ ...formData, condition: value })}>
-                <SelectTrigger className="bg-muted/50 border-border">
-                  <SelectValue placeholder="Select condition" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="excellent">Excellent</SelectItem>
-                  <SelectItem value="good">Good</SelectItem>
-                  <SelectItem value="average">Average</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Price */}
-            <div className="space-y-2">
-              <Label htmlFor="price">Selling Price (₹) *</Label>
-              <Input
-                id="price"
-                type="number"
-                min="1"
-                max="2147483647"
-                step="1"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="Enter selling price"
-                className="bg-muted/50 border-border"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Tell us more about the book condition, edition, etc."
-                rows={4}
-                className="bg-muted/50 border-border resize-none"
-              />
-            </div>
-
-            {/* Contact Email */}
-            <div className="space-y-2">
-              <Label htmlFor="contactEmail">Contact Email *</Label>
-              <Input
-                id="contactEmail"
-                type="email"
-                value={formData.contactEmail}
-                onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                placeholder="Your email address"
-                className="bg-muted/50 border-border"
-              />
-            </div>
-
-            {/* Contact Phone */}
-            <div className="space-y-2">
-              <Label htmlFor="contactPhone">Contact Phone *</Label>
-              <Input
-                id="contactPhone"
-                type="tel"
-                value={formData.contactPhone}
-                onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
-                placeholder="Your phone number"
-                className="bg-muted/50 border-border"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              size="lg"
-              disabled={loading || !user}
-              className="w-full bg-gradient-to-r from-primary to-coral-dark hover:opacity-90 shadow-[var(--shadow-hover)] transition-all"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                "Submit Listing"
-              )}
-            </Button>
-          </form>
+              <div className="space-y-2">
+                <Label>Author Name *</Label>
+                <Input disabled placeholder="Enter author name" className="bg-muted/50 border-border" />
+              </div>
+              <Button disabled size="lg" className="w-full">Login to Submit</Button>
+            </form>
+          )}
         </div>
       </main>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Listing</DialogTitle>
+          </DialogHeader>
+          {editingListing && (
+            <form onSubmit={handleUpdateListing} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Title</Label>
+                <Input
+                  value={editingListing.title}
+                  onChange={(e) => setEditingListing({ ...editingListing, title: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Author</Label>
+                <Input
+                  value={editingListing.author}
+                  onChange={(e) => setEditingListing({ ...editingListing, author: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select 
+                  value={editingListing.category} 
+                  onValueChange={(value) => setEditingListing({ ...editingListing, category: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Kids">Kids</SelectItem>
+                    <SelectItem value="Fiction">Fiction</SelectItem>
+                    <SelectItem value="Mystery">Mystery</SelectItem>
+                    <SelectItem value="Romance">Romance</SelectItem>
+                    <SelectItem value="Horror">Horror</SelectItem>
+                    <SelectItem value="Study">Study</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Condition</Label>
+                <Select 
+                  value={editingListing.condition} 
+                  onValueChange={(value) => setEditingListing({ ...editingListing, condition: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="excellent">Excellent</SelectItem>
+                    <SelectItem value="good">Good</SelectItem>
+                    <SelectItem value="average">Average</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Price (₹)</Label>
+                <Input
+                  type="number"
+                  value={editingListing.price}
+                  onChange={(e) => setEditingListing({ ...editingListing, price: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea
+                  value={editingListing.description || ''}
+                  onChange={(e) => setEditingListing({ ...editingListing, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Contact Email</Label>
+                <Input
+                  type="email"
+                  value={editingListing.contact_email}
+                  onChange={(e) => setEditingListing({ ...editingListing, contact_email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Contact Phone</Label>
+                <Input
+                  value={editingListing.contact_phone}
+                  onChange={(e) => setEditingListing({ ...editingListing, contact_phone: e.target.value })}
+                />
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)} className="flex-1">
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={editLoading} className="flex-1">
+                  {editLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
