@@ -20,7 +20,6 @@ export default function Cart() {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar cartItemCount={0} onSearchChange={() => {}} />
         <main className="container mx-auto px-4 py-16">
           <div className="max-w-md mx-auto text-center space-y-6 animate-fade-in">
             <ShoppingBag className="h-24 w-24 mx-auto text-muted-foreground" />
@@ -39,8 +38,6 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar cartItemCount={totalItems} onSearchChange={() => {}} />
-      
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-foreground mb-8 animate-fade-in">Shopping Cart</h1>
