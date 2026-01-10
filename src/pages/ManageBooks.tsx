@@ -124,6 +124,8 @@ export default function ManageBooks() {
   const [editUserListingImageUrl, setEditUserListingImageUrl] = useState("");
   const [editUserListingDescription, setEditUserListingDescription] = useState("");
   const [editUserListingStatus, setEditUserListingStatus] = useState("active");
+  const [editUserListingContactEmail, setEditUserListingContactEmail] = useState("");
+  const [editUserListingContactPhone, setEditUserListingContactPhone] = useState("");
   const [editUserListingImageFile, setEditUserListingImageFile] = useState<File | null>(null);
   const [editUserListingUploading, setEditUserListingUploading] = useState(false);
   const editUserListingFileInputRef = useRef<HTMLInputElement>(null);
@@ -231,14 +233,34 @@ export default function ManageBooks() {
   const fetchUserListings = async () => {
     const { data, error } = await supabase
       .from("user_listings")
-      .select("*")
+      .select(`
+        id, user_id, title, author, category, condition, price, 
+        image_url, description, status, created_at,
+        listing_contacts (contact_email, contact_phone)
+      `)
       .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Failed to fetch user listings");
       console.error(error);
     } else {
-      setUserListings(data || []);
+      // Map data to include contact info from joined table
+      const listingsWithContact = (data || []).map((listing: any) => ({
+        id: listing.id,
+        user_id: listing.user_id,
+        title: listing.title,
+        author: listing.author,
+        category: listing.category,
+        condition: listing.condition,
+        price: listing.price,
+        image_url: listing.image_url,
+        description: listing.description,
+        status: listing.status,
+        created_at: listing.created_at,
+        contact_email: listing.listing_contacts?.[0]?.contact_email || '',
+        contact_phone: listing.listing_contacts?.[0]?.contact_phone || '',
+      })) as UserListing[];
+      setUserListings(listingsWithContact);
     }
   };
 
@@ -512,6 +534,8 @@ export default function ManageBooks() {
     setEditUserListingImageUrl(listing.image_url || "");
     setEditUserListingDescription(listing.description || "");
     setEditUserListingStatus(listing.status || "active");
+    setEditUserListingContactEmail(listing.contact_email || "");
+    setEditUserListingContactPhone(listing.contact_phone || "");
     setEditUserListingDialogOpen(true);
   };
 
@@ -540,7 +564,8 @@ export default function ManageBooks() {
         finalImageUrl = uploadedUrl;
       }
 
-      const { error } = await supabase
+      // Update main listing data
+      const { error: listingError } = await supabase
         .from("user_listings")
         .update({
           title: editUserListingTitle,
@@ -554,18 +579,33 @@ export default function ManageBooks() {
         })
         .eq("id", editingUserListing.id);
 
-      if (error) {
+      if (listingError) {
         toast.error("Failed to update user listing");
-        console.error(error);
-      } else {
-        toast.success("User listing updated successfully!");
-        setEditUserListingDialogOpen(false);
-        setEditingUserListing(null);
-        setEditUserListingImageFile(null);
-        if (editUserListingFileInputRef.current) editUserListingFileInputRef.current.value = "";
-        fetchUserListings();
-        fetchAllBooks();
+        console.error(listingError);
+        return;
       }
+
+      // Update contact info in separate table
+      const { error: contactError } = await supabase
+        .from("listing_contacts")
+        .update({
+          contact_email: editUserListingContactEmail,
+          contact_phone: editUserListingContactPhone,
+        })
+        .eq("listing_id", editingUserListing.id);
+
+      if (contactError) {
+        console.error("Contact update error:", contactError);
+        // Don't fail completely, the main listing was updated
+      }
+
+      toast.success("User listing updated successfully!");
+      setEditUserListingDialogOpen(false);
+      setEditingUserListing(null);
+      setEditUserListingImageFile(null);
+      if (editUserListingFileInputRef.current) editUserListingFileInputRef.current.value = "";
+      fetchUserListings();
+      fetchAllBooks();
     } finally {
       setEditUserListingUploading(false);
     }
@@ -1504,6 +1544,30 @@ export default function ManageBooks() {
                 onChange={(e) => setEditUserListingDescription(e.target.value)}
                 placeholder="Optional book description"
               />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingContactEmail">Contact Email</Label>
+                <Input
+                  id="editUserListingContactEmail"
+                  type="email"
+                  value={editUserListingContactEmail}
+                  onChange={(e) => setEditUserListingContactEmail(e.target.value)}
+                  placeholder="Seller's email"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editUserListingContactPhone">Contact Phone</Label>
+                <Input
+                  id="editUserListingContactPhone"
+                  type="tel"
+                  value={editUserListingContactPhone}
+                  onChange={(e) => setEditUserListingContactPhone(e.target.value)}
+                  placeholder="Seller's phone"
+                />
+              </div>
             </div>
 
             <div className="flex gap-2 justify-end">
