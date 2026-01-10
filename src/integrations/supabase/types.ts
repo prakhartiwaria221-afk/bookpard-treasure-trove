@@ -194,6 +194,25 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_public_listings_secure: {
+        Args: never
+        Returns: {
+          author: string
+          category: string
+          condition: string
+          contact_email: string
+          contact_phone: string
+          created_at: string
+          description: string
+          id: string
+          image_url: string
+          is_owner: boolean
+          price: number
+          status: string
+          title: string
+          user_id: string
+        }[]
+      }
       get_public_user_listings: {
         Args: never
         Returns: {
