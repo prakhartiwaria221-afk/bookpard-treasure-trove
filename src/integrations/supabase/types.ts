@@ -194,6 +194,13 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_listing_contact_info: {
+        Args: { listing_id: string }
+        Returns: {
+          contact_email: string
+          contact_phone: string
+        }[]
+      }
       get_public_listings_secure: {
         Args: never
         Returns: {
