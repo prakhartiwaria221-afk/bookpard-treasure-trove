@@ -56,6 +56,38 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_contacts: {
+        Row: {
+          contact_email: string
+          contact_phone: string
+          created_at: string | null
+          id: string
+          listing_id: string
+        }
+        Insert: {
+          contact_email: string
+          contact_phone: string
+          created_at?: string | null
+          id?: string
+          listing_id: string
+        }
+        Update: {
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_contacts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "user_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           contact_email: string | null
@@ -100,8 +132,6 @@ export type Database = {
           author: string
           category: string
           condition: string
-          contact_email: string
-          contact_phone: string
           created_at: string | null
           description: string | null
           id: string
@@ -115,8 +145,6 @@ export type Database = {
           author: string
           category: string
           condition: string
-          contact_email: string
-          contact_phone: string
           created_at?: string | null
           description?: string | null
           id?: string
@@ -130,8 +158,6 @@ export type Database = {
           author?: string
           category?: string
           condition?: string
-          contact_email?: string
-          contact_phone?: string
           created_at?: string | null
           description?: string | null
           id?: string

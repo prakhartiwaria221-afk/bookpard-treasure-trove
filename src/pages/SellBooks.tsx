@@ -69,33 +69,30 @@ export default function SellBooks() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch user's own listings with contact info via secure function
+  // Fetch user's own listings with contact info from separate table
   const fetchMyListings = async () => {
     if (!user) return;
     setLoadingListings(true);
     try {
-      // First get basic listing data
+      // Get listings with contact info joined from listing_contacts table
       const { data: listings, error } = await supabase
         .from('user_listings')
-        .select('id, user_id, title, author, category, condition, description, image_url, price, status, created_at')
+        .select(`
+          id, user_id, title, author, category, condition, description, 
+          image_url, price, status, created_at,
+          listing_contacts (contact_email, contact_phone)
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Then fetch contact info for each listing using secure function
-      const listingsWithContact = await Promise.all(
-        (listings || []).map(async (listing) => {
-          const { data: contactData } = await supabase
-            .rpc('get_listing_contact_info', { listing_id: listing.id });
-          
-          return {
-            ...listing,
-            contact_email: contactData?.[0]?.contact_email || '',
-            contact_phone: contactData?.[0]?.contact_phone || '',
-          } as UserListing;
-        })
-      );
+      // Map the data to include contact info
+      const listingsWithContact = (listings || []).map((listing: any) => ({
+        ...listing,
+        contact_email: listing.listing_contacts?.[0]?.contact_email || '',
+        contact_phone: listing.listing_contacts?.[0]?.contact_phone || '',
+      })) as UserListing[];
 
       setMyListings(listingsWithContact);
     } catch (error) {
@@ -168,14 +165,15 @@ export default function SellBooks() {
     setEditDialogOpen(true);
   };
 
-  // Update listing
+  // Update listing (listing data + contact info in separate table)
   const handleUpdateListing = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingListing) return;
 
     setEditLoading(true);
     try {
-      const { error } = await supabase
+      // Update main listing data
+      const { error: listingError } = await supabase
         .from('user_listings')
         .update({
           title: editingListing.title,
@@ -184,12 +182,22 @@ export default function SellBooks() {
           condition: editingListing.condition,
           price: editingListing.price,
           description: editingListing.description,
-          contact_email: editingListing.contact_email,
-          contact_phone: editingListing.contact_phone,
         })
         .eq('id', editingListing.id);
 
-      if (error) throw error;
+      if (listingError) throw listingError;
+
+      // Update contact info in separate table
+      const { error: contactError } = await supabase
+        .from('listing_contacts')
+        .update({
+          contact_email: editingListing.contact_email,
+          contact_phone: editingListing.contact_phone,
+        })
+        .eq('listing_id', editingListing.id);
+
+      if (contactError) throw contactError;
+
       toast.success('Listing updated successfully');
       setEditDialogOpen(false);
       setEditingListing(null);
@@ -241,8 +249,8 @@ export default function SellBooks() {
         }
       }
 
-      // Insert listing into database
-      const { error } = await supabase
+      // Insert listing into database (without contact info)
+      const { data: newListing, error } = await supabase
         .from('user_listings')
         .insert({
           user_id: user.id,
@@ -252,14 +260,32 @@ export default function SellBooks() {
           condition: formData.condition,
           price: parsedPrice,
           description: formData.description || null,
-          contact_email: formData.contactEmail,
-          contact_phone: formData.contactPhone,
           image_url: imageUrl,
           status: 'active'
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) {
         console.error('Insert error:', error);
+        toast.error("Failed to submit listing. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      // Insert contact info into separate protected table
+      const { error: contactError } = await supabase
+        .from('listing_contacts')
+        .insert({
+          listing_id: newListing.id,
+          contact_email: formData.contactEmail,
+          contact_phone: formData.contactPhone,
+        });
+
+      if (contactError) {
+        console.error('Contact insert error:', contactError);
+        // Delete the listing if contact insert fails
+        await supabase.from('user_listings').delete().eq('id', newListing.id);
         toast.error("Failed to submit listing. Please try again.");
         setLoading(false);
         return;
