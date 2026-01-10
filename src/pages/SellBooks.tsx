@@ -69,19 +69,35 @@ export default function SellBooks() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch user's own listings
+  // Fetch user's own listings with contact info via secure function
   const fetchMyListings = async () => {
     if (!user) return;
     setLoadingListings(true);
     try {
-      const { data, error } = await supabase
+      // First get basic listing data
+      const { data: listings, error } = await supabase
         .from('user_listings')
-        .select('*')
+        .select('id, user_id, title, author, category, condition, description, image_url, price, status, created_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setMyListings(data || []);
+
+      // Then fetch contact info for each listing using secure function
+      const listingsWithContact = await Promise.all(
+        (listings || []).map(async (listing) => {
+          const { data: contactData } = await supabase
+            .rpc('get_listing_contact_info', { listing_id: listing.id });
+          
+          return {
+            ...listing,
+            contact_email: contactData?.[0]?.contact_email || '',
+            contact_phone: contactData?.[0]?.contact_phone || '',
+          } as UserListing;
+        })
+      );
+
+      setMyListings(listingsWithContact);
     } catch (error) {
       console.error('Error fetching listings:', error);
     } finally {
