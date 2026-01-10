@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
-import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -40,7 +40,16 @@ export default function Cart() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold text-foreground mb-8 animate-fade-in">Shopping Cart</h1>
+          <div className="flex items-center gap-4 mb-8 animate-fade-in">
+            <button
+              onClick={() => navigate("/")}
+              className="p-2 rounded-full hover:bg-muted transition-colors"
+              aria-label="Go back to home"
+            >
+              <ArrowLeft className="h-6 w-6 text-foreground" />
+            </button>
+            <h1 className="text-4xl font-bold text-foreground">Shopping Cart</h1>
+          </div>
           
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
