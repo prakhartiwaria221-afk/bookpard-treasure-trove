@@ -48,15 +48,25 @@ type AdminUser = {
   created_at: string;
 };
 
+type UserProfile = {
+  id: string;
+  email: string;
+  email_verified: boolean;
+  created_at: string;
+  last_sign_in_at: string | null;
+};
+
 export default function AdminDashboard() {
   const { isAdmin, loading } = useAdmin();
   const navigate = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
+  const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [addingAdmin, setAddingAdmin] = useState(false);
   const [removingAdminId, setRemovingAdminId] = useState<string | null>(null);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   // Analytics
   const totalBooks = books.length;
@@ -76,8 +86,24 @@ export default function AdminDashboard() {
       fetchBooks();
       fetchOrders();
       fetchAdminUsers();
+      fetchAllUsers();
     }
   }, [isAdmin]);
+
+  const fetchAllUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const { data, error } = await supabase.rpc("get_all_users");
+      
+      if (error) {
+        console.error("Failed to fetch users:", error);
+      } else {
+        setAllUsers(data || []);
+      }
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
 
   const fetchBooks = async () => {
     const { data, error } = await supabase
@@ -477,83 +503,151 @@ export default function AdminDashboard() {
 
             {/* Users Tab */}
             <TabsContent value="users">
-              <Card>
-                <CardHeader>
-                  <CardTitle>User Management</CardTitle>
-                  <CardDescription>
-                    Manage admin users and their roles ({adminUsers.length} admins)
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Add Admin Form */}
-                  <form onSubmit={handleAddAdmin} className="flex gap-3">
-                    <div className="flex-1">
-                      <Input
-                        type="email"
-                        placeholder="Enter user email to make admin..."
-                        value={newAdminEmail}
-                        onChange={(e) => setNewAdminEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <Button type="submit" disabled={addingAdmin} className="shrink-0">
-                      {addingAdmin ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <>
-                          <UserPlus className="h-4 w-4 mr-2" />
-                          Add Admin
-                        </>
-                      )}
-                    </Button>
-                  </form>
-
-                  {/* Admin Users List */}
-                  <div className="space-y-3">
-                    <h3 className="font-medium text-foreground">Current Admins</h3>
-                    {adminUsers.length === 0 ? (
+              <div className="space-y-6">
+                {/* All Registered Users */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>All Registered Users</CardTitle>
+                    <CardDescription>
+                      View all users who have signed up ({allUsers.length} users)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {loadingUsers ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : allUsers.length === 0 ? (
                       <p className="text-center text-muted-foreground py-8">
-                        No admin users found.
+                        No users found.
                       </p>
                     ) : (
-                      adminUsers.map((admin) => (
-                        <div
-                          key={admin.user_id}
-                          className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
-                              <Users className="h-5 w-5 text-primary" />
+                      <div className="space-y-3">
+                        {allUsers.map((user) => (
+                          <div
+                            key={user.id}
+                            className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+                                user.email_verified 
+                                  ? "bg-green-500/20" 
+                                  : "bg-orange-500/20"
+                              }`}>
+                                <Users className={`h-5 w-5 ${
+                                  user.email_verified 
+                                    ? "text-green-500" 
+                                    : "text-orange-500"
+                                }`} />
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">{user.email}</p>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                  <span>Joined: {new Date(user.created_at).toLocaleDateString()}</span>
+                                  {user.last_sign_in_at && (
+                                    <>
+                                      <span>•</span>
+                                      <span>Last login: {new Date(user.last_sign_in_at).toLocaleDateString()}</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <div>
-                              <p className="font-medium text-foreground">{admin.email}</p>
-                              <p className="text-xs text-muted-foreground">
-                                Admin since {new Date(admin.created_at).toLocaleDateString()}
-                              </p>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                user.email_verified 
+                                  ? "bg-green-500/10 text-green-600" 
+                                  : "bg-orange-500/10 text-orange-600"
+                              }`}>
+                                {user.email_verified ? "Verified" : "Pending"}
+                              </span>
                             </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRemoveAdmin(admin.user_id)}
-                            disabled={removingAdminId === admin.user_id}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            {removingAdminId === admin.user_id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <>
-                                <UserMinus className="h-4 w-4 mr-2" />
-                                Remove
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      ))
+                        ))}
+                      </div>
                     )}
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                {/* Admin Management */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Admin Management</CardTitle>
+                    <CardDescription>
+                      Manage admin users and their roles ({adminUsers.length} admins)
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Add Admin Form */}
+                    <form onSubmit={handleAddAdmin} className="flex gap-3">
+                      <div className="flex-1">
+                        <Input
+                          type="email"
+                          placeholder="Enter user email to make admin..."
+                          value={newAdminEmail}
+                          onChange={(e) => setNewAdminEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <Button type="submit" disabled={addingAdmin} className="shrink-0">
+                        {addingAdmin ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Add Admin
+                          </>
+                        )}
+                      </Button>
+                    </form>
+
+                    {/* Admin Users List */}
+                    <div className="space-y-3">
+                      <h3 className="font-medium text-foreground">Current Admins</h3>
+                      {adminUsers.length === 0 ? (
+                        <p className="text-center text-muted-foreground py-8">
+                          No admin users found.
+                        </p>
+                      ) : (
+                        adminUsers.map((admin) => (
+                          <div
+                            key={admin.user_id}
+                            className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+                                <Users className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">{admin.email}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Admin since {new Date(admin.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRemoveAdmin(admin.user_id)}
+                              disabled={removingAdminId === admin.user_id}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              {removingAdminId === admin.user_id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <UserMinus className="h-4 w-4 mr-2" />
+                                  Remove
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

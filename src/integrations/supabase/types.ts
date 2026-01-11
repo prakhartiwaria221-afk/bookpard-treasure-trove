@@ -127,6 +127,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          email_verified: boolean
+          id: string
+          last_sign_in_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_verified?: boolean
+          id: string
+          last_sign_in_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_verified?: boolean
+          id?: string
+          last_sign_in_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_listings: {
         Row: {
           author: string
@@ -218,6 +245,16 @@ export type Database = {
           email: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
+        }[]
+      }
+      get_all_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          email_verified: boolean
+          id: string
+          last_sign_in_at: string
         }[]
       }
       get_listing_contact_info: {
