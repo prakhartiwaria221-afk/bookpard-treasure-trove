@@ -5,25 +5,56 @@ import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { StarRating } from "@/components/StarRating";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BookCardProps {
   book: Book;
   onAddToCart: (book: Book) => void;
+  onClick?: () => void;
 }
 
-export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
+export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const discount = Math.round(((book.oldPrice - book.price) / book.oldPrice) * 100);
+  const [avgRating, setAvgRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
 
-  const handleBuyNow = () => {
+  useEffect(() => {
+    const fetchRating = async () => {
+      const { data, error } = await supabase
+        .from("book_reviews")
+        .select("rating")
+        .eq("book_id", book.id);
+
+      if (!error && data && data.length > 0) {
+        const avg = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
+        setAvgRating(Math.round(avg * 10) / 10);
+        setReviewCount(data.length);
+      }
+    };
+
+    fetchRating();
+  }, [book.id]);
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
     addToCart(book);
     toast.success(`${book.title} added to cart!`);
     navigate("/checkout");
   };
 
+  const handleAddToCartClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddToCart(book);
+  };
+
   return (
-    <div className="group relative bg-gradient-to-br from-amber-950/95 via-stone-900/95 to-amber-950/95 rounded-xl overflow-hidden shadow-xl shadow-amber-950/30 hover:shadow-2xl hover:shadow-amber-900/40 transition-all duration-300 hover:-translate-y-1 border border-amber-700/40">
+    <div 
+      onClick={onClick}
+      className="group relative bg-gradient-to-br from-amber-950/95 via-stone-900/95 to-amber-950/95 rounded-xl overflow-hidden shadow-xl shadow-amber-950/30 hover:shadow-2xl hover:shadow-amber-900/40 transition-all duration-300 hover:-translate-y-1 border border-amber-700/40 cursor-pointer">
       {/* Vintage Paper Texture */}
       <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')]" />
 
@@ -93,6 +124,18 @@ export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
           
           {/* Author */}
           <p className="text-sm text-amber-200/60 mt-1 font-inter">{book.author}</p>
+          
+          {/* Rating */}
+          {reviewCount > 0 && (
+            <div className="mt-1">
+              <StarRating 
+                rating={avgRating} 
+                size="sm" 
+                showCount 
+                reviewCount={reviewCount} 
+              />
+            </div>
+          )}
         </div>
 
         {/* Decorative Divider */}
@@ -113,7 +156,7 @@ export const BookCard = ({ book, onAddToCart }: BookCardProps) => {
         {/* Action Buttons - Vintage Style */}
         <div className="flex gap-2 pt-1">
           <Button
-            onClick={() => onAddToCart(book)}
+            onClick={handleAddToCartClick}
             className="flex-1 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 text-amber-50 shadow-lg shadow-amber-900/40 hover:shadow-xl transition-all hover:scale-[1.02] border border-amber-600/50 font-medium"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
