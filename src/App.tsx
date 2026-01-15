@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProjectDocumentation from "./pages/ProjectDocumentation";
+import ManageFeaturedBooks from "./pages/ManageFeaturedBooks";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/sell" element={<SellBooks />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/manage-books" element={<ManageBooks />} />
+              <Route path="/manage-featured" element={<ManageFeaturedBooks />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/orders" element={<Orders />} />
               <Route path="/admin" element={<AdminDashboard />} />

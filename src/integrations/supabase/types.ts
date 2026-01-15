@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      book_reviews: {
+        Row: {
+          book_id: string
+          created_at: string
+          id: string
+          rating: number
+          review_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          id?: string
+          rating: number
+          review_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_reviews_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       books: {
         Row: {
           author: string
@@ -55,6 +93,53 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      featured_books: {
+        Row: {
+          book_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          feature_type: string
+          id: string
+          is_active: boolean
+          start_date: string
+          title: string | null
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          feature_type: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          title?: string | null
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          feature_type?: string
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_books_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       listing_contacts: {
         Row: {
@@ -153,6 +238,96 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      seller_profiles: {
+        Row: {
+          avatar_url: string | null
+          avg_rating: number | null
+          bio: string | null
+          display_name: string
+          id: string
+          is_verified: boolean
+          joined_at: string
+          last_active_at: string
+          response_rate: number | null
+          total_ratings: number
+          total_sales: number
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          avg_rating?: number | null
+          bio?: string | null
+          display_name: string
+          id?: string
+          is_verified?: boolean
+          joined_at?: string
+          last_active_at?: string
+          response_rate?: number | null
+          total_ratings?: number
+          total_sales?: number
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          avg_rating?: number | null
+          bio?: string | null
+          display_name?: string
+          id?: string
+          is_verified?: boolean
+          joined_at?: string
+          last_active_at?: string
+          response_rate?: number | null
+          total_ratings?: number
+          total_sales?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seller_ratings: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          order_id: string | null
+          rating: number
+          review_text: string | null
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          rating: number
+          review_text?: string | null
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          rating?: number
+          review_text?: string | null
+          seller_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_ratings_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seller_ratings_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_listings: {
         Row: {
@@ -255,6 +430,13 @@ export type Database = {
           email_verified: boolean
           id: string
           last_sign_in_at: string
+        }[]
+      }
+      get_book_rating: {
+        Args: { book_uuid: string }
+        Returns: {
+          avg_rating: number
+          total_reviews: number
         }[]
       }
       get_listing_contact_info: {
