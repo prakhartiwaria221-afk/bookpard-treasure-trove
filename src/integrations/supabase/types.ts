@@ -94,6 +94,39 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          email_type: string
+          id: string
+          metadata: Json | null
+          recipient_email: string
+          sent_at: string | null
+          status: string | null
+          subject: string
+          user_id: string | null
+        }
+        Insert: {
+          email_type: string
+          id?: string
+          metadata?: Json | null
+          recipient_email: string
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          user_id?: string | null
+        }
+        Update: {
+          email_type?: string
+          id?: string
+          metadata?: Json | null
+          recipient_email?: string
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       featured_books: {
         Row: {
           book_id: string
@@ -141,6 +174,41 @@ export type Database = {
           },
         ]
       }
+      inventory_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          alert_type?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_alerts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "user_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_contacts: {
         Row: {
           contact_email: string
@@ -173,44 +241,143 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_back_in_stock: boolean | null
+          email_order_updates: boolean | null
+          email_price_drops: boolean | null
+          email_promotions: boolean | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_back_in_stock?: boolean | null
+          email_order_updates?: boolean | null
+          email_price_drops?: boolean | null
+          email_promotions?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_back_in_stock?: boolean | null
+          email_order_updates?: boolean | null
+          email_price_drops?: boolean | null
+          email_promotions?: boolean | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
+          carrier: string | null
           contact_email: string | null
           contact_phone: string | null
           created_at: string
           delivery_address: string | null
+          estimated_delivery: string | null
           id: string
           items: Json
+          last_status_update: string | null
           payment_method: string
           status: string
+          status_history: Json | null
           total_price: number
+          tracking_number: string | null
           user_id: string | null
         }
         Insert: {
+          carrier?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
           delivery_address?: string | null
+          estimated_delivery?: string | null
           id?: string
           items: Json
+          last_status_update?: string | null
           payment_method: string
           status?: string
+          status_history?: Json | null
           total_price: number
+          tracking_number?: string | null
           user_id?: string | null
         }
         Update: {
+          carrier?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
           delivery_address?: string | null
+          estimated_delivery?: string | null
           id?: string
           items?: Json
+          last_status_update?: string | null
           payment_method?: string
           status?: string
+          status_history?: Json | null
           total_price?: number
+          tracking_number?: string | null
           user_id?: string | null
         }
         Relationships: []
+      }
+      price_watches: {
+        Row: {
+          book_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          listing_id: string | null
+          notified_at: string | null
+          notify_any_drop: boolean | null
+          target_price: number | null
+          user_id: string
+        }
+        Insert: {
+          book_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          listing_id?: string | null
+          notified_at?: string | null
+          notify_any_drop?: boolean | null
+          target_price?: number | null
+          user_id: string
+        }
+        Update: {
+          book_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          listing_id?: string | null
+          notified_at?: string | null
+          notify_any_drop?: boolean | null
+          target_price?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_watches_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_watches_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "user_listings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -338,8 +505,11 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          low_stock_threshold: number | null
+          notify_low_stock: boolean | null
           price: number
           status: string | null
+          stock_quantity: number | null
           title: string
           user_id: string
         }
@@ -351,8 +521,11 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          low_stock_threshold?: number | null
+          notify_low_stock?: boolean | null
           price: number
           status?: string | null
+          stock_quantity?: number | null
           title: string
           user_id: string
         }
@@ -364,8 +537,11 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          low_stock_threshold?: number | null
+          notify_low_stock?: boolean | null
           price?: number
           status?: string | null
+          stock_quantity?: number | null
           title?: string
           user_id?: string
         }
