@@ -3,7 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ArrowLeft, Package, Calendar, CreditCard } from "lucide-react";
+import { Loader2, ArrowLeft, Package, Calendar, CreditCard, ChevronDown, ChevronUp } from "lucide-react";
+import { OrderTracking } from "@/components/OrderTracking";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import type { User } from "@supabase/supabase-js";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -24,6 +27,11 @@ interface Order {
   payment_method: string;
   created_at: string;
   delivery_address: string | null;
+  tracking_number: string | null;
+  carrier: string | null;
+  estimated_delivery: string | null;
+  status_history: Json;
+  last_status_update: string | null;
 }
 
 const parseOrderItems = (items: Json): OrderItem[] => {
@@ -45,6 +53,7 @@ export default function Orders() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -167,6 +176,40 @@ export default function Orders() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-4">
+                  {/* Order Tracking */}
+                  <Collapsible 
+                    open={expandedOrder === order.id}
+                    onOpenChange={(open) => setExpandedOrder(open ? order.id : null)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" className="w-full mb-4">
+                        {expandedOrder === order.id ? (
+                          <>
+                            <ChevronUp className="h-4 w-4 mr-2" />
+                            Hide Tracking Details
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-4 w-4 mr-2" />
+                            View Tracking Details
+                          </>
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mb-6">
+                      <div className="p-4 bg-muted/20 rounded-lg">
+                        <OrderTracking
+                          status={order.status}
+                          trackingNumber={order.tracking_number}
+                          carrier={order.carrier}
+                          estimatedDelivery={order.estimated_delivery}
+                          statusHistory={order.status_history}
+                          lastStatusUpdate={order.last_status_update}
+                        />
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
                   <div className="space-y-4">
                     {parseOrderItems(order.items).map((item, index) => (
                       <div key={index} className="flex items-center gap-4">
