@@ -4,142 +4,134 @@
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
-🪁 MAKAR SANKRANTI CELEBRATION THEME with Dark Mode Support
+🇮🇳 REPUBLIC DAY CELEBRATION THEME with Dark Mode Support
 */
 
 @layer base {
   :root {
-    /* Makar Sankranti Light Theme - Saffron, Sky Blue & Earthy tones */
-    --background: 35 30% 98%;
-    --foreground: 25 40% 15%;
+    /* Republic Day Light Theme - Saffron, White & Green (Tricolor) */
+    --background: 0 0% 99%;
+    --foreground: 220 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 40% 15%;
+    --card-foreground: 220 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 40% 15%;
+    --popover-foreground: 220 20% 15%;
 
-    /* Saffron Orange Primary */
-    --primary: 25 90% 50%;
+    /* Deep Saffron Primary */
+    --primary: 24 100% 50%;
     --primary-foreground: 0 0% 100%;
     
-    /* Sky Blue Secondary */
-    --secondary: 200 85% 55%;
+    /* India Green Secondary */
+    --secondary: 120 60% 30%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Soft cream muted */
-    --muted: 35 25% 94%;
-    --muted-foreground: 25 20% 45%;
+    /* Soft muted */
+    --muted: 0 0% 96%;
+    --muted-foreground: 220 10% 45%;
 
-    /* Golden Yellow accent */
-    --accent: 45 95% 50%;
-    --accent-foreground: 25 40% 15%;
+    /* Saffron accent */
+    --accent: 24 100% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 35 20% 88%;
-    --input: 35 20% 92%;
-    --ring: 25 90% 50%;
+    --border: 220 15% 90%;
+    --input: 220 15% 94%;
+    --ring: 24 100% 50%;
 
     --radius: 1rem;
 
-    /* Custom Makar Sankranti colors */
-    --sankranti-saffron: 25 90% 50%;
-    --sankranti-saffron-light: 30 95% 65%;
-    --sankranti-saffron-dark: 20 85% 40%;
-    --sankranti-sky: 200 85% 55%;
-    --sankranti-sky-light: 200 90% 70%;
-    --sankranti-sky-dark: 200 80% 45%;
-    --sankranti-yellow: 45 95% 50%;
-    --sankranti-yellow-light: 50 100% 65%;
-    --sankranti-cream: 40 50% 90%;
-    --sun-glow: 40 100% 55%;
-    --kite-red: 0 80% 55%;
-    --kite-green: 145 70% 45%;
-    --kite-purple: 280 65% 55%;
-    --kite-blue: 210 85% 55%;
-    --kite-pink: 340 75% 60%;
+    /* Republic Day Tricolor */
+    --tricolor-saffron: 24 100% 50%;
+    --tricolor-saffron-light: 28 100% 60%;
+    --tricolor-saffron-dark: 20 100% 42%;
+    --tricolor-white: 0 0% 100%;
+    --tricolor-green: 120 60% 30%;
+    --tricolor-green-light: 120 55% 40%;
+    --tricolor-green-dark: 120 65% 22%;
+    --tricolor-navy: 220 70% 25%;
+    --tricolor-navy-light: 220 65% 35%;
+    --ashoka-chakra: 210 80% 45%;
+    --gold-accent: 45 95% 50%;
     
     /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(200 85% 90%) 0%, hsl(200 80% 95%) 50%, hsl(40 60% 96%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(35 20% 98%));
-    --gradient-primary: linear-gradient(135deg, hsl(25 90% 50%), hsl(30 95% 60%));
-    --gradient-celebration: linear-gradient(135deg, hsl(25 90% 50%) 0%, hsl(200 85% 55%) 100%);
-    --gradient-festive: linear-gradient(90deg, hsl(25 90% 50%) 0%, hsl(45 95% 50%) 25%, hsl(0 80% 55%) 50%, hsl(200 85% 55%) 75%, hsl(25 90% 50%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(24 100% 50%) 0%, hsl(0 0% 100%) 50%, hsl(120 60% 30%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(24 100% 50%), hsl(24 100% 60%));
+    --gradient-tricolor: linear-gradient(180deg, hsl(24 100% 50%) 0%, hsl(0 0% 100%) 50%, hsl(120 60% 30%) 100%);
+    --gradient-patriotic: linear-gradient(90deg, hsl(24 100% 50%) 0%, hsl(24 100% 55%) 33%, hsl(0 0% 100%) 50%, hsl(120 55% 35%) 67%, hsl(120 60% 30%) 100%);
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(25 90% 50% / 0.12);
-    --shadow-hover: 0 8px 30px -4px hsl(45 95% 50% / 0.25);
-    --shadow-card: 0 2px 15px -3px hsl(25 40% 25% / 0.08);
-    --shadow-glow: 0 0 20px hsl(40 100% 55% / 0.4);
-    --shadow-celebration: 0 0 30px hsl(25 90% 50% / 0.5), 0 0 60px hsl(45 95% 50% / 0.3);
+    --shadow-soft: 0 4px 20px -2px hsl(220 20% 15% / 0.08);
+    --shadow-hover: 0 8px 30px -4px hsl(24 100% 50% / 0.25);
+    --shadow-card: 0 2px 15px -3px hsl(220 20% 15% / 0.08);
+    --shadow-glow: 0 0 20px hsl(24 100% 50% / 0.4);
+    --shadow-tricolor: 0 0 30px hsl(24 100% 50% / 0.4), 0 0 60px hsl(120 60% 30% / 0.3);
   }
 
   .dark {
-    /* Makar Sankranti Dark Theme - Deep twilight with warm saffron highlights */
+    /* Republic Day Dark Theme - Deep navy with tricolor accents */
     --background: 220 30% 8%;
-    --foreground: 40 30% 95%;
+    --foreground: 0 0% 95%;
 
     --card: 220 25% 12%;
-    --card-foreground: 40 30% 95%;
+    --card-foreground: 0 0% 95%;
 
     --popover: 220 25% 12%;
-    --popover-foreground: 40 30% 95%;
+    --popover-foreground: 0 0% 95%;
 
     /* Bright Saffron */
-    --primary: 25 95% 55%;
+    --primary: 24 100% 55%;
     --primary-foreground: 0 0% 100%;
 
-    /* Rich Sky Blue */
-    --secondary: 200 90% 60%;
+    /* Vibrant Green */
+    --secondary: 120 55% 40%;
     --secondary-foreground: 0 0% 100%;
 
     /* Dark elegant muted */
     --muted: 220 20% 18%;
-    --muted-foreground: 35 20% 65%;
+    --muted-foreground: 220 10% 60%;
 
-    /* Warm Yellow accent */
-    --accent: 45 100% 55%;
-    --accent-foreground: 220 30% 10%;
+    /* Warm Saffron accent */
+    --accent: 24 100% 55%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 220 20% 22%;
     --input: 220 20% 18%;
-    --ring: 25 95% 55%;
+    --ring: 24 100% 55%;
 
-    /* Dark mode Makar Sankranti colors */
-    --sankranti-saffron: 25 95% 55%;
-    --sankranti-saffron-light: 30 100% 68%;
-    --sankranti-saffron-dark: 20 90% 45%;
-    --sankranti-sky: 200 90% 60%;
-    --sankranti-sky-light: 200 95% 72%;
-    --sankranti-sky-dark: 200 85% 50%;
-    --sankranti-yellow: 45 100% 55%;
-    --sankranti-yellow-light: 50 100% 68%;
-    --sankranti-cream: 40 40% 25%;
-    --sun-glow: 40 100% 60%;
-    --kite-red: 0 85% 60%;
-    --kite-green: 145 75% 50%;
-    --kite-purple: 280 70% 60%;
-    --kite-blue: 210 90% 60%;
-    --kite-pink: 340 80% 65%;
+    /* Dark mode Republic Day colors */
+    --tricolor-saffron: 24 100% 55%;
+    --tricolor-saffron-light: 28 100% 65%;
+    --tricolor-saffron-dark: 20 100% 45%;
+    --tricolor-white: 0 0% 95%;
+    --tricolor-green: 120 55% 40%;
+    --tricolor-green-light: 120 50% 50%;
+    --tricolor-green-dark: 120 60% 30%;
+    --tricolor-navy: 220 60% 35%;
+    --tricolor-navy-light: 220 55% 45%;
+    --ashoka-chakra: 210 85% 55%;
+    --gold-accent: 45 100% 55%;
     
     /* Dark Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(220 30% 8%) 0%, hsl(220 25% 12%) 50%, hsl(25 30% 10%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(220 30% 8%) 0%, hsl(220 25% 12%) 50%, hsl(220 30% 10%) 100%);
     --gradient-card: linear-gradient(to bottom, hsl(220 25% 14%), hsl(220 25% 10%));
-    --gradient-primary: linear-gradient(135deg, hsl(25 95% 55%), hsl(30 100% 65%));
-    --gradient-celebration: linear-gradient(135deg, hsl(25 95% 55%) 0%, hsl(200 90% 60%) 100%);
-    --gradient-festive: linear-gradient(90deg, hsl(25 95% 55%) 0%, hsl(45 100% 55%) 25%, hsl(0 85% 60%) 50%, hsl(200 90% 60%) 75%, hsl(25 95% 55%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(24 100% 55%), hsl(24 100% 65%));
+    --gradient-tricolor: linear-gradient(180deg, hsl(24 100% 55%) 0%, hsl(0 0% 95%) 50%, hsl(120 55% 40%) 100%);
+    --gradient-patriotic: linear-gradient(90deg, hsl(24 100% 55%) 0%, hsl(24 100% 60%) 33%, hsl(0 0% 95%) 50%, hsl(120 50% 45%) 67%, hsl(120 55% 40%) 100%);
     
     /* Dark Shadows */
     --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.4);
-    --shadow-hover: 0 8px 30px -4px hsl(25 95% 55% / 0.3);
+    --shadow-hover: 0 8px 30px -4px hsl(24 100% 55% / 0.3);
     --shadow-card: 0 2px 15px -3px hsl(0 0% 0% / 0.3);
-    --shadow-glow: 0 0 30px hsl(40 100% 60% / 0.5);
-    --shadow-celebration: 0 0 40px hsl(25 95% 55% / 0.6), 0 0 80px hsl(45 100% 55% / 0.4);
+    --shadow-glow: 0 0 30px hsl(24 100% 55% / 0.5);
+    --shadow-tricolor: 0 0 40px hsl(24 100% 55% / 0.5), 0 0 80px hsl(120 55% 40% / 0.4);
   }
 }
 
@@ -157,100 +149,69 @@ All colors MUST be HSL.
   }
 }
 
-/* ===== MAKAR SANKRANTI ANIMATIONS ===== */
+/* ===== REPUBLIC DAY ANIMATIONS ===== */
 
-/* Kite flying animation */
-@keyframes kite-fly {
-  0% {
-    transform: translateY(100vh) translateX(-20px) rotate(-15deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(20vh) translateX(30px) rotate(10deg);
-  }
-  100% {
-    transform: translateY(-20vh) translateX(-10px) rotate(-5deg);
-    opacity: 0;
-  }
+/* Flag wave animation */
+@keyframes flag-wave {
+  0%, 100% { transform: skewX(0deg) translateX(0); }
+  25% { transform: skewX(2deg) translateX(2px); }
+  50% { transform: skewX(-1deg) translateX(-1px); }
+  75% { transform: skewX(1deg) translateX(1px); }
 }
 
-@keyframes kite-sway {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  25% { transform: translateX(20px) rotate(8deg); }
-  50% { transform: translateX(-15px) rotate(-5deg); }
-  75% { transform: translateX(10px) rotate(3deg); }
-}
-
-/* Sun glow animations */
-@keyframes sun-pulse {
-  0%, 100% {
-    opacity: 0.8;
-    transform: scale(1);
-    filter: drop-shadow(0 0 20px hsl(var(--sun-glow)));
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 40px hsl(var(--sun-glow)));
-  }
-}
-
-@keyframes sun-rays {
+/* Ashoka Chakra spin */
+@keyframes chakra-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* Sparkle animations */
-@keyframes sparkle {
+/* Tricolor shimmer */
+@keyframes tricolor-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Patriotic pulse */
+@keyframes patriotic-pulse {
   0%, 100% {
-    opacity: 0.3;
-    transform: scale(0.8);
+    box-shadow: 0 0 10px hsl(var(--tricolor-saffron) / 0.6),
+                0 0 20px hsl(var(--tricolor-white) / 0.3),
+                0 0 30px hsl(var(--tricolor-green) / 0.4);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.3);
+    box-shadow: 0 0 20px hsl(var(--tricolor-saffron) / 0.8),
+                0 0 40px hsl(var(--tricolor-white) / 0.5),
+                0 0 60px hsl(var(--tricolor-green) / 0.6);
   }
 }
 
-@keyframes twinkle-star {
+/* Star burst */
+@keyframes star-burst {
   0%, 100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    filter: drop-shadow(0 0 4px hsl(var(--sankranti-yellow)));
-  }
-  25% {
     opacity: 0.5;
-    transform: scale(0.9) rotate(45deg);
+    transform: scale(0.8) rotate(0deg);
   }
   50% {
-    opacity: 0.3;
-    transform: scale(0.8) rotate(90deg);
-  }
-  75% {
-    opacity: 0.6;
-    transform: scale(0.9) rotate(135deg);
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
   }
 }
 
-/* Celebration glow */
-@keyframes celebration-glow {
-  0%, 100% {
-    box-shadow: 0 0 10px hsl(var(--sankranti-saffron) / 0.6),
-                0 0 20px hsl(var(--sun-glow) / 0.4),
-                0 0 30px hsl(var(--sankranti-sky) / 0.3);
+/* March animation */
+@keyframes march {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Confetti fall */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
   }
-  33% {
-    box-shadow: 0 0 15px hsl(var(--sankranti-yellow) / 0.6),
-                0 0 30px hsl(var(--sankranti-saffron) / 0.4),
-                0 0 45px hsl(var(--kite-red) / 0.3);
-  }
-  66% {
-    box-shadow: 0 0 10px hsl(var(--kite-blue) / 0.6),
-                0 0 25px hsl(var(--sankranti-saffron) / 0.5),
-                0 0 40px hsl(var(--kite-green) / 0.3);
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
   }
 }
 
@@ -279,34 +240,46 @@ All colors MUST be HSL.
   }
 }
 
+/* Sparkle */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
 /* ===== ANIMATION CLASSES ===== */
 
-.animate-kite-fly {
-  animation: kite-fly 15s ease-in-out infinite;
+.animate-flag-wave {
+  animation: flag-wave 3s ease-in-out infinite;
 }
 
-.animate-kite-sway {
-  animation: kite-sway 4s ease-in-out infinite;
+.animate-chakra-spin {
+  animation: chakra-spin 10s linear infinite;
 }
 
-.animate-sun-pulse {
-  animation: sun-pulse 3s ease-in-out infinite;
+.animate-tricolor-shimmer {
+  animation: tricolor-shimmer 3s linear infinite;
 }
 
-.animate-sun-rays {
-  animation: sun-rays 30s linear infinite;
+.animate-patriotic-pulse {
+  animation: patriotic-pulse 2s ease-in-out infinite;
 }
 
-.animate-sparkle {
-  animation: sparkle 1.5s ease-in-out infinite;
+.animate-star-burst {
+  animation: star-burst 2s ease-in-out infinite;
 }
 
-.animate-twinkle-star {
-  animation: twinkle-star 2s ease-in-out infinite;
+.animate-march {
+  animation: march 0.5s ease-in-out infinite;
 }
 
-.animate-celebration-glow {
-  animation: celebration-glow 3s ease-in-out infinite;
+.animate-confetti-fall {
+  animation: confetti-fall 5s linear infinite;
 }
 
 .animate-gentle-float {
@@ -317,26 +290,31 @@ All colors MUST be HSL.
   animation: pulse-ring 2s ease-out infinite;
 }
 
-/* ===== MAKAR SANKRANTI DECORATIVE ELEMENTS ===== */
-
-.celebration-glow {
-  box-shadow: 0 0 20px hsl(var(--sankranti-saffron) / 0.4), 
-              0 0 40px hsl(var(--sun-glow) / 0.2);
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
 }
 
-.dark .celebration-glow {
-  box-shadow: 0 0 30px hsl(var(--sankranti-saffron) / 0.5), 
-              0 0 60px hsl(var(--sun-glow) / 0.3);
+/* ===== REPUBLIC DAY DECORATIVE ELEMENTS ===== */
+
+.tricolor-glow {
+  box-shadow: 0 0 20px hsl(var(--tricolor-saffron) / 0.4), 
+              0 0 40px hsl(var(--tricolor-green) / 0.2);
 }
 
-/* Festive text gradient */
-.text-festive-gradient {
+.dark .tricolor-glow {
+  box-shadow: 0 0 30px hsl(var(--tricolor-saffron) / 0.5), 
+              0 0 60px hsl(var(--tricolor-green) / 0.3);
+}
+
+/* Tricolor text gradient */
+.text-tricolor-gradient {
   background: linear-gradient(90deg, 
-    hsl(var(--sankranti-saffron)) 0%, 
-    hsl(var(--sankranti-yellow)) 25%, 
-    hsl(var(--kite-red)) 50%, 
-    hsl(var(--sankranti-sky)) 75%, 
-    hsl(var(--sankranti-saffron)) 100%
+    hsl(var(--tricolor-saffron)) 0%, 
+    hsl(var(--tricolor-saffron)) 30%, 
+    hsl(var(--tricolor-white)) 45%,
+    hsl(var(--tricolor-white)) 55%,
+    hsl(var(--tricolor-green)) 70%, 
+    hsl(var(--tricolor-green)) 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -348,9 +326,9 @@ All colors MUST be HSL.
 /* Saffron shimmer text */
 .text-gold-shimmer {
   background: linear-gradient(90deg, 
-    hsl(var(--sankranti-saffron-dark)) 0%,
-    hsl(var(--sankranti-saffron-light)) 50%,
-    hsl(var(--sankranti-saffron-dark)) 100%
+    hsl(var(--tricolor-saffron-dark)) 0%,
+    hsl(var(--tricolor-saffron-light)) 50%,
+    hsl(var(--tricolor-saffron-dark)) 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -359,74 +337,87 @@ All colors MUST be HSL.
   animation: text-gradient-flow 3s linear infinite;
 }
 
-/* Celebration border */
-.border-celebration {
-  border: 2px solid transparent;
+/* Tricolor border */
+.border-tricolor {
+  border: 3px solid transparent;
   background: linear-gradient(var(--background), var(--background)) padding-box,
-              linear-gradient(135deg, hsl(var(--sankranti-saffron)), hsl(var(--sankranti-yellow)), hsl(var(--sankranti-sky)), hsl(var(--sankranti-saffron))) border-box;
+              linear-gradient(180deg, hsl(var(--tricolor-saffron)), hsl(var(--tricolor-white)), hsl(var(--tricolor-green))) border-box;
 }
 
-/* Festive button glow */
-.btn-festive {
-  background: linear-gradient(135deg, hsl(var(--sankranti-saffron)), hsl(var(--sankranti-saffron-dark)));
-  box-shadow: 0 4px 15px hsl(var(--sankranti-saffron) / 0.4);
+/* Patriotic button glow */
+.btn-patriotic {
+  background: linear-gradient(135deg, hsl(var(--tricolor-saffron)), hsl(var(--tricolor-saffron-dark)));
+  box-shadow: 0 4px 15px hsl(var(--tricolor-saffron) / 0.4);
   transition: all 0.3s ease;
 }
 
-.btn-festive:hover {
-  box-shadow: 0 6px 25px hsl(var(--sankranti-saffron) / 0.6);
+.btn-patriotic:hover {
+  box-shadow: 0 6px 25px hsl(var(--tricolor-saffron) / 0.6);
   transform: translateY(-2px);
 }
 
-/* Sankranti banner ribbon */
-.ribbon-banner {
-  background: linear-gradient(135deg, hsl(var(--sankranti-saffron)) 0%, hsl(var(--sankranti-saffron-dark)) 100%);
-  box-shadow: 0 4px 15px hsl(var(--sankranti-saffron) / 0.4);
+/* Republic Day banner ribbon */
+.ribbon-tricolor {
+  background: linear-gradient(180deg, 
+    hsl(var(--tricolor-saffron)) 0%, 
+    hsl(var(--tricolor-saffron)) 33%, 
+    hsl(var(--tricolor-white)) 33%, 
+    hsl(var(--tricolor-white)) 66%, 
+    hsl(var(--tricolor-green)) 66%, 
+    hsl(var(--tricolor-green)) 100%
+  );
 }
 
-.ribbon-banner::before,
-.ribbon-banner::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  border: 10px solid transparent;
-  border-top-color: hsl(var(--sankranti-saffron-dark));
+/* Horizontal tricolor stripe */
+.stripe-tricolor {
+  background: linear-gradient(90deg, 
+    hsl(var(--tricolor-saffron)) 0%, 
+    hsl(var(--tricolor-saffron)) 33%, 
+    hsl(var(--tricolor-white)) 33%, 
+    hsl(var(--tricolor-white)) 66%, 
+    hsl(var(--tricolor-green)) 66%, 
+    hsl(var(--tricolor-green)) 100%
+  );
 }
 
-.ribbon-banner::before {
-  left: 0;
-  border-left-color: hsl(var(--sankranti-saffron-dark));
-}
-
-.ribbon-banner::after {
-  right: 0;
-  border-right-color: hsl(var(--sankranti-saffron-dark));
-}
-
-/* Kite styles */
-.kite-piece {
-  position: fixed;
-  z-index: 9999;
-  animation: kite-fly linear forwards;
-}
-
-.kite-shape {
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 25px solid currentColor;
+/* Ashoka Chakra */
+.ashoka-chakra {
+  border: 2px solid hsl(var(--ashoka-chakra));
+  border-radius: 50%;
   position: relative;
 }
 
-.kite-shape::after {
+.ashoka-chakra::before {
+  content: '☸';
+  font-size: inherit;
+  color: hsl(var(--ashoka-chakra));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Offer badge styles */
+.offer-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-badge::before {
   content: '';
   position: absolute;
-  top: 25px;
-  left: -2px;
-  width: 4px;
-  height: 40px;
-  background: currentColor;
-  opacity: 0.6;
-  transform: rotate(-5deg);
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.3), transparent);
+  animation: tricolor-shimmer 2s linear infinite;
+}
+
+/* Celebration confetti piece */
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 20px;
+  animation: confetti-fall linear forwards;
+  z-index: 9999;
 }
