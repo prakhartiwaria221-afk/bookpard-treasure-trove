@@ -5,15 +5,14 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { FilterControls } from "@/components/FilterControls";
 import { BookCard } from "@/components/BookCard";
 import { BookSection } from "@/components/BookSection";
-import { SankrantiBanner } from "@/components/SankrantiBanner";
-import { KiteEffect } from "@/components/KiteEffect";
+import { RepublicDayBanner } from "@/components/RepublicDayBanner";
 import { useCart } from "@/hooks/useCart";
 import { booksData, bookCollections } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
-import { Sun, Heart } from "lucide-react";
+import { Flag, Star, Gift } from "lucide-react";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -24,13 +23,6 @@ const Index = () => {
   const [filterCondition, setFilterCondition] = useState<FilterCondition>("all");
   const [userListings, setUserListings] = useState<Book[]>([]);
   const [adminBooks, setAdminBooks] = useState<Book[]>([]);
-  const [showKites, setShowKites] = useState(true);
-
-  // Auto-hide kites after 10 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => setShowKites(false), 10000);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Fetch admin books from database
   useEffect(() => {
@@ -310,12 +302,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Kite Effect */}
-      {showKites && <KiteEffect />}
-      
-      {/* Sankranti Banner - Fixed at very top */}
+      {/* Republic Day Banner - Fixed at very top */}
       <div className="fixed top-0 left-0 right-0 z-[60]">
-        <SankrantiBanner />
+        <RepublicDayBanner />
       </div>
       
       {/* Main content with adjusted padding */}
@@ -326,22 +315,29 @@ const Index = () => {
           <Hero />
           
           <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
-            {/* Sankranti Section Header */}
+            {/* Republic Day Section Header */}
             <div className="text-center mb-12 animate-fade-in">
               <div className="inline-flex items-center gap-3 mb-4">
-                <Sun className="h-8 w-8 text-sankranti-saffron animate-sun-pulse" />
-                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-festive-gradient">
-                  Makar Sankranti 2026 Book Collection
+                <span className="text-3xl">🇮🇳</span>
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-tricolor-gradient">
+                  Republic Day 2026 Book Sale
                 </h2>
-                <div className="h-8 w-8 animate-kite-sway">
-                  <svg viewBox="0 0 24 30" className="w-full h-full" fill="hsl(var(--kite-red))">
-                    <path d="M12 0L24 12L12 30L0 12L12 0Z" />
-                  </svg>
-                </div>
+                <span className="text-3xl">🇮🇳</span>
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Celebrate Sankranti with amazing reads! Explore our curated collection of books at special festive prices.
+                Celebrate the spirit of freedom with <span className="font-bold text-primary">26% OFF</span> on all books! Honor our Constitution with knowledge and wisdom.
               </p>
+              {/* Offer highlights */}
+              <div className="flex flex-wrap justify-center gap-3 mt-4">
+                <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
+                  <Gift className="h-4 w-4" />
+                  26% OFF All Books
+                </div>
+                <div className="flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold">
+                  <Star className="h-4 w-4" />
+                  Free Shipping
+                </div>
+              </div>
             </div>
 
             {/* Filters */}
@@ -361,7 +357,7 @@ const Index = () => {
             {/* Category Title */}
             {!searchQuery && (
               <div className="mb-6 flex items-center gap-3">
-                <Sun className="h-6 w-6 text-sankranti-saffron" />
+                <Flag className="h-6 w-6 text-primary" />
                 <h2 className="text-2xl font-playfair font-bold text-foreground">
                   {selectedCategory}
                   <span className="text-muted-foreground font-inter font-normal text-base ml-2">
@@ -480,48 +476,43 @@ const Index = () => {
             )}
           </main>
 
-          {/* Footer - Sankranti Themed */}
-          <footer className="relative bg-gradient-to-b from-card to-sankranti-saffron/10 dark:to-sankranti-saffron-dark/20 border-t border-sankranti-saffron/20 mt-16 overflow-hidden">
+          {/* Footer - Republic Day Themed */}
+          <footer className="relative bg-gradient-to-b from-card to-primary/5 dark:to-primary/10 border-t border-primary/20 mt-16 overflow-hidden">
+            {/* Tricolor top accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(24,100%,50%)] via-white to-[hsl(120,60%,30%)]" />
+            
             {/* Decorative elements */}
             <div className="absolute inset-0 pointer-events-none">
-              <Sun className="absolute top-8 left-[10%] h-4 w-4 text-sankranti-saffron/20 animate-sun-pulse" />
-              <Sun className="absolute top-12 right-[15%] h-3 w-3 text-sun-glow/25 animate-sun-pulse" style={{ animationDelay: "0.5s" }} />
-              <div className="absolute bottom-20 left-[20%] h-4 w-4 animate-kite-sway" style={{ animationDelay: "1s" }}>
-                <svg viewBox="0 0 16 20" className="w-full h-full opacity-15" fill="hsl(var(--kite-blue))">
-                  <path d="M8 0L16 10L8 20L0 10L8 0Z" />
-                </svg>
-              </div>
+              <Star className="absolute top-8 left-[10%] h-4 w-4 text-primary/20 animate-sparkle" />
+              <Star className="absolute top-12 right-[15%] h-3 w-3 text-secondary/25 animate-sparkle" style={{ animationDelay: "0.5s" }} />
+              <div className="absolute bottom-20 left-[20%] text-xl text-[hsl(210,80%,45%)]/20 animate-chakra-spin">☸</div>
             </div>
             
             <div className="container mx-auto px-4 py-12 relative z-10">
               <div className="grid md:grid-cols-3 gap-8">
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Sun className="h-4 w-4 text-sankranti-saffron" />
+                    <Flag className="h-4 w-4 text-primary" />
                     About BookPard
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Your trusted marketplace for buying and selling books. Celebrate Makar Sankranti 2026 with amazing deals on books for all ages!
+                    Your trusted marketplace for buying and selling books. Celebrate Republic Day 2026 with 26% OFF on all books!
                   </p>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <div className="h-4 w-4">
-                      <svg viewBox="0 0 16 20" className="w-full h-full" fill="hsl(var(--sankranti-saffron))">
-                        <path d="M8 0L16 10L8 20L0 10L8 0Z" />
-                      </svg>
-                    </div>
+                    <span className="text-lg">🇮🇳</span>
                     Quick Links
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li><a href="/" className="hover:text-sankranti-saffron transition-colors">Home</a></li>
-                    <li><a href="/#books-section" className="hover:text-sankranti-saffron transition-colors">Books</a></li>
-                    <li><a href="/sell" className="hover:text-sankranti-saffron transition-colors">Sell Books</a></li>
+                    <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
+                    <li><a href="/#books-section" className="hover:text-primary transition-colors">Books</a></li>
+                    <li><a href="/sell" className="hover:text-primary transition-colors">Sell Books</a></li>
                   </ul>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-kite-pink" />
+                    <Gift className="h-4 w-4 text-secondary" />
                     Contact Us
                   </h3>
                   <p className="text-muted-foreground text-sm">
@@ -531,19 +522,15 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Sankranti Footer Message */}
-              <div className="mt-8 pt-8 border-t border-sankranti-saffron/20 text-center">
+              {/* Republic Day Footer Message */}
+              <div className="mt-8 pt-8 border-t border-primary/20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Sun className="h-4 w-4 text-sankranti-saffron" />
-                  <span className="font-dancing text-lg text-sankranti-saffron">Happy Makar Sankranti 2026!</span>
-                  <div className="h-4 w-4 animate-kite-sway">
-                    <svg viewBox="0 0 16 20" className="w-full h-full" fill="hsl(var(--kite-red))">
-                      <path d="M8 0L16 10L8 20L0 10L8 0Z" />
-                    </svg>
-                  </div>
+                  <span className="text-xl">🇮🇳</span>
+                  <span className="font-playfair text-lg text-primary font-bold">Happy Republic Day 2026!</span>
+                  <span className="text-xl">🇮🇳</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  © 2026 BookPard. All rights reserved. Made with <Heart className="inline h-3 w-3 text-kite-pink fill-kite-pink" /> for book lovers.
+                  © 2026 BookPard. All rights reserved. Jai Hind! 🇮🇳
                 </p>
               </div>
             </div>

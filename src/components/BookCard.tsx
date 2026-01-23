@@ -1,6 +1,6 @@
 import { Book } from "@/types/book";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, BookOpen, Sparkles } from "lucide-react";
+import { ShoppingCart, BookOpen, Sparkles, Flag, Gift } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,12 @@ interface BookCardProps {
 export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const discount = Math.round(((book.oldPrice - book.price) / book.oldPrice) * 100);
+  
+  // Republic Day Special: 26% OFF on all books
+  const republicDayDiscount = 26;
+  const discountedPrice = Math.round(book.price * (1 - republicDayDiscount / 100));
+  const originalDiscount = Math.round(((book.oldPrice - book.price) / book.oldPrice) * 100);
+  
   const [avgRating, setAvgRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
 
@@ -41,89 +46,89 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    addToCart(book);
-    toast.success(`${book.title} added to cart!`);
+    // Add with discounted price
+    const discountedBook = { ...book, price: discountedPrice };
+    addToCart(discountedBook);
+    toast.success(`${book.title} added to cart with Republic Day discount!`);
     navigate("/checkout");
   };
 
   const handleAddToCartClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onAddToCart(book);
+    // Add with discounted price
+    const discountedBook = { ...book, price: discountedPrice };
+    onAddToCart(discountedBook);
   };
 
   return (
     <div 
       onClick={onClick}
-      className="group relative bg-gradient-to-br from-amber-950/95 via-stone-900/95 to-amber-950/95 rounded-xl overflow-hidden shadow-xl shadow-amber-950/30 hover:shadow-2xl hover:shadow-amber-900/40 transition-all duration-300 hover:-translate-y-1 border border-amber-700/40 cursor-pointer">
-      {/* Vintage Paper Texture */}
-      <div className="absolute inset-0 opacity-5 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E')]" />
+      className="group relative bg-card dark:bg-card rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-transparent hover:border-[hsl(24,100%,50%)/30] cursor-pointer">
+      
+      {/* Tricolor Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(24,100%,50%)] via-white to-[hsl(120,60%,30%)]" />
 
-      {/* Corner Flourishes */}
-      <div className="absolute top-1.5 left-1.5 w-6 h-6 border-l-2 border-t-2 border-amber-600/40 rounded-tl pointer-events-none" />
-      <div className="absolute top-1.5 right-1.5 w-6 h-6 border-r-2 border-t-2 border-amber-600/40 rounded-tr pointer-events-none" />
-      <div className="absolute bottom-1.5 left-1.5 w-6 h-6 border-l-2 border-b-2 border-amber-600/40 rounded-bl pointer-events-none" />
-      <div className="absolute bottom-1.5 right-1.5 w-6 h-6 border-r-2 border-b-2 border-amber-600/40 rounded-br pointer-events-none" />
-
-      {/* Vintage Corner Badge */}
+      {/* Republic Day Badge - Top Left */}
       <div className="absolute top-3 left-3 z-10">
-        <div className="p-1.5 bg-gradient-to-br from-amber-700 to-amber-900 rounded-lg shadow-lg border border-amber-600/50 group-hover:scale-110 transition-transform duration-300">
-          <BookOpen className="h-3.5 w-3.5 text-amber-200" />
+        <div className="p-1.5 bg-gradient-to-br from-[hsl(24,100%,50%)] to-[hsl(24,100%,40%)] rounded-lg shadow-lg group-hover:scale-110 transition-transform duration-300 flex items-center gap-1">
+          <Flag className="h-3.5 w-3.5 text-white" />
         </div>
       </div>
 
-      {/* Book Image with Vintage Frame */}
-      <div className="relative aspect-[3/4] overflow-hidden m-2 rounded-lg border border-amber-700/30">
+      {/* Book Image */}
+      <div className="relative aspect-[3/4] overflow-hidden m-2 rounded-lg">
         <img
           src={book.image}
           alt={book.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         
-        {/* Warm Vintage Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-transparent to-amber-900/20" />
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent to-amber-950/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
         
-        {/* Discount Badge - Vintage Seal */}
-        {discount > 0 && (
-          <div className="absolute top-2 right-2 z-10">
-            <div className="relative bg-gradient-to-br from-amber-700 to-amber-900 text-amber-100 px-3 py-1.5 rounded-lg shadow-lg border border-amber-500/50">
-              <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-amber-400 animate-pulse" />
-              <span className="text-sm font-bold">{discount}% OFF</span>
+        {/* Republic Day Discount Badge */}
+        <div className="absolute top-2 right-2 z-10">
+          <div className="relative bg-gradient-to-br from-[hsl(24,100%,50%)] to-[hsl(24,100%,40%)] text-white px-3 py-1.5 rounded-lg shadow-lg offer-badge">
+            <div className="flex items-center gap-1">
+              <span className="text-lg">🇮🇳</span>
+              <span className="text-sm font-bold">{republicDayDiscount}% OFF</span>
             </div>
           </div>
-        )}
+        </div>
+
+        {/* Free Shipping Tag */}
+        <div className="absolute bottom-2 left-2 z-10">
+          <Badge className="bg-[hsl(120,60%,30%)] text-white border-0 text-xs flex items-center gap-1">
+            <Gift className="h-3 w-3" />
+            Free Shipping
+          </Badge>
+        </div>
 
         {/* Condition Badge */}
         {book.condition === "old" && (
-          <div className="absolute top-2 left-10 z-10">
-            <Badge className="bg-stone-800/90 text-amber-200 border border-amber-600/40 text-xs">
-              ✦ Pre-loved
+          <div className="absolute top-2 left-12 z-10">
+            <Badge className="bg-secondary/90 text-secondary-foreground border-0 text-xs">
+              Pre-loved
             </Badge>
           </div>
         )}
-
-        {/* Bottom Gold Accent */}
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-600/60 to-transparent" />
       </div>
 
-      {/* Book Info - Vintage Typography */}
+      {/* Book Info */}
       <div className="p-4 pt-2 space-y-3 relative">
-        {/* Decorative Sparkle */}
-        <Sparkles className="absolute top-2 right-3 h-3 w-3 text-amber-500/30 animate-pulse" />
-        
         <div>
-          {/* Category Badge - Vintage Style */}
-          <Badge className="text-xs mb-2 bg-gradient-to-r from-amber-800/80 to-stone-800/80 text-amber-200 border border-amber-600/40 shadow-sm">
+          {/* Category Badge */}
+          <Badge className="text-xs mb-2 bg-primary/10 text-primary border border-primary/20">
             {book.category}
           </Badge>
           
-          {/* Title - Elegant Font */}
-          <h3 className="font-playfair font-bold text-amber-50 line-clamp-2 group-hover:text-amber-300 transition-colors leading-tight">
+          {/* Title */}
+          <h3 className="font-playfair font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight">
             {book.title}
           </h3>
           
           {/* Author */}
-          <p className="text-sm text-amber-200/60 mt-1 font-inter">{book.author}</p>
+          <p className="text-sm text-muted-foreground mt-1">{book.author}</p>
           
           {/* Rating */}
           {reviewCount > 0 && (
@@ -140,24 +145,33 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
 
         {/* Decorative Divider */}
         <div className="flex items-center gap-2">
-          <div className="h-px flex-1 bg-gradient-to-r from-amber-700/40 to-transparent" />
-          <Sparkles className="h-2.5 w-2.5 text-amber-500/40" />
-          <div className="h-px flex-1 bg-gradient-to-l from-amber-700/40 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-[hsl(24,100%,50%)/30] to-transparent" />
+          <div className="text-sm text-[hsl(210,80%,45%)]">☸</div>
+          <div className="h-px flex-1 bg-gradient-to-l from-[hsl(120,60%,30%)/30] to-transparent" />
         </div>
 
-        {/* Pricing - Vintage Gold */}
-        <div className="flex items-center gap-2">
-          <span className="text-2xl font-playfair font-bold bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent">
-            ₹{book.price}
-          </span>
-          <span className="text-sm text-amber-400/50 line-through">₹{book.oldPrice}</span>
+        {/* Pricing with Republic Day Offer */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-playfair font-bold text-primary">
+              ₹{discountedPrice}
+            </span>
+            <span className="text-sm text-muted-foreground line-through">₹{book.price}</span>
+            {book.oldPrice > book.price && (
+              <span className="text-xs text-muted-foreground line-through">₹{book.oldPrice}</span>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-[hsl(120,60%,30%)] dark:text-[hsl(120,55%,45%)]">
+            <Sparkles className="h-3 w-3" />
+            <span>Republic Day Special Price!</span>
+          </div>
         </div>
 
-        {/* Action Buttons - Vintage Style */}
+        {/* Action Buttons */}
         <div className="flex gap-2 pt-1">
           <Button
             onClick={handleAddToCartClick}
-            className="flex-1 bg-gradient-to-r from-amber-700 to-amber-800 hover:from-amber-600 hover:to-amber-700 text-amber-50 shadow-lg shadow-amber-900/40 hover:shadow-xl transition-all hover:scale-[1.02] border border-amber-600/50 font-medium"
+            className="flex-1 bg-gradient-to-r from-[hsl(24,100%,50%)] to-[hsl(24,100%,45%)] hover:from-[hsl(24,100%,55%)] hover:to-[hsl(24,100%,50%)] text-white shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Add to Cart
@@ -165,15 +179,15 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
           <Button
             variant="outline"
             onClick={handleBuyNow}
-            className="border-2 border-amber-600/50 text-amber-200 hover:bg-amber-800/40 hover:text-amber-100 hover:border-amber-500 transition-all bg-transparent"
+            className="border-2 border-[hsl(120,60%,30%)] text-[hsl(120,60%,30%)] hover:bg-[hsl(120,60%,30%)] hover:text-white transition-all dark:border-[hsl(120,55%,40%)] dark:text-[hsl(120,55%,40%)] dark:hover:bg-[hsl(120,55%,40%)]"
           >
             Buy Now
           </Button>
         </div>
       </div>
 
-      {/* Bottom Decorative Border */}
-      <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent" />
+      {/* Bottom Tricolor Border */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(24,100%,50%)] via-white to-[hsl(120,60%,30%)]" />
     </div>
   );
 };
