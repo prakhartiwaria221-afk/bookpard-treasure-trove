@@ -10,6 +10,7 @@ import { Upload, CheckCircle, Loader2, ArrowLeft, Pencil, Trash2, BookOpen } fro
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BulkUpload } from "@/components/BulkUpload";
 
 interface UserListing {
   id: string;
@@ -359,9 +360,10 @@ export default function SellBooks() {
 
           {user && (
             <Tabs defaultValue="add" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="add">Add New Book</TabsTrigger>
                 <TabsTrigger value="my-listings">My Listings ({myListings.length})</TabsTrigger>
+                <TabsTrigger value="bulk">Bulk Upload</TabsTrigger>
               </TabsList>
 
               {/* Add New Book Tab */}
@@ -587,6 +589,13 @@ export default function SellBooks() {
                       ))}
                     </div>
                   )}
+                </div>
+              </TabsContent>
+
+              {/* Bulk Upload Tab */}
+              <TabsContent value="bulk">
+                <div className="bg-card rounded-3xl p-8 shadow-[var(--shadow-card)]">
+                  <BulkUpload />
                 </div>
               </TabsContent>
             </Tabs>

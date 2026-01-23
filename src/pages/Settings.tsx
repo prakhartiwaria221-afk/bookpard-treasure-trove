@@ -6,8 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, Trash2, User, AlertTriangle } from "lucide-react";
+import { Loader2, ArrowLeft, Trash2, User, AlertTriangle, Bell, Package } from "lucide-react";
+import { NotificationPreferences } from "@/components/NotificationPreferences";
+import { InventoryAlerts } from "@/components/InventoryAlerts";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { Link } from "react-router-dom";
 
@@ -120,114 +123,167 @@ export default function Settings() {
 
         <h1 className="text-3xl font-bold text-foreground mb-8">Account Settings</h1>
 
-        {/* Account Info Card */}
-        <Card className="mb-6 border-border/40 shadow-[var(--shadow-soft)]">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              Account Information
-            </CardTitle>
-            <CardDescription>Your account details</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label className="text-muted-foreground">Email</Label>
-              <p className="text-foreground font-medium">{user.email}</p>
-            </div>
-            <div>
-              <Label className="text-muted-foreground">Account Created</Label>
-              <p className="text-foreground font-medium">
-                {new Date(user.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="account" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="account" className="gap-2">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Account</span>
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="gap-2">
+              <Bell className="h-4 w-4" />
+              <span className="hidden sm:inline">Notifications</span>
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="gap-2">
+              <Package className="h-4 w-4" />
+              <span className="hidden sm:inline">Inventory</span>
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Danger Zone Card */}
-        <Card className="border-destructive/50 bg-destructive/5">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
-              <AlertTriangle className="h-5 w-5" />
-              Danger Zone
-            </CardTitle>
-            <CardDescription>
-              Irreversible actions that permanently affect your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Delete Account</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Permanently delete your account and all associated data. This includes your book listings and personal information. This action cannot be undone.
-                </p>
-                
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="gap-2">
-                      <Trash2 className="h-4 w-4" />
-                      Delete My Account
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle className="flex items-center gap-2 text-destructive">
-                        <AlertTriangle className="h-5 w-5" />
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription className="space-y-3">
-                        <p>
-                          This action <strong>cannot be undone</strong>. This will permanently delete:
-                        </p>
-                        <ul className="list-disc list-inside space-y-1 text-sm">
-                          <li>Your account and login credentials</li>
-                          <li>All your book listings</li>
-                          <li>Your personal information from orders</li>
-                        </ul>
-                        <div className="pt-4">
-                          <Label htmlFor="confirm-delete" className="text-foreground font-medium">
-                            Type <span className="font-mono bg-muted px-1 rounded">DELETE</span> to confirm
-                          </Label>
-                          <Input
-                            id="confirm-delete"
-                            value={confirmText}
-                            onChange={(e) => setConfirmText(e.target.value)}
-                            placeholder="Type DELETE"
-                            className="mt-2"
-                            autoComplete="off"
-                          />
-                        </div>
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel onClick={() => setConfirmText("")}>
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeleteAccount}
-                        disabled={confirmText !== "DELETE" || deleting}
-                        className="bg-destructive hover:bg-destructive/90"
-                      >
-                        {deleting ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          "Delete Account Permanently"
-                        )}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="account" className="space-y-6">
+            {/* Account Info Card */}
+            <Card className="border-border/40 shadow-[var(--shadow-soft)]">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  Account Information
+                </CardTitle>
+                <CardDescription>Your account details</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-muted-foreground">Email</Label>
+                  <p className="text-foreground font-medium">{user.email}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Account Created</Label>
+                  <p className="text-foreground font-medium">
+                    {new Date(user.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Danger Zone Card */}
+            <Card className="border-destructive/50 bg-destructive/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="h-5 w-5" />
+                  Danger Zone
+                </CardTitle>
+                <CardDescription>
+                  Irreversible actions that permanently affect your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-1">Delete Account</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Permanently delete your account and all associated data. This includes your book listings and personal information. This action cannot be undone.
+                    </p>
+                    
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" className="gap-2">
+                          <Trash2 className="h-4 w-4" />
+                          Delete My Account
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                            <AlertTriangle className="h-5 w-5" />
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription className="space-y-3">
+                            <p>
+                              This action <strong>cannot be undone</strong>. This will permanently delete:
+                            </p>
+                            <ul className="list-disc list-inside space-y-1 text-sm">
+                              <li>Your account and login credentials</li>
+                              <li>All your book listings</li>
+                              <li>Your personal information from orders</li>
+                            </ul>
+                            <div className="pt-4">
+                              <Label htmlFor="confirm-delete" className="text-foreground font-medium">
+                                Type <span className="font-mono bg-muted px-1 rounded">DELETE</span> to confirm
+                              </Label>
+                              <Input
+                                id="confirm-delete"
+                                value={confirmText}
+                                onChange={(e) => setConfirmText(e.target.value)}
+                                placeholder="Type DELETE"
+                                className="mt-2"
+                                autoComplete="off"
+                              />
+                            </div>
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel onClick={() => setConfirmText("")}>
+                            Cancel
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={handleDeleteAccount}
+                            disabled={confirmText !== "DELETE" || deleting}
+                            className="bg-destructive hover:bg-destructive/90"
+                          >
+                            {deleting ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Deleting...
+                              </>
+                            ) : (
+                              "Delete Account Permanently"
+                            )}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <Card className="border-border/40 shadow-[var(--shadow-soft)]">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="h-5 w-5 text-primary" />
+                  Email Notifications
+                </CardTitle>
+                <CardDescription>
+                  Manage how you receive updates about orders, price drops, and more
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <NotificationPreferences />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <Card className="border-border/40 shadow-[var(--shadow-soft)]">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  Inventory Alerts
+                </CardTitle>
+                <CardDescription>
+                  Notifications about your book listings stock levels
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <InventoryAlerts />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
