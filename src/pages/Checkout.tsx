@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCart } from "@/hooks/useCart";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { CreditCard, Smartphone, Banknote, ShoppingBag, CheckCircle2 } from "lucide-react";
+import { CreditCard, Smartphone, Banknote, Building2, Wallet2, Calendar, ShoppingBag, CheckCircle2, Gift, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +15,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
+import { GiftCardRedeem } from "@/components/GiftCardRedeem";
 
 export default function Checkout() {
   const { cart, totalPrice, totalItems, clearCart } = useCart();
@@ -33,6 +39,65 @@ export default function Checkout() {
   const [cvv, setCvv] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  
+  // Net Banking
+  const [selectedBank, setSelectedBank] = useState("");
+  
+  // Wallet states
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [useWallet, setUseWallet] = useState(false);
+  
+  // Gift card states
+  const [giftCardOpen, setGiftCardOpen] = useState(false);
+  const [appliedGiftCard, setAppliedGiftCard] = useState<{ code: string; balance: number } | null>(null);
+  const [giftCardCode, setGiftCardCode] = useState("");
+
+  // EMI states
+  const [emiMonths, setEmiMonths] = useState("3");
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, []);
+
+  const fetchWalletBalance = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("user_wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .single();
+
+    if (data) {
+      setWalletBalance(data.balance);
+    }
+  };
+
+  const walletDiscount = useWallet ? Math.min(walletBalance, totalPrice) : 0;
+  const giftCardDiscount = appliedGiftCard ? Math.min(appliedGiftCard.balance, totalPrice - walletDiscount) : 0;
+  const finalPrice = totalPrice - walletDiscount - giftCardDiscount;
+
+  const handleApplyGiftCard = async () => {
+    if (!giftCardCode.trim()) {
+      toast.error("Please enter a gift card code");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("gift_cards")
+      .select("code, balance, is_active")
+      .eq("code", giftCardCode.toUpperCase().trim())
+      .single();
+
+    if (error || !data || !data.is_active || data.balance <= 0) {
+      toast.error("Invalid or empty gift card");
+      return;
+    }
+
+    setAppliedGiftCard({ code: data.code, balance: data.balance });
+    toast.success(`Gift card applied! ₹${data.balance} discount`);
+  };
 
   if (cart.length === 0) {
     navigate("/cart");
@@ -53,6 +118,11 @@ export default function Checkout() {
       }
     }
 
+    if (paymentMethod === "netbanking" && !selectedBank) {
+      toast.error("Please select a bank");
+      return;
+    }
+
     if (paymentMethod === "cod" && (!deliveryAddress || !phoneNumber)) {
       toast.error("Please fill delivery address and phone number");
       return;
@@ -61,11 +131,34 @@ export default function Checkout() {
     // Get current user
     const { data: { user } } = await supabase.auth.getUser();
 
+    // Deduct wallet balance if used
+    if (useWallet && walletDiscount > 0 && user) {
+      await supabase
+        .from("user_wallets")
+        .update({ balance: walletBalance - walletDiscount })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        amount: walletDiscount,
+        transaction_type: "debit",
+        description: "Order payment",
+      });
+    }
+
+    // Deduct gift card balance if used
+    if (appliedGiftCard && giftCardDiscount > 0) {
+      await supabase
+        .from("gift_cards")
+        .update({ balance: appliedGiftCard.balance - giftCardDiscount })
+        .eq("code", appliedGiftCard.code);
+    }
+
     // Save order to database
     const { error } = await supabase.from("orders").insert([{
       user_id: user?.id || null,
       items: cart as any,
-      total_price: totalPrice,
+      total_price: finalPrice,
       payment_method: paymentMethod,
       delivery_address: paymentMethod === "cod" ? deliveryAddress : null,
       contact_phone: paymentMethod === "cod" ? phoneNumber : null,
@@ -93,6 +186,16 @@ export default function Checkout() {
     toast.success("Order placed successfully!");
   };
 
+  const banks = [
+    "State Bank of India",
+    "HDFC Bank",
+    "ICICI Bank",
+    "Axis Bank",
+    "Punjab National Bank",
+    "Bank of Baroda",
+    "Kotak Mahindra Bank",
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar cartItemCount={totalItems} onSearchChange={() => {}} />
@@ -104,10 +207,81 @@ export default function Checkout() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Payment Form */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Wallet & Gift Card Section */}
+              <div className="bg-card rounded-2xl p-6 shadow-[var(--shadow-card)] animate-fade-in space-y-4">
+                <h2 className="text-xl font-bold text-foreground">Apply Discounts</h2>
+                
+                {/* Wallet Balance */}
+                {walletBalance > 0 && (
+                  <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                    <div className="flex items-center gap-3">
+                      <Wallet2 className="h-5 w-5 text-emerald-600" />
+                      <div>
+                        <p className="font-medium">Wallet Balance</p>
+                        <p className="text-sm text-muted-foreground">₹{walletBalance} available</p>
+                      </div>
+                    </div>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useWallet}
+                        onChange={(e) => setUseWallet(e.target.checked)}
+                        className="w-5 h-5 accent-emerald-600"
+                      />
+                      <span className="text-sm font-medium">Use ₹{Math.min(walletBalance, totalPrice)}</span>
+                    </label>
+                  </div>
+                )}
+
+                {/* Gift Card */}
+                <Collapsible open={giftCardOpen} onOpenChange={setGiftCardOpen}>
+                  <CollapsibleTrigger className="flex items-center justify-between w-full p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors">
+                    <div className="flex items-center gap-3">
+                      <Gift className="h-5 w-5 text-primary" />
+                      <span className="font-medium">Apply Gift Card</span>
+                    </div>
+                    {giftCardOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="pt-4">
+                    {appliedGiftCard ? (
+                      <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div>
+                          <p className="font-medium text-green-700 dark:text-green-400">Gift Card Applied!</p>
+                          <p className="text-sm text-muted-foreground">Code: {appliedGiftCard.code}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-green-600">-₹{giftCardDiscount}</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setAppliedGiftCard(null)}
+                            className="text-red-500 hover:text-red-600"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Enter gift card code"
+                          value={giftCardCode}
+                          onChange={(e) => setGiftCardCode(e.target.value.toUpperCase())}
+                          className="font-mono"
+                        />
+                        <Button onClick={handleApplyGiftCard} variant="outline">
+                          Apply
+                        </Button>
+                      </div>
+                    )}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+
               <div className="bg-card rounded-2xl p-6 shadow-[var(--shadow-card)] animate-fade-in">
                 <h2 className="text-xl font-bold text-foreground mb-6">Select Payment Method</h2>
                 
-                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
+                <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-3">
                   <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-border hover:border-primary transition-colors cursor-pointer">
                     <RadioGroupItem value="upi" id="upi" />
                     <Label htmlFor="upi" className="flex items-center gap-3 cursor-pointer flex-1">
@@ -121,6 +295,22 @@ export default function Checkout() {
                     <Label htmlFor="card" className="flex items-center gap-3 cursor-pointer flex-1">
                       <CreditCard className="h-5 w-5 text-primary" />
                       <span className="font-medium">Debit/Credit Card</span>
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-border hover:border-primary transition-colors cursor-pointer">
+                    <RadioGroupItem value="netbanking" id="netbanking" />
+                    <Label htmlFor="netbanking" className="flex items-center gap-3 cursor-pointer flex-1">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      <span className="font-medium">Net Banking</span>
+                    </Label>
+                  </div>
+
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-border hover:border-primary transition-colors cursor-pointer">
+                    <RadioGroupItem value="emi" id="emi" />
+                    <Label htmlFor="emi" className="flex items-center gap-3 cursor-pointer flex-1">
+                      <Calendar className="h-5 w-5 text-primary" />
+                      <span className="font-medium">EMI (No Cost EMI Available)</span>
                     </Label>
                   </div>
                   
@@ -199,6 +389,72 @@ export default function Checkout() {
                     </div>
                   </div>
                 )}
+
+                {paymentMethod === "netbanking" && (
+                  <div className="space-y-2">
+                    <Label>Select Bank</Label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {banks.map((bank) => (
+                        <button
+                          key={bank}
+                          type="button"
+                          onClick={() => setSelectedBank(bank)}
+                          className={`p-3 text-left rounded-lg border-2 transition-colors ${
+                            selectedBank === bank
+                              ? "border-primary bg-primary/10"
+                              : "border-border hover:border-primary/50"
+                          }`}
+                        >
+                          <span className="text-sm font-medium">{bank}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {paymentMethod === "emi" && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Select EMI Duration</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {["3", "6", "9", "12", "18", "24"].map((months) => (
+                          <button
+                            key={months}
+                            type="button"
+                            onClick={() => setEmiMonths(months)}
+                            className={`p-3 rounded-lg border-2 transition-colors text-center ${
+                              emiMonths === months
+                                ? "border-primary bg-primary/10"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <span className="font-bold">{months}</span>
+                            <span className="text-xs text-muted-foreground block">months</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="bg-muted/50 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground">EMI Amount per month:</p>
+                      <p className="text-2xl font-bold text-primary">
+                        ₹{Math.ceil(finalPrice / parseInt(emiMonths))}
+                      </p>
+                      <p className="text-xs text-green-600">No Cost EMI - 0% interest</p>
+                    </div>
+                    
+                    {/* Card details for EMI */}
+                    <div className="space-y-2">
+                      <Label htmlFor="emi-card-number">Card Number</Label>
+                      <Input
+                        id="emi-card-number"
+                        placeholder="1234 5678 9012 3456"
+                        maxLength={16}
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ''))}
+                      />
+                    </div>
+                  </div>
+                )}
                 
                 {paymentMethod === "cod" && (
                   <div className="space-y-4">
@@ -235,7 +491,7 @@ export default function Checkout() {
               <div className="bg-card rounded-2xl p-6 shadow-[var(--shadow-card)] sticky top-24 space-y-4">
                 <h2 className="text-xl font-bold text-foreground">Order Summary</h2>
                 
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-48 overflow-y-auto">
                   {cart.map((item) => (
                     <div key={item.id} className="flex gap-3 pb-3 border-b border-border">
                       <img
@@ -257,6 +513,18 @@ export default function Checkout() {
                     <span className="text-muted-foreground">Subtotal ({totalItems} items)</span>
                     <span className="font-medium">₹{totalPrice}</span>
                   </div>
+                  {walletDiscount > 0 && (
+                    <div className="flex justify-between text-sm text-emerald-600">
+                      <span>Wallet Discount</span>
+                      <span className="font-medium">-₹{walletDiscount}</span>
+                    </div>
+                  )}
+                  {giftCardDiscount > 0 && (
+                    <div className="flex justify-between text-sm text-primary">
+                      <span>Gift Card</span>
+                      <span className="font-medium">-₹{giftCardDiscount}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
                     <span className="font-medium text-green-600">FREE</span>
@@ -265,7 +533,7 @@ export default function Checkout() {
                 
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">₹{totalPrice}</span>
+                  <span className="text-primary">₹{finalPrice}</span>
                 </div>
                 
                 <Button
@@ -273,7 +541,10 @@ export default function Checkout() {
                   size="lg"
                   className="w-full bg-gradient-to-r from-primary to-coral-dark hover:opacity-90 shadow-[var(--shadow-hover)]"
                 >
-                  Complete Payment
+                  {paymentMethod === "emi" 
+                    ? `Pay ₹${Math.ceil(finalPrice / parseInt(emiMonths))}/month`
+                    : `Complete Payment`
+                  }
                 </Button>
                 
                 <Button
@@ -304,13 +575,15 @@ export default function Checkout() {
           <div className="bg-muted rounded-lg p-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Order Total</span>
-              <span className="font-bold">₹{totalPrice}</span>
+              <span className="font-bold">₹{finalPrice}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Payment Method</span>
               <span className="font-medium">
                 {paymentMethod === "upi" && "UPI"}
                 {paymentMethod === "card" && "Card"}
+                {paymentMethod === "netbanking" && "Net Banking"}
+                {paymentMethod === "emi" && `EMI (${emiMonths} months)`}
                 {paymentMethod === "cod" && "Cash on Delivery"}
               </span>
             </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -172,6 +172,10 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             <Link to="/sell" className="text-foreground hover:text-primary transition-colors font-medium">
               Sell Books
             </Link>
+            <Link to="/rewards" className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1">
+              <Gift className="h-4 w-4" />
+              Rewards
+            </Link>
           </div>
 
           {/* Search Bar */}
@@ -238,6 +242,12 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
                     <Link to="/orders" className="flex items-center gap-2">
                       <Package className="h-4 w-4" />
                       My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to="/rewards" className="flex items-center gap-2">
+                      <Gift className="h-4 w-4" />
+                      Rewards & Gift Cards
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -330,6 +340,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
               onClick={() => setIsMenuOpen(false)}
             >
               Sell Books
+            </Link>
+            <Link
+              to="/rewards"
+              className="block text-foreground hover:text-primary transition-colors font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Rewards & Gift Cards
             </Link>
             {user && (
               <>
