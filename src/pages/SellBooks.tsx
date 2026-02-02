@@ -431,6 +431,12 @@ export default function SellBooks() {
                         <SelectItem value="Romance">Romance</SelectItem>
                         <SelectItem value="Horror">Horror</SelectItem>
                         <SelectItem value="Study">Study</SelectItem>
+                        <SelectItem value="Historical">Historical</SelectItem>
+                        <SelectItem value="Politics">Politics</SelectItem>
+                        <SelectItem value="Spirituality">Spirituality</SelectItem>
+                        <SelectItem value="Novels & Manga">Novels & Manga</SelectItem>
+                        <SelectItem value="Health">Health</SelectItem>
+                        <SelectItem value="Poetry">Poetry</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

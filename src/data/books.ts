@@ -131,6 +131,12 @@ export const categories = [
   "Romance",
   "Horror",
   "Study",
+  "Historical",
+  "Politics",
+  "Spirituality",
+  "Novels & Manga",
+  "Health",
+  "Poetry",
   "Collection",
 ];
 

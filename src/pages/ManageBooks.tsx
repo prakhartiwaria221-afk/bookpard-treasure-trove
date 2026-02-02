@@ -691,13 +691,25 @@ export default function ManageBooks() {
 
                       <div className="space-y-2">
                         <Label htmlFor="category">Category *</Label>
-                        <Input
-                          id="category"
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          placeholder="e.g., Fiction, Mystery, Romance"
-                          required
-                        />
+                        <Select value={category} onValueChange={setCategory}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Kids">Kids</SelectItem>
+                            <SelectItem value="Fiction">Fiction</SelectItem>
+                            <SelectItem value="Mystery">Mystery</SelectItem>
+                            <SelectItem value="Romance">Romance</SelectItem>
+                            <SelectItem value="Horror">Horror</SelectItem>
+                            <SelectItem value="Study">Study</SelectItem>
+                            <SelectItem value="Historical">Historical</SelectItem>
+                            <SelectItem value="Politics">Politics</SelectItem>
+                            <SelectItem value="Spirituality">Spirituality</SelectItem>
+                            <SelectItem value="Novels & Manga">Novels & Manga</SelectItem>
+                            <SelectItem value="Health">Health</SelectItem>
+                            <SelectItem value="Poetry">Poetry</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div className="space-y-2">
