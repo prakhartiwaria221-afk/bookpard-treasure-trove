@@ -15,7 +15,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAdmin } from "@/hooks/useAdmin";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { CelebrationLights } from "@/components/CelebrationLights";
 import { SearchSuggestions } from "@/components/SearchSuggestions";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -127,15 +126,13 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
   };
 
   return (
-    <nav className={`fixed left-0 right-0 z-50 border-b border-newyear-gold/20 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b border-primary/20 transition-all duration-300 ${
       isHidden ? "-translate-y-full" : "translate-y-0"
     } ${
       isScrolled 
-        ? "bg-card/80 backdrop-blur-lg shadow-lg shadow-newyear-gold/5" 
+        ? "bg-card/80 backdrop-blur-lg shadow-lg shadow-primary/5" 
         : "bg-card/95 backdrop-blur-sm shadow-[var(--shadow-soft)]"
-    }`} style={{ top: '40px' }}>
-      {/* Celebration Lights */}
-      <CelebrationLights />
+    }`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
@@ -146,7 +143,7 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             }}
             className="flex items-center gap-3 hover:opacity-90 transition-opacity"
           >
-            <div className="relative h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-newyear-gold/60 shadow-lg shadow-newyear-gold/30 hover:shadow-xl hover:shadow-newyear-gold/40 hover:scale-105 transition-all duration-300">
+            <div className="relative h-14 w-14 md:h-20 md:w-20 rounded-full overflow-hidden border-2 border-primary/60 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-105 transition-all duration-300">
               <img 
                 src={logoDarkMode} 
                 alt="BookPard Logo" 

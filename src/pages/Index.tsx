@@ -5,14 +5,13 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { FilterControls } from "@/components/FilterControls";
 import { BookCard } from "@/components/BookCard";
 import { BookSection } from "@/components/BookSection";
-import { RepublicDayBanner } from "@/components/RepublicDayBanner";
 import { useCart } from "@/hooks/useCart";
 import { booksData, bookCollections } from "@/data/books";
 import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
-import { Flag, Star, Gift } from "lucide-react";
+import { BookOpen, Sparkles, Library } from "lucide-react";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -302,39 +301,35 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Republic Day Banner - Fixed at very top */}
-      <div className="fixed top-0 left-0 right-0 z-[60]">
-        <RepublicDayBanner />
-      </div>
-      
-      {/* Main content with adjusted padding */}
-      <div className="pt-10">
+      {/* Main content */}
+      <div>
         <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
         
         <div className="pt-20 md:pt-24">
           <Hero />
           
           <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
-            {/* Republic Day Section Header */}
+            {/* Classic Library Section Header */}
             <div className="text-center mb-12 animate-fade-in">
               <div className="inline-flex items-center gap-3 mb-4">
-                <span className="text-3xl">🇮🇳</span>
-                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-tricolor-gradient">
-                  Republic Day 2026 Book Sale
+                <Library className="h-8 w-8 text-primary" />
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-vintage-gradient">
+                  Our Book Collection
                 </h2>
-                <span className="text-3xl">🇮🇳</span>
+                <Library className="h-8 w-8 text-primary" />
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Celebrate the spirit of freedom with <span className="font-bold text-primary">26% OFF</span> on all books! Honor our Constitution with knowledge and wisdom.
+                Explore our carefully curated collection of <span className="font-bold text-primary">literary treasures</span>. 
+                From timeless classics to modern bestsellers, find your next great read.
               </p>
-              {/* Offer highlights */}
+              {/* Feature highlights */}
               <div className="flex flex-wrap justify-center gap-3 mt-4">
                 <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
-                  <Gift className="h-4 w-4" />
-                  26% OFF All Books
+                  <BookOpen className="h-4 w-4" />
+                  Curated Collection
                 </div>
                 <div className="flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold">
-                  <Star className="h-4 w-4" />
+                  <Sparkles className="h-4 w-4" />
                   Free Shipping
                 </div>
               </div>
@@ -357,7 +352,7 @@ const Index = () => {
             {/* Category Title */}
             {!searchQuery && (
               <div className="mb-6 flex items-center gap-3">
-                <Flag className="h-6 w-6 text-primary" />
+                <BookOpen className="h-6 w-6 text-primary" />
                 <h2 className="text-2xl font-playfair font-bold text-foreground">
                   {selectedCategory}
                   <span className="text-muted-foreground font-inter font-normal text-base ml-2">
@@ -425,7 +420,7 @@ const Index = () => {
                 {/* Popular Series */}
                 {bookSections.popularSeries.length > 0 && (
                   <BookSection
-                    title="🪁 Popular Series"
+                    title="📖 Popular Series"
                     books={bookSections.popularSeries}
                     onAddToCart={handleAddToCart}
                     icon="sparkles"
@@ -476,32 +471,32 @@ const Index = () => {
             )}
           </main>
 
-          {/* Footer - Republic Day Themed */}
+          {/* Footer - Classic Library Themed */}
           <footer className="relative bg-gradient-to-b from-card to-primary/5 dark:to-primary/10 border-t border-primary/20 mt-16 overflow-hidden">
-            {/* Tricolor top accent */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(24,100%,50%)] via-white to-[hsl(120,60%,30%)]" />
+            {/* Leather top accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary" />
             
             {/* Decorative elements */}
             <div className="absolute inset-0 pointer-events-none">
-              <Star className="absolute top-8 left-[10%] h-4 w-4 text-primary/20 animate-sparkle" />
-              <Star className="absolute top-12 right-[15%] h-3 w-3 text-secondary/25 animate-sparkle" style={{ animationDelay: "0.5s" }} />
-              <div className="absolute bottom-20 left-[20%] text-xl text-[hsl(210,80%,45%)]/20 animate-chakra-spin">☸</div>
+              <Sparkles className="absolute top-8 left-[10%] h-4 w-4 text-secondary/20 animate-sparkle" />
+              <Sparkles className="absolute top-12 right-[15%] h-3 w-3 text-primary/25 animate-sparkle" style={{ animationDelay: "0.5s" }} />
+              <BookOpen className="absolute bottom-20 left-[20%] h-5 w-5 text-secondary/20 animate-gentle-float" />
             </div>
             
             <div className="container mx-auto px-4 py-12 relative z-10">
               <div className="grid md:grid-cols-3 gap-8">
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Flag className="h-4 w-4 text-primary" />
+                    <Library className="h-4 w-4 text-primary" />
                     About BookPard
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Your trusted marketplace for buying and selling books. Celebrate Republic Day 2026 with 26% OFF on all books!
+                    Your trusted marketplace for buying and selling books. Discover timeless literary treasures and find your next great read.
                   </p>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <span className="text-lg">🇮🇳</span>
+                    <BookOpen className="h-4 w-4 text-secondary" />
                     Quick Links
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
@@ -512,7 +507,7 @@ const Index = () => {
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Gift className="h-4 w-4 text-secondary" />
+                    <Sparkles className="h-4 w-4 text-secondary" />
                     Contact Us
                   </h3>
                   <p className="text-muted-foreground text-sm">
@@ -522,15 +517,15 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Republic Day Footer Message */}
+              {/* Footer Message */}
               <div className="mt-8 pt-8 border-t border-primary/20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-xl">🇮🇳</span>
-                  <span className="font-playfair text-lg text-primary font-bold">Happy Republic Day 2026!</span>
-                  <span className="text-xl">🇮🇳</span>
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  <span className="font-playfair text-lg text-primary font-bold">Happy Reading!</span>
+                  <BookOpen className="h-5 w-5 text-primary" />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  © 2026 BookPard. All rights reserved. Jai Hind! 🇮🇳
+                  © 2026 BookPard. All rights reserved. 📚
                 </p>
               </div>
             </div>

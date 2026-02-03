@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-// Makar Sankranti celebration color utilities for direct use
+// Classic Library theme color utilities
 
 export default {
   darkMode: ["class"],
@@ -54,27 +54,21 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Makar Sankranti celebration colors
-        sankranti: {
-          saffron: "hsl(var(--sankranti-saffron))",
-          "saffron-light": "hsl(var(--sankranti-saffron-light))",
-          "saffron-dark": "hsl(var(--sankranti-saffron-dark))",
-          sky: "hsl(var(--sankranti-sky))",
-          "sky-light": "hsl(var(--sankranti-sky-light))",
-          "sky-dark": "hsl(var(--sankranti-sky-dark))",
-          yellow: "hsl(var(--sankranti-yellow))",
-          "yellow-light": "hsl(var(--sankranti-yellow-light))",
-          cream: "hsl(var(--sankranti-cream))",
-        },
-        sun: {
-          glow: "hsl(var(--sun-glow))",
-        },
-        kite: {
-          red: "hsl(var(--kite-red))",
-          green: "hsl(var(--kite-green))",
-          purple: "hsl(var(--kite-purple))",
-          blue: "hsl(var(--kite-blue))",
-          pink: "hsl(var(--kite-pink))",
+        // Classic Library colors
+        library: {
+          mahogany: "hsl(var(--library-mahogany))",
+          "mahogany-light": "hsl(var(--library-mahogany-light))",
+          "mahogany-dark": "hsl(var(--library-mahogany-dark))",
+          leather: "hsl(var(--library-leather))",
+          "leather-light": "hsl(var(--library-leather-light))",
+          gold: "hsl(var(--library-gold))",
+          "gold-light": "hsl(var(--library-gold-light))",
+          "gold-dark": "hsl(var(--library-gold-dark))",
+          parchment: "hsl(var(--library-parchment))",
+          cream: "hsl(var(--library-cream))",
+          forest: "hsl(var(--library-forest))",
+          "forest-light": "hsl(var(--library-forest-light))",
+          ink: "hsl(var(--library-ink))",
         },
       },
       borderRadius: {
@@ -99,21 +93,13 @@ export default {
           from: { opacity: "0", transform: "translateX(-10px)" },
           to: { opacity: "1", transform: "translateX(0)" },
         },
-        "kite-fly": {
-          "0%": { transform: "translateY(100vh) translateX(-20px) rotate(-15deg)", opacity: "0" },
-          "10%": { opacity: "1" },
-          "50%": { transform: "translateY(20vh) translateX(30px) rotate(10deg)" },
-          "100%": { transform: "translateY(-20vh) translateX(-10px) rotate(-5deg)", opacity: "0" },
+        "book-float": {
+          "0%, 100%": { transform: "translateY(0) rotate(-1deg)" },
+          "50%": { transform: "translateY(-10px) rotate(1deg)" },
         },
-        "kite-sway": {
-          "0%, 100%": { transform: "translateX(0) rotate(0deg)" },
-          "25%": { transform: "translateX(20px) rotate(8deg)" },
-          "50%": { transform: "translateX(-15px) rotate(-5deg)" },
-          "75%": { transform: "translateX(10px) rotate(3deg)" },
-        },
-        "sun-pulse": {
-          "0%, 100%": { opacity: "0.8", transform: "scale(1)" },
-          "50%": { opacity: "1", transform: "scale(1.1)" },
+        "gentle-float": {
+          "0%, 100%": { transform: "translateY(0) rotate(0deg)" },
+          "50%": { transform: "translateY(-15px) rotate(2deg)" },
         },
         sparkle: {
           "0%, 100%": { opacity: "0.4", transform: "scale(0.8)" },
@@ -123,9 +109,9 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
-        "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(25 90% 50% / 0.6)" },
-          "50%": { boxShadow: "0 0 40px hsl(25 90% 50% / 0.9), 0 0 60px hsl(45 95% 50% / 0.5)" },
+        "warm-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px hsl(38 60% 45% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(38 60% 45% / 0.5), 0 0 60px hsl(15 65% 35% / 0.3)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -149,12 +135,11 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
-        "kite-fly": "kite-fly 15s ease-in-out infinite",
-        "kite-sway": "kite-sway 4s ease-in-out infinite",
-        "sun-pulse": "sun-pulse 3s ease-in-out infinite",
+        "book-float": "book-float 6s ease-in-out infinite",
+        "gentle-float": "gentle-float 4s ease-in-out infinite",
         sparkle: "sparkle 1.5s ease-in-out infinite",
         shimmer: "shimmer 2s linear infinite",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "warm-glow": "warm-glow 3s ease-in-out infinite",
         float: "float 3s ease-in-out infinite",
         "bounce-slow": "bounce-slow 2s ease-in-out infinite",
         "rotate-slow": "rotate-slow 20s linear infinite",
