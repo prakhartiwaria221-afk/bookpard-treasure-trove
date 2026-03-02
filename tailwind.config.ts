@@ -70,6 +70,17 @@ export default {
           "forest-light": "hsl(var(--library-forest-light))",
           ink: "hsl(var(--library-ink))",
         },
+        // Holi Festival colors
+        holi: {
+          pink: "hsl(var(--holi-pink))",
+          yellow: "hsl(var(--holi-yellow))",
+          purple: "hsl(var(--holi-purple))",
+          green: "hsl(var(--holi-green))",
+          orange: "hsl(var(--holi-orange))",
+          blue: "hsl(var(--holi-blue))",
+          red: "hsl(var(--holi-red))",
+          magenta: "hsl(var(--holi-magenta))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

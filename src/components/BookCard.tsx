@@ -59,10 +59,10 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
   return (
     <div 
       onClick={onClick}
-      className="group relative bg-card dark:bg-card rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-transparent hover:border-primary/30 cursor-pointer">
+      className="group relative bg-card dark:bg-card rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 card-holi-border cursor-pointer">
       
-      {/* Leather Top Accent */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary" />
+      {/* Rainbow Top Accent */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(var(--holi-pink))] via-[hsl(var(--holi-yellow))] via-[hsl(var(--holi-green))] to-[hsl(var(--holi-purple))]" />
 
       {/* Book Icon Badge - Top Left */}
       <div className="absolute top-3 left-3 z-10">
