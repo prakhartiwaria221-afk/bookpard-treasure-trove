@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useCallback } from "react";
-import { Fireworks } from "@/components/Fireworks";
+import { ColorPowderBurst } from "@/components/ColorPowderBurst";
 
 interface FireworksContextType {
   triggerFireworks: (intensity?: "low" | "medium" | "high") => void;
@@ -19,7 +19,7 @@ export const FireworksProvider = ({ children }: { children: ReactNode }) => {
   return (
     <FireworksContext.Provider value={{ triggerFireworks }}>
       {children}
-      <Fireworks trigger={trigger} intensity={intensity} />
+      <ColorPowderBurst trigger={trigger} intensity={intensity} />
     </FireworksContext.Provider>
   );
 };
