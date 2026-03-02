@@ -11,7 +11,9 @@ import { SortOption, FilterCondition, Book } from "@/types/book";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFireworks } from "@/contexts/FireworksContext";
-import { BookOpen, Sparkles, Library } from "lucide-react";
+import { BookOpen, Sparkles, Library, Palette } from "lucide-react";
+import { HoliBanner } from "@/components/HoliBanner";
+import { ColorSplashEffect } from "@/components/ColorSplashEffect";
 
 const Index = () => {
   const { addToCart, totalItems } = useCart();
@@ -300,37 +302,42 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      {/* Holi Color Splash Background Effect */}
+      <ColorSplashEffect />
+      
       {/* Main content */}
-      <div>
+      <div className="relative z-10">
         <Navbar cartItemCount={totalItems} onSearchChange={setSearchQuery} />
         
         <div className="pt-20 md:pt-24">
+          {/* Holi Festival Banner */}
+          <HoliBanner />
           <Hero />
           
           <main className="container mx-auto px-4 py-12 scroll-mt-32" id="books-section">
-            {/* Classic Library Section Header */}
+            {/* Holi Festival Section Header */}
             <div className="text-center mb-12 animate-fade-in">
               <div className="inline-flex items-center gap-3 mb-4">
-                <Library className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-vintage-gradient">
+                <Palette className="h-8 w-8 text-[hsl(var(--holi-pink))]" />
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-holi-gradient">
                   Our Book Collection
                 </h2>
-                <Library className="h-8 w-8 text-primary" />
+                <Palette className="h-8 w-8 text-[hsl(var(--holi-purple))]" />
               </div>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Explore our carefully curated collection of <span className="font-bold text-primary">literary treasures</span>. 
-                From timeless classics to modern bestsellers, find your next great read.
+                Add a splash of color to your reading! Explore our <span className="font-bold text-[hsl(var(--holi-pink))]">vibrant collection</span>. 
+                From timeless classics to modern bestsellers — celebrate Holi with books! 🌈
               </p>
               {/* Feature highlights */}
               <div className="flex flex-wrap justify-center gap-3 mt-4">
-                <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
+                <div className="flex items-center gap-2 bg-[hsl(var(--holi-pink))]/10 text-[hsl(var(--holi-pink))] px-4 py-2 rounded-full text-sm font-semibold">
                   <BookOpen className="h-4 w-4" />
                   Curated Collection
                 </div>
-                <div className="flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold">
+                <div className="flex items-center gap-2 bg-[hsl(var(--holi-purple))]/10 text-[hsl(var(--holi-purple))] px-4 py-2 rounded-full text-sm font-semibold">
                   <Sparkles className="h-4 w-4" />
-                  Free Shipping
+                  Holi Special Deals
                 </div>
               </div>
             </div>
@@ -472,22 +479,22 @@ const Index = () => {
           </main>
 
           {/* Footer - Classic Library Themed */}
-          <footer className="relative bg-gradient-to-b from-card to-primary/5 dark:to-primary/10 border-t border-primary/20 mt-16 overflow-hidden">
-            {/* Leather top accent */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary" />
+          <footer className="relative bg-gradient-to-b from-card to-[hsl(var(--holi-purple))]/5 dark:to-[hsl(var(--holi-purple))]/10 border-t border-[hsl(var(--holi-pink))]/20 mt-16 overflow-hidden">
+            {/* Rainbow top accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[hsl(var(--holi-pink))] via-[hsl(var(--holi-yellow))] via-[hsl(var(--holi-green))] via-[hsl(var(--holi-blue))] to-[hsl(var(--holi-purple))]" />
             
             {/* Decorative elements */}
             <div className="absolute inset-0 pointer-events-none">
-              <Sparkles className="absolute top-8 left-[10%] h-4 w-4 text-secondary/20 animate-sparkle" />
-              <Sparkles className="absolute top-12 right-[15%] h-3 w-3 text-primary/25 animate-sparkle" style={{ animationDelay: "0.5s" }} />
-              <BookOpen className="absolute bottom-20 left-[20%] h-5 w-5 text-secondary/20 animate-gentle-float" />
+              <Sparkles className="absolute top-8 left-[10%] h-4 w-4 text-[hsl(var(--holi-yellow))]/30 animate-sparkle" />
+              <Sparkles className="absolute top-12 right-[15%] h-3 w-3 text-[hsl(var(--holi-pink))]/30 animate-sparkle" style={{ animationDelay: "0.5s" }} />
+              <Palette className="absolute bottom-20 left-[20%] h-5 w-5 text-[hsl(var(--holi-purple))]/20 animate-gentle-float" />
             </div>
             
             <div className="container mx-auto px-4 py-12 relative z-10">
               <div className="grid md:grid-cols-3 gap-8">
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Library className="h-4 w-4 text-primary" />
+                    <Library className="h-4 w-4 text-[hsl(var(--holi-pink))]" />
                     About BookPard
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
@@ -496,18 +503,18 @@ const Index = () => {
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-secondary" />
+                    <BookOpen className="h-4 w-4 text-[hsl(var(--holi-purple))]" />
                     Quick Links
                   </h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li><a href="/" className="hover:text-primary transition-colors">Home</a></li>
-                    <li><a href="/#books-section" className="hover:text-primary transition-colors">Books</a></li>
-                    <li><a href="/sell" className="hover:text-primary transition-colors">Sell Books</a></li>
+                    <li><a href="/" className="hover:text-[hsl(var(--holi-pink))] transition-colors">Home</a></li>
+                    <li><a href="/#books-section" className="hover:text-[hsl(var(--holi-pink))] transition-colors">Books</a></li>
+                    <li><a href="/sell" className="hover:text-[hsl(var(--holi-pink))] transition-colors">Sell Books</a></li>
                   </ul>
                 </div>
                 <div>
                   <h3 className="font-playfair font-bold text-foreground mb-4 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-secondary" />
+                    <Sparkles className="h-4 w-4 text-[hsl(var(--holi-yellow))]" />
                     Contact Us
                   </h3>
                   <p className="text-muted-foreground text-sm">
@@ -518,14 +525,14 @@ const Index = () => {
               </div>
               
               {/* Footer Message */}
-              <div className="mt-8 pt-8 border-t border-primary/20 text-center">
+              <div className="mt-8 pt-8 border-t border-[hsl(var(--holi-pink))]/20 text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  <span className="font-playfair text-lg text-primary font-bold">Happy Reading!</span>
-                  <BookOpen className="h-5 w-5 text-primary" />
+                  <Palette className="h-5 w-5 text-[hsl(var(--holi-pink))]" />
+                  <span className="font-playfair text-lg text-holi-gradient font-bold">Happy Holi & Happy Reading! 🌈</span>
+                  <Palette className="h-5 w-5 text-[hsl(var(--holi-purple))]" />
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  © 2026 BookPard. All rights reserved. 📚
+                  © 2026 BookPard. All rights reserved. 🎨📚
                 </p>
               </div>
             </div>
