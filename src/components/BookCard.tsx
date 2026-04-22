@@ -1,6 +1,6 @@
 import { Book } from "@/types/book";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, BookOpen, Sparkles, BookMarked, Tag } from "lucide-react";
+import { ShoppingCart, BookOpen, Sparkles, BookMarked, Tag, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/hooks/useCart";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +55,13 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
     onAddToCart(book);
   };
 
+  const handleSourceClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (book.sourceUrl) {
+      window.open(book.sourceUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div 
       onClick={onClick}
@@ -70,12 +77,26 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
         </div>
       </div>
 
+      {/* Source Link Button */}
+      {book.sourceUrl && (
+        <div className="absolute top-3 right-3 z-10">
+          <button
+            onClick={handleSourceClick}
+            className="p-1.5 bg-background/80 backdrop-blur-sm rounded-lg shadow-lg hover:bg-primary hover:text-white transition-all duration-300 border border-border"
+            title="View on Amazon"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Book Image */}
       <div className="relative aspect-[3/4] overflow-hidden m-2 rounded-lg">
         <img
           src={book.image}
           alt={book.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
         />
         
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
@@ -174,6 +195,17 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
             Buy Now
           </Button>
         </div>
+
+        {/* Source link text */}
+        {book.sourceUrl && (
+          <button
+            onClick={handleSourceClick}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors w-full justify-center pt-1"
+          >
+            <ExternalLink className="h-3 w-3" />
+            <span>View Original Source</span>
+          </button>
+        )}
       </div>
 
       {/* Bottom Accent */}

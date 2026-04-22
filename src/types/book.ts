@@ -8,6 +8,7 @@ export interface Book {
   image: string;
   condition: "new" | "old";
   description?: string;
+  sourceUrl?: string;
 }
 
 export interface CartItem extends Book {

@@ -21,6 +21,7 @@ export const booksData: Book[] = [
     image: harryPotterImg,
     condition: "new",
     description: "The magical journey begins at Hogwarts School of Witchcraft and Wizardry.",
+    sourceUrl: "https://www.amazon.in/Harry-Potter-Philosophers-Stone-Rowling/dp/1408855658",
   },
   {
     id: "2",
@@ -32,6 +33,7 @@ export const booksData: Book[] = [
     image: toyStoryImg,
     condition: "new",
     description: "Join Woody and Buzz on their exciting adventures!",
+    sourceUrl: "https://www.amazon.in/Toy-Story-Adventures-Disney-Pixar/dp/1506717616",
   },
   {
     id: "3",
@@ -43,6 +45,7 @@ export const booksData: Book[] = [
     image: carsImg,
     condition: "new",
     description: "Race through Radiator Springs with Lightning McQueen.",
+    sourceUrl: "https://www.amazon.in/Cars-Lightning-McQueens-Disney-Pixar/dp/0736423451",
   },
   {
     id: "4",
@@ -54,6 +57,7 @@ export const booksData: Book[] = [
     image: mysteryImg,
     condition: "new",
     description: "An intriguing mystery that will keep you guessing until the end.",
+    sourceUrl: "https://www.amazon.in/Agatha-Christie/e/B000AQ0842",
   },
   {
     id: "5",
@@ -65,6 +69,7 @@ export const booksData: Book[] = [
     image: romanceImg,
     condition: "new",
     description: "A heartwarming tale of love and passion.",
+    sourceUrl: "https://www.amazon.in/Nicholas-Sparks/e/B000AQ3TBI",
   },
   {
     id: "6",
@@ -76,6 +81,7 @@ export const booksData: Book[] = [
     image: fictionImg,
     condition: "new",
     description: "Award-winning contemporary fiction.",
+    sourceUrl: "https://www.amazon.in/Margaret-Atwood/e/B000AQ1JK0",
   },
   {
     id: "7",
@@ -87,6 +93,7 @@ export const booksData: Book[] = [
     image: studyImg,
     condition: "new",
     description: "Comprehensive guide for students and professionals.",
+    sourceUrl: "https://www.amazon.in/s?k=advanced+mathematics+textbook",
   },
   {
     id: "8",
@@ -98,6 +105,7 @@ export const booksData: Book[] = [
     image: horrorImg,
     condition: "new",
     description: "A spine-chilling horror story that will haunt your dreams.",
+    sourceUrl: "https://www.amazon.in/Stephen-King/e/B000AQ0842",
   },
   {
     id: "9",
@@ -109,6 +117,7 @@ export const booksData: Book[] = [
     image: harryPotterChamberImg,
     condition: "old",
     description: "Used book in excellent condition.",
+    sourceUrl: "https://www.amazon.in/Harry-Potter-Chamber-Secrets-Rowling/dp/1408855666",
   },
   {
     id: "10",
@@ -120,6 +129,7 @@ export const booksData: Book[] = [
     image: mysteryImg,
     condition: "old",
     description: "Classic mystery in good condition.",
+    sourceUrl: "https://www.amazon.in/Murder-Orient-Express-Agatha-Christie/dp/0007119313",
   },
 ];
 
