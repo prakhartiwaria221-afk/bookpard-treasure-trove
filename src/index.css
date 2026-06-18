@@ -9,153 +9,142 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Classic Library Light Theme - Warm & Inviting */
-    --background: 35 30% 97%;
-    --foreground: 25 25% 15%;
+    /* ☀️ SUMMER THEME — bright, sunny, beachy */
+    --background: 200 65% 97%;
+    --foreground: 210 45% 15%;
 
-    --card: 35 25% 98%;
-    --card-foreground: 25 25% 15%;
+    --card: 45 85% 98%;
+    --card-foreground: 210 45% 15%;
 
-    --popover: 35 25% 98%;
-    --popover-foreground: 25 25% 15%;
+    --popover: 45 85% 98%;
+    --popover-foreground: 210 45% 15%;
 
-    /* Rich Mahogany Primary */
-    --primary: 15 65% 35%;
-    --primary-foreground: 35 30% 97%;
-    
-    /* Aged Gold Secondary */
-    --secondary: 38 60% 45%;
-    --secondary-foreground: 35 30% 97%;
+    /* Ocean Blue Primary */
+    --primary: 200 90% 45%;
+    --primary-foreground: 45 100% 98%;
 
-    /* Parchment Muted */
-    --muted: 35 25% 92%;
-    --muted-foreground: 25 15% 45%;
+    /* Sunshine Yellow Secondary */
+    --secondary: 42 100% 55%;
+    --secondary-foreground: 210 50% 15%;
 
-    /* Leather Accent */
-    --accent: 25 55% 40%;
-    --accent-foreground: 35 30% 97%;
+    /* Sandy Muted */
+    --muted: 40 60% 92%;
+    --muted-foreground: 210 25% 40%;
 
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 35 30% 97%;
+    /* Coral Accent */
+    --accent: 12 90% 60%;
+    --accent-foreground: 45 100% 98%;
 
-    --border: 30 20% 85%;
-    --input: 35 25% 94%;
-    --ring: 15 65% 35%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 45 100% 98%;
+
+    --border: 200 40% 85%;
+    --input: 40 60% 94%;
+    --ring: 200 90% 45%;
 
     --radius: 0.75rem;
 
-    /* Classic Library Colors */
-    --library-mahogany: 15 65% 35%;
-    --library-mahogany-light: 15 55% 45%;
-    --library-mahogany-dark: 15 70% 25%;
-    --library-leather: 25 55% 40%;
-    --library-leather-light: 25 45% 50%;
-    --library-gold: 38 60% 45%;
-    --library-gold-light: 42 65% 55%;
-    --library-gold-dark: 35 55% 35%;
-    --library-parchment: 40 40% 92%;
-    --library-cream: 45 35% 95%;
-    --library-forest: 140 35% 30%;
-    --library-forest-light: 140 30% 40%;
-    --library-ink: 220 25% 20%;
-    
-    /* Holi Festival Colors */
-    --holi-pink: 330 85% 60%;
-    --holi-yellow: 45 95% 55%;
-    --holi-purple: 280 75% 55%;
-    --holi-green: 140 70% 45%;
-    --holi-orange: 25 90% 55%;
-    --holi-blue: 200 85% 55%;
-    --holi-red: 0 80% 55%;
-    --holi-magenta: 310 80% 55%;
-    
-    /* Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(35 30% 97%) 0%, hsl(35 25% 92%) 50%, hsl(40 40% 92%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(35 25% 98%), hsl(40 35% 95%));
-    --gradient-primary: linear-gradient(135deg, hsl(15 65% 35%), hsl(25 55% 40%));
-    --gradient-leather: linear-gradient(180deg, hsl(25 55% 40%) 0%, hsl(15 65% 35%) 100%);
-    --gradient-gold: linear-gradient(90deg, hsl(38 60% 45%) 0%, hsl(42 65% 55%) 50%, hsl(38 60% 45%) 100%);
-    
-    /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(25 25% 15% / 0.08);
-    --shadow-hover: 0 8px 30px -4px hsl(15 65% 35% / 0.2);
-    --shadow-card: 0 2px 15px -3px hsl(25 25% 15% / 0.1);
-    --shadow-book: 4px 4px 20px hsl(25 25% 15% / 0.15), -2px -2px 10px hsl(40 40% 92% / 0.5);
-    --shadow-glow: 0 0 20px hsl(38 60% 45% / 0.4);
+    /* Summer palette (reusing library-* token names) */
+    --library-mahogany: 12 90% 60%;
+    --library-mahogany-light: 12 95% 70%;
+    --library-mahogany-dark: 12 80% 50%;
+    --library-leather: 25 95% 60%;
+    --library-leather-light: 25 95% 70%;
+    --library-gold: 42 100% 55%;
+    --library-gold-light: 48 100% 65%;
+    --library-gold-dark: 38 95% 48%;
+    --library-parchment: 200 65% 92%;
+    --library-cream: 175 65% 92%;
+    --library-forest: 165 75% 40%;
+    --library-forest-light: 165 65% 50%;
+    --library-ink: 210 45% 18%;
+
+    --holi-pink: 340 90% 65%;
+    --holi-yellow: 48 100% 60%;
+    --holi-purple: 280 70% 60%;
+    --holi-green: 150 70% 50%;
+    --holi-orange: 22 95% 60%;
+    --holi-blue: 200 90% 55%;
+    --holi-red: 8 85% 60%;
+    --holi-magenta: 320 80% 60%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(48 100% 85%) 0%, hsl(25 95% 75%) 40%, hsl(200 90% 70%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(45 90% 98%), hsl(200 60% 95%));
+    --gradient-primary: linear-gradient(135deg, hsl(42 100% 55%), hsl(12 90% 60%));
+    --gradient-leather: linear-gradient(180deg, hsl(25 95% 60%) 0%, hsl(12 90% 55%) 100%);
+    --gradient-gold: linear-gradient(90deg, hsl(42 100% 55%) 0%, hsl(48 100% 70%) 50%, hsl(42 100% 55%) 100%);
+
+    --shadow-soft: 0 4px 20px -2px hsl(200 60% 30% / 0.10);
+    --shadow-hover: 0 8px 30px -4px hsl(42 100% 50% / 0.35);
+    --shadow-card: 0 2px 15px -3px hsl(200 40% 30% / 0.12);
+    --shadow-book: 4px 4px 20px hsl(200 50% 25% / 0.15), -2px -2px 10px hsl(48 100% 90% / 0.6);
+    --shadow-glow: 0 0 24px hsl(42 100% 55% / 0.55);
   }
 
   .dark {
-    /* Classic Library Dark Theme - Cozy evening reading */
-    --background: 25 25% 8%;
-    --foreground: 35 25% 92%;
+    /* 🌅 Summer Sunset Dark */
+    --background: 220 40% 10%;
+    --foreground: 45 90% 95%;
 
-    --card: 25 20% 12%;
-    --card-foreground: 35 25% 92%;
+    --card: 220 35% 14%;
+    --card-foreground: 45 90% 95%;
 
-    --popover: 25 20% 12%;
-    --popover-foreground: 35 25% 92%;
+    --popover: 220 35% 14%;
+    --popover-foreground: 45 90% 95%;
 
-    /* Warm Mahogany */
-    --primary: 18 55% 45%;
-    --primary-foreground: 35 30% 97%;
+    --primary: 195 90% 60%;
+    --primary-foreground: 220 40% 10%;
 
-    /* Antique Gold */
-    --secondary: 40 55% 50%;
-    --secondary-foreground: 25 25% 10%;
+    --secondary: 42 95% 60%;
+    --secondary-foreground: 220 40% 10%;
 
-    /* Dark Wood Muted */
-    --muted: 25 20% 18%;
-    --muted-foreground: 35 20% 60%;
+    --muted: 220 30% 20%;
+    --muted-foreground: 45 30% 75%;
 
-    /* Warm Leather Accent */
-    --accent: 28 50% 45%;
-    --accent-foreground: 35 30% 97%;
+    --accent: 12 90% 65%;
+    --accent-foreground: 220 40% 10%;
 
-    --destructive: 0 55% 45%;
-    --destructive-foreground: 35 30% 97%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 45 90% 95%;
 
-    --border: 25 20% 22%;
-    --input: 25 20% 18%;
-    --ring: 18 55% 45%;
+    --border: 220 25% 24%;
+    --input: 220 30% 20%;
+    --ring: 195 90% 60%;
 
-    /* Dark Mode Library Colors */
-    --library-mahogany: 18 55% 45%;
-    --library-mahogany-light: 18 50% 55%;
-    --library-mahogany-dark: 15 60% 35%;
-    --library-leather: 28 50% 45%;
-    --library-leather-light: 28 45% 55%;
-    --library-gold: 40 55% 50%;
-    --library-gold-light: 42 60% 60%;
-    --library-gold-dark: 38 50% 40%;
-    --library-parchment: 35 20% 20%;
-    --library-cream: 35 15% 25%;
-    --library-forest: 140 30% 40%;
-    --library-forest-light: 140 25% 50%;
-    --library-ink: 220 15% 70%;
-    
-    /* Dark Holi Festival Colors */
-    --holi-pink: 330 80% 65%;
-    --holi-yellow: 45 90% 60%;
-    --holi-purple: 280 70% 60%;
-    --holi-green: 140 65% 50%;
-    --holi-orange: 25 85% 60%;
-    --holi-blue: 200 80% 60%;
-    --holi-red: 0 75% 60%;
-    --holi-magenta: 310 75% 60%;
-    
-    /* Dark Gradients */
-    --gradient-hero: linear-gradient(135deg, hsl(25 25% 8%) 0%, hsl(25 20% 12%) 50%, hsl(25 25% 10%) 100%);
-    --gradient-card: linear-gradient(to bottom, hsl(25 20% 14%), hsl(25 20% 10%));
-    --gradient-primary: linear-gradient(135deg, hsl(18 55% 45%), hsl(28 50% 45%));
-    --gradient-leather: linear-gradient(180deg, hsl(28 50% 45%) 0%, hsl(18 55% 40%) 100%);
-    --gradient-gold: linear-gradient(90deg, hsl(40 55% 50%) 0%, hsl(42 60% 60%) 50%, hsl(40 55% 50%) 100%);
-    
-    /* Dark Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.4);
-    --shadow-hover: 0 8px 30px -4px hsl(18 55% 45% / 0.3);
-    --shadow-card: 0 2px 15px -3px hsl(0 0% 0% / 0.3);
-    --shadow-book: 4px 4px 20px hsl(0 0% 0% / 0.3), -2px -2px 10px hsl(25 20% 15% / 0.2);
-    --shadow-glow: 0 0 30px hsl(40 55% 50% / 0.4);
+    --library-mahogany: 12 90% 65%;
+    --library-mahogany-light: 12 90% 75%;
+    --library-mahogany-dark: 12 85% 55%;
+    --library-leather: 25 90% 60%;
+    --library-leather-light: 25 90% 70%;
+    --library-gold: 42 95% 60%;
+    --library-gold-light: 48 100% 70%;
+    --library-gold-dark: 38 90% 50%;
+    --library-parchment: 220 30% 22%;
+    --library-cream: 220 25% 26%;
+    --library-forest: 165 70% 50%;
+    --library-forest-light: 165 60% 60%;
+    --library-ink: 45 80% 90%;
+
+    --holi-pink: 340 85% 70%;
+    --holi-yellow: 48 95% 65%;
+    --holi-purple: 280 70% 65%;
+    --holi-green: 150 65% 55%;
+    --holi-orange: 22 90% 65%;
+    --holi-blue: 195 90% 60%;
+    --holi-red: 8 80% 65%;
+    --holi-magenta: 320 75% 65%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(220 50% 12%) 0%, hsl(280 40% 18%) 50%, hsl(12 70% 25%) 100%);
+    --gradient-card: linear-gradient(to bottom, hsl(220 35% 16%), hsl(220 35% 12%));
+    --gradient-primary: linear-gradient(135deg, hsl(195 90% 55%), hsl(42 95% 60%));
+    --gradient-leather: linear-gradient(180deg, hsl(25 90% 60%) 0%, hsl(12 90% 55%) 100%);
+    --gradient-gold: linear-gradient(90deg, hsl(42 95% 60%) 0%, hsl(48 100% 70%) 50%, hsl(42 95% 60%) 100%);
+
+    --shadow-soft: 0 4px 20px -2px hsl(0 0% 0% / 0.45);
+    --shadow-hover: 0 8px 30px -4px hsl(42 95% 55% / 0.35);
+    --shadow-card: 0 2px 15px -3px hsl(0 0% 0% / 0.35);
+    --shadow-book: 4px 4px 20px hsl(0 0% 0% / 0.35), -2px -2px 10px hsl(220 30% 18% / 0.3);
+    --shadow-glow: 0 0 30px hsl(42 95% 60% / 0.5);
   }
 }
 
