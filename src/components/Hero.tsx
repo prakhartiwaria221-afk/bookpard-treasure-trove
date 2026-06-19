@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, Sparkles, Library, BookMarked, Star, TrendingUp, Shield, Truck } from "lucide-react";
+import { ArrowRight, BookOpen, Sparkles, Library, BookMarked, Star, Leaf, Trees } from "lucide-react";
 import heroImage from "@/assets/hero-library.jpg";
 
 export const Hero = () => {
@@ -57,38 +57,38 @@ export const Hero = () => {
         <div className="max-w-2xl space-y-8 animate-fade-in">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 btn-vintage text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-lg">
-            <Library className="h-4 w-4" />
-            <span className="tracking-wide">📚 India's Trusted Book Store</span>
+            <Leaf className="h-4 w-4" />
+            <span className="tracking-wide">🌿 Where Books Grow on You</span>
             <Sparkles className="h-4 w-4" />
           </div>
 
           {/* Main Heading */}
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-playfair font-bold leading-tight tracking-tight">
-            <span className="block mb-2 text-foreground">Discover Your Next</span>
-            <span className="text-vintage-gradient">Great Read</span>
+            <span className="block mb-2 text-foreground">Read. Grow.</span>
+            <span className="text-vintage-gradient">Flourish.</span>
           </h1>
 
           {/* Ornamental Divider */}
           <div className="flex items-center gap-2">
             <div className="h-0.5 w-16 bg-gradient-to-r from-primary to-secondary rounded" />
-            <BookOpen className="h-5 w-5 text-secondary" />
+            <Leaf className="h-5 w-5 text-secondary" />
             <div className="h-0.5 w-16 bg-gradient-to-r from-secondary to-primary rounded" />
           </div>
 
           {/* Subheading */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-lg font-inter leading-relaxed">
-            Explore our curated collection of <span className="font-bold text-primary">timeless classics</span> and
-            <span className="font-semibold text-secondary"> modern bestsellers</span>. Buy, sell & discover at <span className="font-bold text-accent">BookPard</span>.
+            A breath of fresh air for readers — discover <span className="font-bold text-primary">timeless classics</span> and
+            <span className="font-semibold text-secondary"> modern bestsellers</span>, then plant them in your personal <span className="font-bold text-accent">Reading Shelf</span>.
           </p>
 
           {/* Feature highlights */}
           <div className="flex flex-wrap gap-3">
             <div className="flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold border border-primary/30 backdrop-blur-sm">
-              <Shield className="h-4 w-4" />
-              Secure Payments
+              <BookMarked className="h-4 w-4" />
+              Personal Shelves
             </div>
             <div className="flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold border border-secondary/30 backdrop-blur-sm">
-              <Truck className="h-4 w-4" />
+              <Trees className="h-4 w-4" />
               Free Shipping
             </div>
             <div className="flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-semibold border border-accent/30 backdrop-blur-sm">

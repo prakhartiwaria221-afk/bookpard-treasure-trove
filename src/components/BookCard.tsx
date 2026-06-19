@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { AddToShelfButton } from "@/components/AddToShelfButton";
 
 interface BookCardProps {
   book: Book;
@@ -194,6 +195,11 @@ export const BookCard = ({ book, onAddToCart, onClick }: BookCardProps) => {
           >
             Buy Now
           </Button>
+        </div>
+
+        {/* Reading shelf */}
+        <div className="flex justify-end pt-1">
+          <AddToShelfButton book={book} />
         </div>
 
         {/* Source link text */}
