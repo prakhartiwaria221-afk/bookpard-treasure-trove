@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard, Gift } from "lucide-react";
+import { ShoppingCart, Search, Menu, X, LogOut, User, Settings, Package, ChevronDown, BookOpen, LayoutDashboard, Gift, BookMarked } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -168,6 +168,10 @@ export const Navbar = ({ cartItemCount, onSearchChange }: NavbarProps) => {
             </a>
             <Link to="/sell" className="text-foreground hover:text-primary transition-colors font-medium">
               Sell Books
+            </Link>
+            <Link to="/my-shelf" className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1">
+              <BookMarked className="h-4 w-4" />
+              My Shelf
             </Link>
             <Link to="/rewards" className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1">
               <Gift className="h-4 w-4" />
