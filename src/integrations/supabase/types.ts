@@ -496,6 +496,45 @@ export type Database = {
         }
         Relationships: []
       }
+      reading_lists: {
+        Row: {
+          book_author: string
+          book_id: string
+          book_image: string | null
+          book_title: string
+          created_at: string
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["reading_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_author: string
+          book_id: string
+          book_image?: string | null
+          book_title: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["reading_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_author?: string
+          book_id?: string
+          book_image?: string | null
+          book_title?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["reading_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       referral_codes: {
         Row: {
           code: string
@@ -891,6 +930,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      reading_status: "want_to_read" | "reading" | "finished"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1019,6 +1059,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      reading_status: ["want_to_read", "reading", "finished"],
     },
   },
 } as const
